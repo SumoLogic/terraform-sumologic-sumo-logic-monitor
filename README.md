@@ -58,7 +58,7 @@ In the module declaration, pass the folder id as `sumologic_monitor_folder.tf_mo
 
 ```shell
 module "sumologic-logs-alert" {
-  source                    = "../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   version                   = "{revision}"
   alert_name                = "Logs Monitor"
   alert_description         = "Sample Logs Monitor"
@@ -124,7 +124,7 @@ module "sumologic-logs-alert" {
 
 ```shell
 module "sumologic-metrics-alert" {
-  source                    = "../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   version                   = "{revision}"
   alert_name                = "Metrics Monitor"
   alert_description         = "Sample Metrics Monitor"

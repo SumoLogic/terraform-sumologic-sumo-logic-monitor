@@ -1,6 +1,6 @@
 # Sumo Logic Logs Alerts Example
 module "sumologic-logs-alert" {
-  source                    = "../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   alert_name                = "Logs Monitor"
   alert_description         = "Sample Logs Monitor"

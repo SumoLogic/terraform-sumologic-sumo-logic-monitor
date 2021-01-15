@@ -1,6 +1,6 @@
 # Sumo Logic Metrics Alerts Example
 module "KubeAPIDown" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   alert_name                = "KubeAPIDown"
   alert_description         = "KubeAPI disappeared from Prometheus target discovery."
@@ -59,7 +59,7 @@ module "KubeAPIDown" {
 }
 
 module "KubeControllerManagerDown" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   alert_name                = "KubeControllerManagerDown"
   alert_description         = "KubeControllerManager has disappeared from Prometheus target discovery."
@@ -118,7 +118,7 @@ module "KubeControllerManagerDown" {
 }
 
 module "KubeletDown" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   alert_name                = "KubeletDown"
   alert_description         = "Kubelet has disappeared from Prometheus target discovery."
@@ -177,7 +177,7 @@ module "KubeletDown" {
 }
 
 module "KubeNodeNotReady" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   alert_name                = "KubeNodeNotReady"
   alert_description         = "Node is not ready."
@@ -236,7 +236,7 @@ module "KubeNodeNotReady" {
 }
 
 module "KubeSchedulerDown" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   alert_name                = "KubeSchedulerDown"
   alert_description         = "Kube Scheduler has disappeared from Prometheus target discovery."
@@ -296,7 +296,7 @@ module "KubeSchedulerDown" {
 
 
 module "ClusterCPUUtilizationHigh" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   alert_name                = "Cluster CPU utilization High"
   alert_description         = "Alert when Cluster CPU utlization is high."

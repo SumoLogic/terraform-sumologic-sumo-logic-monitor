@@ -1,6 +1,6 @@
 # Sumo Logic Metrics Alerts Example
 module "sumologic-metrics-alert" {
-  source                    = "../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   alert_name                = "Metrics Monitor"
   alert_description         = "Sample Metrics Monitor"
