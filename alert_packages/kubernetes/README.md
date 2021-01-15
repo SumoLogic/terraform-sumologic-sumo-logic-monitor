@@ -32,7 +32,8 @@ You can also define these values in `terraform.tfvars`.
 
 * Make sure that `Terraform 0.13+` is installed.
 * Run `terraform init`.
-* Configure `Sumo Logic Provider` as in the previous step.
+* Configure `Sumo Logic Provider` in the file `sumologic_provider_and_monitors_folder.tf` as explained in the previous step.
+* Optionally, update the monitor folder name in the file `sumologic_provider_and_monitors_folder.tf`.
 * Configure Email and Connection notifications in the file `kubernetes_notifications.auto.tfvars`.
 * Run `terraform plan` to view the resources which will be created/modified by Terraform.
 * Run `terraform apply`.
