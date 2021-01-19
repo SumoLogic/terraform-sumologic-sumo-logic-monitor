@@ -1,11 +1,11 @@
-# Sumo Logic Logs Alerts Example
-module "sumologic-logs-alert" {
+# Sumo Logic Logs Monitors Example
+module "sumologic-logs-monitor" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  alert_name                = "Logs Monitor"
-  alert_description         = "Sample Logs Monitor"
-  alert_monitor_type        = "Logs"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "Logs Monitor"
+  monitor_description         = "Sample Logs Monitor"
+  monitor_monitor_type        = "Logs"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Only one query is allowed for Logs monitor
   queries = {

@@ -1,11 +1,11 @@
-# Sumo Logic Metrics Alerts Example
+# Sumo Logic Metrics Monitors Example
 module "KubeAPIDown" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  alert_name                = "KubeAPIDown"
-  alert_description         = "KubeAPI disappeared from Prometheus target discovery."
-  alert_monitor_type        = "Metrics"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "KubeAPIDown"
+  monitor_description         = "KubeAPI disappeared from Prometheus target discovery."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -61,10 +61,10 @@ module "KubeAPIDown" {
 module "KubeControllerManagerDown" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  alert_name                = "KubeControllerManagerDown"
-  alert_description         = "KubeControllerManager has disappeared from Prometheus target discovery."
-  alert_monitor_type        = "Metrics"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "KubeControllerManagerDown"
+  monitor_description         = "KubeControllerManager has disappeared from Prometheus target discovery."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -120,10 +120,10 @@ module "KubeControllerManagerDown" {
 module "KubeletDown" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  alert_name                = "KubeletDown"
-  alert_description         = "Kubelet has disappeared from Prometheus target discovery."
-  alert_monitor_type        = "Metrics"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "KubeletDown"
+  monitor_description         = "Kubelet has disappeared from Prometheus target discovery."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -179,10 +179,10 @@ module "KubeletDown" {
 module "KubeNodeNotReady" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  alert_name                = "KubeNodeNotReady"
-  alert_description         = "Node is not ready."
-  alert_monitor_type        = "Metrics"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "KubeNodeNotReady"
+  monitor_description         = "Node is not ready."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -238,10 +238,10 @@ module "KubeNodeNotReady" {
 module "KubeSchedulerDown" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  alert_name                = "KubeSchedulerDown"
-  alert_description         = "Kube Scheduler has disappeared from Prometheus target discovery."
-  alert_monitor_type        = "Metrics"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "KubeSchedulerDown"
+  monitor_description         = "Kube Scheduler has disappeared from Prometheus target discovery."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -298,10 +298,10 @@ module "KubeSchedulerDown" {
 module "ClusterCPUUtilizationHigh" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  alert_name                = "Cluster CPU utilization High"
-  alert_description         = "Alert when Cluster CPU utlization is high."
-  alert_monitor_type        = "Metrics"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "Cluster CPU utilization High"
+  monitor_description         = "Alerts when Cluster CPU utlization is high."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -357,10 +357,10 @@ module "ClusterCPUUtilizationHigh" {
 module "PrometheusRemoteStorageFailures" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  alert_name                = "PrometheusRemoteStorageFailures"
-  alert_description         = "Prometheus fails to send samples to remote storage."
-  alert_monitor_type        = "Metrics"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "PrometheusRemoteStorageFailures"
+  monitor_description         = "Prometheus fails to send samples to remote storage."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -400,10 +400,10 @@ module "PrometheusRemoteStorageFailures" {
 module "MultipleTerminatedPodsFounds" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  alert_name                = "Multiple Terminated pods founds"
-  alert_description         = "Alerts when there are pods that have been terminated."
-  alert_monitor_type        = "Metrics"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "Multiple Terminated pods founds"
+  monitor_description         = "Alerts when there are pods that have been terminated."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {

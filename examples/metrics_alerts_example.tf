@@ -1,11 +1,11 @@
-# Sumo Logic Metrics Alerts Example
-module "sumologic-metrics-alert" {
+# Sumo Logic Metrics Monitors Example
+module "sumologic-metrics-monitor" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  alert_name                = "Metrics Monitor"
-  alert_description         = "Sample Metrics Monitor"
-  alert_monitor_type        = "Metrics"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "Metrics Monitor"
+  monitor_description         = "Sample Metrics Monitor"
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {

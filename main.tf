@@ -1,11 +1,11 @@
 resource "sumologic_monitor" "tf_monitor_1" {
-  name = var.alert_name
-  parent_id  = var.alert_parent_id
-  description = var.alert_description
+  name = var.monitor_name
+  parent_id  = var.monitor_parent_id
+  description = var.monitor_description
   type = "MonitorsLibraryMonitor"
-  is_disabled = var.alert_is_disabled
+  is_disabled = var.monitor_is_disabled
   content_type = "Monitor"
-  monitor_type = var.alert_monitor_type
+  monitor_type = var.monitor_monitor_type
   group_notifications = var.group_notifications
 
   dynamic "queries" {

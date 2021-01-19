@@ -1,24 +1,24 @@
-# Sumo Logic Alerts
-variable "alert_name" {
+# Sumo Logic Monitors
+variable "monitor_name" {
   type        = string
-  description = "Alert Name"
+  description = "Monitor Name"
 }
-variable "alert_parent_id" {
+variable "monitor_parent_id" {
   type        = string
   description = "The ID of the Monitor Folder that contains this monitor."
   default     = null
 }
-variable "alert_description" {
+variable "monitor_description" {
   type        = string
   description = "The description of the monitor."
   default     = ""
 }
-variable "alert_monitor_type" {
+variable "monitor_monitor_type" {
   type        = string
   description = "The type of monitor, Logs or Metrics. Default Logs"
   default     = "Logs"
 }
-variable "alert_is_disabled" {
+variable "monitor_is_disabled" {
   type        = bool
   description = "Whether or not the monitor is disabled. Default false."
   default     = false

@@ -1,6 +1,6 @@
 # terraform-sumologic-sumo-logic-monitor
 
-Configure Sumo Logic Monitord using Terraform modules.
+Configure Sumo Logic Monitors using Terraform modules.
 
 This module configures/creates monitors as per configurations.
 
@@ -39,7 +39,7 @@ provider "sumologic" {
 You can also define these values in `terraform.tfvars`.
 #### Optional Prerequisites
 
-Sumo Logic alerts can be configured in a folder.
+Sumo Logic monitors can be configured in a folder.
 
 Configure the monitor folder resource as below:
 
@@ -57,13 +57,13 @@ In the module declaration, pass the folder id as `sumologic_monitor_folder.tf_mo
 ### Logs Monitor Example
 
 ```shell
-module "sumologic-logs-alert" {
+module "sumologic-logs-monitor" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   version                   = "{revision}"
-  alert_name                = "Logs Monitor"
-  alert_description         = "Sample Logs Monitor"
-  alert_monitor_type        = "Logs"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "Logs Monitor"
+  monitor_description         = "Sample Logs Monitor"
+  monitor_monitor_type        = "Logs"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Only one query is allowed for Logs monitor
   queries = {
@@ -123,13 +123,13 @@ module "sumologic-logs-alert" {
 ### Metrics Monitor Example
 
 ```shell
-module "sumologic-metrics-alert" {
+module "sumologic-metrics-monitor" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   version                   = "{revision}"
-  alert_name                = "Metrics Monitor"
-  alert_description         = "Sample Metrics Monitor"
-  alert_monitor_type        = "Metrics"
-  alert_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_name                = "Metrics Monitor"
+  monitor_description         = "Sample Metrics Monitor"
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries   = {

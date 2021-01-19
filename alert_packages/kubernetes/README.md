@@ -1,21 +1,21 @@
-# sumologic-kubernetes-alerts
+# sumologic-kubernetes-monitors
 
-This script configures Sumo Logic Alerts for Kubernetes using Terraform modules.
+This script configures Sumo Logic Monitors for Kubernetes using Terraform modules.
 
 ## Getting Started
 
-#### Requirements
+### Requirements
 
 * [Terraform 0.13+](https://www.terraform.io/downloads.html)
 * [Sumo Logic Provider](https://registry.terraform.io/providers/SumoLogic/sumologic/latest/docs)
-* [Sumo Logic Alerts Module]
+* [Sumo Logic Monitors Module]
 
 
 The `versions.tf` file lists the requirements.
 Running `terraform init` will automatically install the required providers and the required modules.
 
 
-#### Sumo Logic Provider
+### Sumo Logic Provider
 
 Configure the Sumo Logic Access Key, Access Id and Deployment in the file `sumologic_provider_and_monitors_folder`.
 
@@ -69,3 +69,6 @@ email_notifications = [
   ]
 }
 ```
+
+### Monitors Created
+
