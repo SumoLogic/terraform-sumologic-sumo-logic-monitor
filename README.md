@@ -1,8 +1,8 @@
 # terraform-sumologic-sumo-logic-monitor
 
-Configure Sumo Logic Alerts using Terraform modules.
+Configure Sumo Logic Monitord using Terraform modules.
 
-The modules configure/create alerts as per configurations.
+This module configures/creates monitors as per configurations.
 
 ## Getting Started
 
@@ -54,7 +54,7 @@ In the module declaration, pass the folder id as `sumologic_monitor_folder.tf_mo
 
 ## Module Declaration Examples
 
-### Logs Alert Example
+### Logs Monitor Example
 
 ```shell
 module "sumologic-logs-alert" {
@@ -120,7 +120,7 @@ module "sumologic-logs-alert" {
   ]
 }
 ```
-### Metrics Alert Example
+### Metrics Monitor Example
 
 ```shell
 module "sumologic-metrics-alert" {
