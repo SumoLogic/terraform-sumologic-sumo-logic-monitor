@@ -1,4 +1,4 @@
-# terraform-sumologic-sumologic-alerts
+# terraform-sumologic-sumo-logic-monitor
 
 Configure Sumo Logic Alerts using Terraform modules.
 
