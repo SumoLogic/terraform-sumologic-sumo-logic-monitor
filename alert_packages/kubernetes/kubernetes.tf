@@ -1,8 +1,8 @@
-# Sumo Logic Metrics Monitors Example
+# Sumo Logic Kubernetes Metric Monitors
 module "KubeAPIDown" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "KubeAPIDown"
+  monitor_name                = "Kubernetes - Kube API Down"
   monitor_description         = "KubeAPI disappeared from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -59,9 +59,9 @@ module "KubeAPIDown" {
 }
 
 module "KubeControllerManagerDown" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "KubeControllerManagerDown"
+  monitor_name                = "Kubernetes - Kube Controller Manager Down"
   monitor_description         = "KubeControllerManager has disappeared from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -118,9 +118,9 @@ module "KubeControllerManagerDown" {
 }
 
 module "KubeletDown" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "KubeletDown"
+  monitor_name                = "Kubernetes - Kubelet Down"
   monitor_description         = "Kubelet has disappeared from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -177,9 +177,9 @@ module "KubeletDown" {
 }
 
 module "KubeNodeNotReady" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "KubeNodeNotReady"
+  monitor_name                = "Kubernetes - Kube Node Not Ready"
   monitor_description         = "Node is not ready."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -236,9 +236,9 @@ module "KubeNodeNotReady" {
 }
 
 module "KubeSchedulerDown" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "KubeSchedulerDown"
+  monitor_name                = "Kubernetes - Kube Scheduler Down"
   monitor_description         = "Kube Scheduler has disappeared from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -296,9 +296,9 @@ module "KubeSchedulerDown" {
 
 
 module "ClusterCPUUtilizationHigh" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Cluster CPU utilization High"
+  monitor_name                = "Kubernetes - Cluster CPU utilization High"
   monitor_description         = "Alerts when Cluster CPU utlization is high."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -354,11 +354,10 @@ module "ClusterCPUUtilizationHigh" {
   email_notifications       = var.email_notifications
 }
 
-
 module "PrometheusRemoteStorageFailures" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "PrometheusRemoteStorageFailures"
+  monitor_name                = "Kubernetes - Prometheus Remote Storage Failures"
   monitor_description         = "Prometheus fails to send samples to remote storage."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -399,9 +398,9 @@ module "PrometheusRemoteStorageFailures" {
 }
 
 module "MultipleTerminatedPodsFounds" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Multiple Terminated pods founds"
+  monitor_name                = "Kubernetes - Multiple Terminated pods founds"
   monitor_description         = "Alerts when there are pods that have been terminated."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -440,9 +439,9 @@ module "MultipleTerminatedPodsFounds" {
 }
 
 module "KubePodCrashLooping" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "KubePodCrashLooping"
+  monitor_name                = "Kubernetes - KubePodCrashLooping"
   monitor_description         = "Pod is crash looping."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -481,9 +480,9 @@ module "KubePodCrashLooping" {
 }
 
 module "KubeContainerWaiting" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "KubeContainerWaiting"
+  monitor_name                = "Kubernetes - Kube Container Waiting"
   monitor_description         = "Pod container waiting longer than 1 hour."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -522,9 +521,9 @@ module "KubeContainerWaiting" {
 }
 
 module "KubeDaemonSetNotScheduled" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "KubeDaemonSetNotScheduled"
+  monitor_name                = "Kubernetes - Kube DaemonSet Not Scheduled"
   monitor_description         = "DaemonSet pods are not scheduled."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -565,9 +564,9 @@ module "KubeDaemonSetNotScheduled" {
 }
 
 module "KubeDaemonSetMisScheduled" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "KubeDaemonSetMisScheduled"
+  monitor_name                = "Kubernetes - Kube DaemonSet MisScheduled"
   monitor_description         = "DaemonSet pods are misscheduled."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -606,9 +605,9 @@ module "KubeDaemonSetMisScheduled" {
 }
 
 module "KubeStatefulSetGenerationMismatch" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "KubeStatefulSetGenerationMismatch"
+  monitor_name                = "Kubernetes - Kube StatefulSet Generation Mismatch"
   monitor_description         = "StatefulSet generation mismatch due to possible roll-back."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -649,9 +648,9 @@ module "KubeStatefulSetGenerationMismatch" {
 }
 
 module "KubeHpaMaxedOut" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "KubeHpaMaxedOut"
+  monitor_name                = "Kubernetes - Kube Hpa Maxed Out"
   monitor_description         = "HPA is running at max replicas."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -692,9 +691,9 @@ module "KubeHpaMaxedOut" {
 }
 
 module "etcdInsufficientMembers" {
-  source                    = "../../"
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "etcdInsufficientMembers"
+  monitor_name                = "Kubernetes - etcd Insufficient Members"
   monitor_description         = "etcd cluster has insufficient members."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -724,6 +723,50 @@ module "etcdInsufficientMembers" {
                   occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
                   trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
                   trigger_type = "ResolvedCritical",
+                  detection_method = "StaticCondition"
+                }
+            ]
+
+  # Notifications
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+}
+
+
+module "MultipleContainersOOMKilled" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Kubernetes - Multiple Containers OOM Killed"
+  monitor_description         = "Multiple Containers are OOM Killed."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+
+  # Queries - Multiple queries allowed for Metrics monitor
+  queries = {
+    A = "metric=kube_pod_container_status_restarts_total | quantize to 12m | rate increasing | max by namespace, conatiner, pod"
+    B = "metric=kube_pod_container_status_last_terminated_reason reason=\"OOMKilled\" | max by namespace, conatiner, pod | filter max =1"
+    C = "#A + #B "
+  }
+
+  # Triggers
+  triggers = [
+              {
+                  threshold_type = "GreaterThanOrEqual",
+                  threshold = 5,
+                  time_range = "15m",
+                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "Warning",
+                  detection_method = "StaticCondition"
+                },
+                {
+                  threshold_type = "LessThan",
+                  threshold = 5,
+                  time_range = "15m",
+                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "ResolvedWarning",
                   detection_method = "StaticCondition"
                 }
             ]
