@@ -72,3 +72,22 @@ email_notifications = [
 
 ### Monitors Created
 
+| Type (Metrics/Logs)|Name|Description|Trigger Type (Critical / Warning / MissingData)|
+|---|---|---|---|
+|Metrics|etcd Insufficient Members|etcd cluster insufficient members.|Critical|
+|Metrics|Kube Pod Crash Looping|Pod is crash looping.|Critical|
+|Metrics|Kube API Down|KubeAPI disappeared from Prometheus target discovery.|Critical/MissingData|
+|Metrics|Kube Controller Manager Down|KubeControllerManager has disappeared from Prometheus target discovery.|Critical|
+|Metrics|Kubelet Down|Kubelet has disappeared from Prometheus target discovery.|Critical/MissingData|
+|Metrics|Kube Node Not Ready|Node is not ready.|Critical/MissingData|
+|Metrics|Kube Scheduler Down|Kube Scheduler has disappeared from Prometheus target discovery.|Critical/MissingData|
+|Metrics|Cluster CPU utilization High|Alerts when Cluster CPU utlization is high.|Critical/Warning|
+|Metrics|Prometheus Remote Storage Failures|Prometheus fails to send samples to remote storage.|Critical|
+|Metrics|Multiple Terminated pods founds|Alerts when there are pods that have been terminated.|Critical|
+|Metrics|Kube Pod Crash Looping|Pod is crash looping.|Warning|
+|Metrics|Kube Container Waiting|Pod container waiting longer than 1 hour.|Warning|
+|Metrics|Kube DaemonSet Not Scheduled|DaemonSet pods are not scheduled.|Warning|
+|Metrics|Kube DaemonSet MisScheduled|DaemonSet pods are miss-scheduled.|Warning|
+|Metrics|Kube StatefulSet Generation Mismatch|StatefulSet generation mismatch due to possible roll-back.|Warning|
+|Metrics|Kube Hpa Maxed Out|HPA is running at max replicas.|Warning|
+|Metrics|Multiple Containers OOM Killed|Multiple Containers are OOM Killed.|Warning|

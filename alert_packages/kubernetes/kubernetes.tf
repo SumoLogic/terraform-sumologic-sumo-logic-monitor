@@ -441,7 +441,7 @@ module "MultipleTerminatedPodsFounds" {
 module "KubePodCrashLooping" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Kubernetes - KubePodCrashLooping"
+  monitor_name                = "Kubernetes - Kube Pod Crash Looping"
   monitor_description         = "Pod is crash looping."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id

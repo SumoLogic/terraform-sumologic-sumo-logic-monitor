@@ -188,3 +188,6 @@ module "sumologic-metrics-monitor" {
   ]
 }
 ```
+## Pre-defined Monitors
+
+- [Kubernetes](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/alert_packages/kubernetes)
