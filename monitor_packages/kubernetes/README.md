@@ -8,7 +8,7 @@ This script configures Sumo Logic Monitors for Kubernetes using Terraform module
 
 * [Terraform 0.13+](https://www.terraform.io/downloads.html)
 * [Sumo Logic Provider](https://registry.terraform.io/providers/SumoLogic/sumologic/latest/docs)
-* [Sumo Logic Monitors Module]
+* [Sumo Logic Monitors Module](https://registry.terraform.io/modules/SumoLogic/sumo-logic-monitor/sumologic/latest)
 
 
 The `versions.tf` file lists the requirements.
