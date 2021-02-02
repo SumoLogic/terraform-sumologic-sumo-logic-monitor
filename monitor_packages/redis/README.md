@@ -1,6 +1,6 @@
-# sumologic-kubernetes-monitors
+# sumologic-redis-monitors
 
-This script configures Sumo Logic Monitors for Kubernetes using Terraform modules.
+This script configures Sumo Logic Monitors for Redis using Terraform modules.
 
 ## Getting Started
 
@@ -34,7 +34,7 @@ You can also define these values in `terraform.tfvars`.
 * Run `terraform init`.
 * Configure `Sumo Logic Provider` in the file `sumologic_provider_and_monitors_folder.tf` as explained in the previous step.
 * Optionally, update the monitor folder name in the file `sumologic_provider_and_monitors_folder.tf`.
-* Configure Email and Connection notifications in the file `kubernetes_notifications.auto.tfvars`.
+* Configure Email and Connection notifications in the file `redis_notifications.auto.tfvars`.
 * Run `terraform plan` to view the resources which will be created/modified by Terraform.
 * Run `terraform apply`.
 
@@ -74,19 +74,14 @@ email_notifications = [
 
 | Type (Metrics/Logs)|Name|Description|Trigger Type (Critical / Warning / MissingData)|
 |---|---|---|---|
-|Metrics|etcd Insufficient Members|etcd cluster insufficient members.|Critical|
-|Metrics|Kube API Down|KubeAPI disappeared from Prometheus target discovery.|Critical/MissingData|
-|Metrics|Kube Controller Manager Down|KubeControllerManager has disappeared from Prometheus target discovery.|Critical|
-|Metrics|Kubelet Down|Kubelet has disappeared from Prometheus target discovery.|Critical/MissingData|
-|Metrics|Kube Node Not Ready|Node is not ready.|Critical/MissingData|
-|Metrics|Kube Scheduler Down|Kube Scheduler has disappeared from Prometheus target discovery.|Critical/MissingData|
-|Metrics|Cluster CPU utilization High|Alerts when Cluster CPU utlization is high.|Critical/Warning|
-|Metrics|Prometheus Remote Storage Failures|Prometheus fails to send samples to remote storage.|Critical|
-|Metrics|Multiple Terminated pods founds|Alerts when there are pods that have been terminated.|Critical|
-|Metrics|Kube Pod Crash Looping|Pod is crash looping.|Warning|
-|Metrics|Kube Container Waiting|Pod container waiting longer than 1 hour.|Warning|
-|Metrics|Kube DaemonSet Not Scheduled|DaemonSet pods are not scheduled.|Warning|
-|Metrics|Kube DaemonSet MisScheduled|DaemonSet pods are miss-scheduled.|Warning|
-|Metrics|Kube StatefulSet Generation Mismatch|StatefulSet generation mismatch due to possible roll-back.|Warning|
-|Metrics|Kube Hpa Maxed Out|HPA is running at max replicas.|Warning|
-|Metrics|Multiple Containers OOM Killed|Multiple Containers are OOM Killed.|Warning|
+|Metrics|Instance down|This alert fires when the Redis instance is down.|MissingData|
+|Metrics|High CPU Usage|This alert is fired if user and system cpu usage for a host exceeds 80%.|Critical|
+|Metrics|Mem Fragmentation Ratio Higher than 1.5|Compares Compares Redis memory usage to Linux virtual memory pages (mapped to physical memory chunks). A high ratio will lead to swapping and performance degradation.|Warning|
+|Metrics|Master-Slave IO|It has been 60 seconds that the io between master and slave was down.|Warning|
+|Metrics|Missing master|This alert fires when we detect that a Redis cluster has no node marked as master.|Critical|
+|Metrics|Out Of Memory|This alert fires when we detect that a Redis node is running out of memory (> 90%).|Critical|
+|Metrics|Rejected Connections|This alert fires when we detect that some connections to a Redis cluster has been rejected.|Critical|
+|Metrics|Replica Lag|Replica - Lag (sec) greater than 60 sec.|Warning|
+|Metrics|Replication Broken|This alert fires when we detect that a Redis instance has lost all slaves.|Critical|
+|Metrics|Replication Offset|Redis Replication Offset is greater than 1 MB for last five minutes.|Warning|
+|Metrics|Too Many Connections|This alert fires when we detect a given Redis server has too many connections (over 100).|Warning|
