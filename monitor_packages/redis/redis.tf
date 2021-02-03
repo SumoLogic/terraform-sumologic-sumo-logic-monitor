@@ -58,7 +58,7 @@ module "Redis-Instancedown" {
   # Triggers
   triggers = [
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "5m",
                   occurrence_type = "MissingData" # Options: Always, AtLeastOnce and MissingData for Metrics
@@ -67,7 +67,7 @@ module "Redis-Instancedown" {
                   detection_method = "StaticCondition"
                 },
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "5m",
                   occurrence_type = "MissingData"

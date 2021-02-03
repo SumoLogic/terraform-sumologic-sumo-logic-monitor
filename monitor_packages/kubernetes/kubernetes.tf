@@ -33,7 +33,7 @@ module "KubeAPIDown" {
                   detection_method = "StaticCondition"
                 },
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "15m",
                   occurrence_type = "MissingData" # Options: Always, AtLeastOnce and MissingData for Metrics
@@ -42,7 +42,7 @@ module "KubeAPIDown" {
                   detection_method = "StaticCondition"
                 },
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "15m",
                   occurrence_type = "MissingData"
@@ -92,7 +92,7 @@ module "KubeControllerManagerDown" {
                   detection_method = "StaticCondition"
                 },
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "15m",
                   occurrence_type = "MissingData" # Options: Always, AtLeastOnce and MissingData for Metrics
@@ -101,7 +101,7 @@ module "KubeControllerManagerDown" {
                   detection_method = "StaticCondition"
                 },
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "15m",
                   occurrence_type = "MissingData"
@@ -151,7 +151,7 @@ module "KubeletDown" {
                   detection_method = "StaticCondition"
                 },
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "15m",
                   occurrence_type = "MissingData" # Options: Always, AtLeastOnce and MissingData for Metrics
@@ -160,7 +160,7 @@ module "KubeletDown" {
                   detection_method = "StaticCondition"
                 },
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "15m",
                   occurrence_type = "MissingData"
@@ -210,7 +210,7 @@ module "KubeNodeNotReady" {
                   detection_method = "StaticCondition"
                 },
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "5m",
                   occurrence_type = "MissingData" # Options: Always, AtLeastOnce and MissingData for Metrics
@@ -219,7 +219,7 @@ module "KubeNodeNotReady" {
                   detection_method = "StaticCondition"
                 },
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "5m",
                   occurrence_type = "MissingData"
@@ -269,7 +269,7 @@ module "KubeSchedulerDown" {
                   detection_method = "StaticCondition"
                 },
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "15m",
                   occurrence_type = "MissingData" # Options: Always, AtLeastOnce and MissingData for Metrics
@@ -278,7 +278,7 @@ module "KubeSchedulerDown" {
                   detection_method = "StaticCondition"
                 },
                 {
-                  threshold_type = "GreaterThan",
+                  threshold_type = "",
                   threshold = 0,
                   time_range = "15m",
                   occurrence_type = "MissingData"
