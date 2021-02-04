@@ -1,8 +1,8 @@
 # Sumo Logic Provider
 provider "sumologic" {
-  access_id   = ""
-  access_key  = ""
-  environment = "us2"
+  access_id   = "<SUMO_ACCESS_ID>"
+  access_key  = "<SUMO_ACCESS_KEY>"
+  environment = "<SUMO_ENVIRONMENT>"
 }
 
 #Sumo Logic Monitor Folder

@@ -1,11 +1,11 @@
-variable "nginx_metric_source_category" {
+variable "nginx_metric_data_source" {
   type = string
-  description = "Nginx Metrics Sumo Logic Source Category"
+  description = "Nginx Metrics Sumo Logic Data Source. For eg: _sourceCategory=Nginx/Metrics"
 }
 
-variable "nginx_logs_source_category" {
+variable "nginx_logs_data_source" {
   type = string
-  description = "Nginx Logs Sumo Logic Source Category"
+  description = "Nginx Logs Sumo Logic Data Source. For eg: _sourceCategory=Nginx/Logs"
 }
 
 variable "connection_notifications" {
