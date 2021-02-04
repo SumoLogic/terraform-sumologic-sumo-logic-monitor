@@ -74,8 +74,8 @@ email_notifications = [
 
 | Type (Metrics/Logs)|Name|Description|Trigger Type (Critical / Warning / MissingData)|
 |---|---|---|---|
-|Metrics|Instance down|This alert fires when the Redis instance is down.|MissingData|
-|Metrics|High CPU Usage|This alert is fired if user and system cpu usage for a host exceeds 80%.|Critical|
-|Metrics|Mem Fragmentation Ratio Higher than 1.5|Compares Compares Redis memory usage to Linux virtual memory pages (mapped to physical memory chunks). A high ratio will lead to swapping and performance degradation.|Warning|
-|Metrics|Master-Slave IO|It has been 60 seconds that the io between master and slave was down.|Warning|
-|Metrics|Missing master|This alert fires when we detect that a Redis cluster has no node marked as master.|Critical|
+|Metrics|Nginx - Dropped Connections|This alert fires when we detect that the number of dropped connections is greater than 0 for 5 minutes.|Critical|
+|Logs|Nginx - Access from Malicious Source|This alert fires when we detect that the number of Access Logs with Malicious Source (Client IP) is greater than 0 for 5 minutes.|Critical|
+|Logs|Nginx - Critical Error Messages|This alert fires when we detect that the number of Critical Error Messages is greater than 0 for 5 minutes.|Critical|
+|Logs|Nginx - High Client (HTTP 4xx) Error Rate|This alert fires when there are too many HTTP requests (>5%) with a response status of 4xx within an interval of 5 minutes.|Critical|
+|Logs|Nginx - High Server (HTTP 5xx) Error Rate|This alert fires when there are too many HTTP requests (>5%) with a response status of 5xx within an interval of 5 minutes.|Critical|
