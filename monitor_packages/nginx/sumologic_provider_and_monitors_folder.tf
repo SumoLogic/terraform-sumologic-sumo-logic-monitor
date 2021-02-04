@@ -1,7 +1,7 @@
 # Sumo Logic Provider
 provider "sumologic" {
-  access_id   = "sucx0wOuAvgFOa"
-  access_key  = "ggCmhvDFM7oQmYsU7vR2ct5iYzkVV6NtP8BIYzZuYHr4XtAaFiBu6HJBJxmJDAn2"
+  access_id   = ""
+  access_key  = ""
   environment = "us2"
 }
 
