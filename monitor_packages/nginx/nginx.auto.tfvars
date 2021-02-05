@@ -5,7 +5,7 @@ access_key = "<YOUR SUMO ACCESS KEY>"
 # Please update with your deployment, refer: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
 environment = "<DEPLOYMENT>"
 # The Sumo Logic monitors will be installed in a folder specified by this value.
-folder = "Kubernetes"
+folder = "nginx"
 # This flag determines whether to enable all monitors or not.
 monitors_disabled = true
 # This is the nginx metric data source in sumo logic.
