@@ -8,6 +8,12 @@ variable "nginx_logs_data_source" {
   description = "Nginx Logs Sumo Logic Data Source. For eg: _sourceCategory=Nginx/Logs"
 }
 
+variable "alerts_folder_name" {
+  type = string
+  description = "Folder name to install the Nginx alerts."
+  default = "Nginx"
+}
+
 variable "connection_notifications" {
   type        = list(object(
                 {

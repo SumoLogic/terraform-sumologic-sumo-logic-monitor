@@ -7,6 +7,6 @@ provider "sumologic" {
 
 #Sumo Logic Monitor Folder
 resource "sumologic_monitor_folder" "tf_monitor_folder" {
-  name = "Nginx"
+  name = var.alerts_folder_name
   description = "Folder for Nginx Monitors"
 }

@@ -53,7 +53,7 @@ module "AccessFromMaliciousSource" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = ""
+    A = "${var.nginx_logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | parse regex field=nginx_log_message \"(?<Client_Ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\" | lookup type, actor, raw, threatlevel as Malicious_Confidence from sumo://threat/cs on threat=Client_Ip | where type=\"ip_address\" and !isNull(Malicious_Confidence)"
   }
 
   # Triggers
@@ -62,8 +62,8 @@ module "AccessFromMaliciousSource" {
                   threshold_type = "GreaterThan",
                   threshold = 0,
                   time_range = "5m",
-                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
                   trigger_type = "Critical",
                   detection_method = "StaticCondition"
                 },
@@ -71,8 +71,8 @@ module "AccessFromMaliciousSource" {
                   threshold_type = "LessThanOrEqual",
                   threshold = 0,
                   time_range = "5m",
-                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
                   trigger_type = "ResolvedCritical",
                   detection_method = "StaticCondition"
                 }
@@ -94,7 +94,7 @@ module "CriticalErrorMessage" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = ""
+    A = "${var.nginx_logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | parse regex field=nginx_log_message \"\\s\\[(?<Log_Level>\\S+)\\]\\s\\d+#\\d+:\\s(?:\\*\\d+\\s|)(?<Message>[A-Za-z][^,]+)(?:,|$)\" | where log_level in (\"emerg\", \"alert\", \"crit\")"
   }
 
   # Triggers
@@ -103,8 +103,8 @@ module "CriticalErrorMessage" {
                   threshold_type = "GreaterThan",
                   threshold = 0,
                   time_range = "5m",
-                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
                   trigger_type = "Critical",
                   detection_method = "StaticCondition"
                 },
@@ -112,8 +112,8 @@ module "CriticalErrorMessage" {
                   threshold_type = "LessThanOrEqual",
                   threshold = 0,
                   time_range = "5m",
-                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
                   trigger_type = "ResolvedCritical",
                   detection_method = "StaticCondition"
                 }
@@ -135,7 +135,7 @@ module "HighClientError" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = ""
+    A = "${var.nginx_logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | parse regex field=nginx_log_message \"(?<Client_Ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\" | parse regex field=nginx_log_message \"(?<Method>[A-Z]+)\\s(?<URL>\\S+)\\sHTTP/[\\d\\.]+\\\"\\s(?<Status_Code>\\d+)\\s(?<Size>[\\d-]+)\\s\\\"(?<Referrer>.*?)\\\"\\s\\\"(?<User_Agent>.+?)\\\".*\" | if (Status_Code matches \"4*\", 1, 0) as Server_Error | sum(Server_Error) as Server_Error, count as Total_Requets | (Server_Error/Total_Requets) * 100 as Percent | fields Percent"
   }
 
   # Triggers
@@ -144,8 +144,8 @@ module "HighClientError" {
                   threshold_type = "GreaterThan",
                   threshold = 5,
                   time_range = "5m",
-                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
                   trigger_type = "Critical",
                   detection_method = "StaticCondition"
                 },
@@ -153,8 +153,8 @@ module "HighClientError" {
                   threshold_type = "LessThanOrEqual",
                   threshold = 5,
                   time_range = "5m",
-                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
                   trigger_type = "ResolvedCritical",
                   detection_method = "StaticCondition"
                 }
@@ -176,7 +176,7 @@ module "HighServerError" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = ""
+    A = "${var.nginx_logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | parse regex field=nginx_log_message \"(?<Client_Ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\" | parse regex field=nginx_log_message \"(?<Method>[A-Z]+)\\s(?<URL>\\S+)\\sHTTP/[\\d\\.]+\\\"\\s(?<Status_Code>\\d+)\\s(?<Size>[\\d-]+)\\s\\\"(?<Referrer>.*?)\\\"\\s\\\"(?<User_Agent>.+?)\\\".*\" | if (Status_Code matches \"5*\", 1, 0) as Server_Error | sum(Server_Error) as Server_Error, count as Total_Requets | (Server_Error/Total_Requets) * 100 as Percent | fields Percent"
   }
 
   # Triggers
@@ -185,8 +185,8 @@ module "HighServerError" {
                   threshold_type = "GreaterThan",
                   threshold = 5,
                   time_range = "5m",
-                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
                   trigger_type = "Critical",
                   detection_method = "StaticCondition"
                 },
@@ -194,8 +194,8 @@ module "HighServerError" {
                   threshold_type = "LessThanOrEqual",
                   threshold = 5,
                   time_range = "5m",
-                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
                   trigger_type = "ResolvedCritical",
                   detection_method = "StaticCondition"
                 }
