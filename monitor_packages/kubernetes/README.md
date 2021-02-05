@@ -32,7 +32,7 @@ By default the monitors are installed in a folder named as `Kubernetes`, if you 
 * Make sure that `Terraform 0.13+` is installed.
 * Run `terraform init`.
 * Configure `Sumo Logic Authentication` details in the file `kubernetes.auto.tfvars` as explained in the previous step.
-* Optionally, update the monitor folder name in the file ``kubernetes.auto.tfvars``.
+* Optionally, update the monitor folder name in the file `kubernetes.auto.tfvars`.
 * Based on your requirement, enable or disable all the monitors by setting the flag `monitors_disabled` in `kubernetes.auto.tfvars`.
 * Configure Email and Connection notifications in the file `kubernetes_notifications.auto.tfvars`.
 * Run `terraform plan` to view the resources which will be created/modified by Terraform.

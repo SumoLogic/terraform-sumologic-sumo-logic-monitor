@@ -17,23 +17,23 @@ Running `terraform init` will automatically install the required providers and t
 
 ### Sumo Logic Provider
 
-Configure the Sumo Logic Access Key, Access Id and Deployment in the file `sumologic_provider_and_monitors_folder`.
+Configure the Sumo Logic Access Key, Access Id and Deployment in the file `redis.auto.tfvars`.
 
 ```shell
-provider "sumologic" {
   access_id   = "<SUMOLOGIC ACCESS ID>"
   access_key  = "<SUMOLOGIC ACCESS KEY>"
   environment = "<SUMOLOGIC DEPLOYMENT>"
-}
 ```
-You can also define these values in `terraform.tfvars`.
+The monitors are disabled by default on installation, if you would like to enable all the monitors, set the flag `monitors_disabled` as `false` in `redis.auto.tfvars`.
+By default the monitors are installed in a folder named as `Redis`, if you want to change the folder name, set the variable `folder` in the file `redis.auto.tfvars`.
 
 ### Installation Steps
 
 * Make sure that `Terraform 0.13+` is installed.
 * Run `terraform init`.
-* Configure `Sumo Logic Provider` in the file `sumologic_provider_and_monitors_folder.tf` as explained in the previous step.
-* Optionally, update the monitor folder name in the file `sumologic_provider_and_monitors_folder.tf`.
+* Configure `Sumo Logic Authentication` details in the file `redis.auto.tfvars` as explained in the previous step.
+* Optionally, update the monitor folder name in the file `redis.auto.tfvars`.
+* Based on your requirement, enable or disable all the monitors by setting the flag `monitors_disabled` in `redis.auto.tfvars`.
 * Configure Email and Connection notifications in the file `redis_notifications.auto.tfvars`.
 * Run `terraform plan` to view the resources which will be created/modified by Terraform.
 * Run `terraform apply`.
