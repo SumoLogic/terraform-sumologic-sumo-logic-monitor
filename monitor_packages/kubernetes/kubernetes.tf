@@ -6,6 +6,7 @@ module "KubeAPIDown" {
   monitor_description         = "KubeAPI disappeared from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -65,6 +66,7 @@ module "KubeControllerManagerDown" {
   monitor_description         = "KubeControllerManager has disappeared from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -124,6 +126,7 @@ module "KubeletDown" {
   monitor_description         = "Kubelet has disappeared from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -183,6 +186,7 @@ module "KubeNodeNotReady" {
   monitor_description         = "Node is not ready."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -242,6 +246,7 @@ module "KubeSchedulerDown" {
   monitor_description         = "Kube Scheduler has disappeared from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -302,6 +307,7 @@ module "ClusterCPUUtilizationHigh" {
   monitor_description         = "Alerts when Cluster CPU utlization is high."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -361,6 +367,7 @@ module "PrometheusRemoteStorageFailures" {
   monitor_description         = "Prometheus fails to send samples to remote storage."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -404,6 +411,7 @@ module "MultipleTerminatedPodsFounds" {
   monitor_description         = "Alerts when there are pods that have been terminated."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -445,6 +453,7 @@ module "KubePodCrashLooping" {
   monitor_description         = "Pod is crash looping."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -486,7 +495,7 @@ module "KubeContainerWaiting" {
   monitor_description         = "Pod container waiting longer than 1 hour."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-
+  monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
     A = "metric=kube_pod_container_status_waiting_reason job=kube-state-metrics | sum by cluster, namespace, container, pod"
@@ -527,7 +536,7 @@ module "KubeDaemonSetNotScheduled" {
   monitor_description         = "DaemonSet pods are not scheduled."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-
+  monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
     A = "metric=kube_daemonset_status_desired_number_scheduled job=kube-state-metrics"
@@ -570,7 +579,7 @@ module "KubeDaemonSetMisScheduled" {
   monitor_description         = "DaemonSet pods are misscheduled."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-
+  monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
     A = "metric=kube_daemonset_status_number_misscheduled job=kube-state-metrics"
@@ -611,7 +620,7 @@ module "KubeStatefulSetGenerationMismatch" {
   monitor_description         = "StatefulSet generation mismatch due to possible roll-back."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-
+  monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
     A = "metric=kube_statefulset_status_observed_generation job=kube-state-metrics"
@@ -654,7 +663,7 @@ module "KubeHpaMaxedOut" {
   monitor_description         = "HPA is running at max replicas."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-
+  monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
     A = "metric=kube_hpa_status_current_replicas job=kube-state-metrics"
@@ -697,7 +706,7 @@ module "etcdInsufficientMembers" {
   monitor_description         = "etcd cluster has insufficient members."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-
+  monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
     A = "metric=up job=*etcd* | sum by job"
@@ -741,7 +750,7 @@ module "MultipleContainersOOMKilled" {
   monitor_description         = "Multiple Containers are OOM Killed."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-
+  monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
     A = "metric=kube_pod_container_status_restarts_total | quantize to 12m | rate increasing | max by namespace, conatiner, pod"
