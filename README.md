@@ -4,6 +4,8 @@ Configure Sumo Logic Monitors using Terraform modules.
 
 This module configures/creates monitors as per configurations.
 
+This repository also contains predefined alerts for various technologies. Scroll to the [bottom](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor#pre-defined-monitors) of this readme to find out more details.
+
 ## Getting Started
 
 #### Requirements
