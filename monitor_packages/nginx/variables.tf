@@ -1,3 +1,60 @@
+variable "access_id" {
+  type = string
+  description = "Sumo Logic Access ID. Visit https://help.sumologic.com/Manage/Security/Access-Keys#Create_an_access_key"
+  validation {
+    condition = length(var.access_id) > 0
+    error_message = "The \"sumo_access_id\" can not be empty."
+  }
+}
+
+variable "access_key" {
+  type = string
+  description = "Sumo Logic Access Key."
+  validation {
+    condition = length(var.access_key) > 0
+    error_message = "The \"sumo_access_key\" can not be empty."
+  }
+}
+
+variable "environment" {
+  type = string
+  description = "Please update with your deployment, refer: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security"
+  validation {
+    condition = contains([
+      "US1",
+      "us1",
+      "US2",
+      "us2",
+      "AU",
+      "au",
+      "CA",
+      "ca",
+      "DE",
+      "de",
+      "EU",
+      "eu",
+      "FED",
+      "fed",
+      "JP",
+      "jp",
+      "IN",
+      "in"], var.environment)
+    error_message = "Argument \"environment\" must be one of \"us1\",\"us2\",\"au\",\"ca\",\"de\",\"eu\",\"fed\",\"jp\",\"in\"."
+  }
+}
+
+variable "folder" {
+  type = string
+  description = "Folder where monitors will be created."
+  default = "Nginx"
+}
+
+variable "monitors_disabled" {
+  type = bool
+  description = "Whether the monitors are enabled or not?"
+  default = true
+}
+
 variable "nginx_metric_data_source" {
   type = string
   description = "Nginx Metrics Sumo Logic Data Source. For eg: _sourceCategory=Nginx/Metrics"
@@ -8,40 +65,34 @@ variable "nginx_logs_data_source" {
   description = "Nginx Logs Sumo Logic Data Source. For eg: _sourceCategory=Nginx/Logs"
 }
 
-variable "alerts_folder_name" {
-  type = string
-  description = "Folder name to install the Nginx alerts."
-  default = "Nginx"
-}
-
 variable "connection_notifications" {
-  type        = list(object(
-                {
-                  connection_type = string,
-                  connection_id = string,
-                  payload_override = string,
-                  run_for_trigger_types = list(string)
-                }
-    ))
+  type = list(object(
+  {
+    connection_type = string,
+    connection_id = string,
+    payload_override = string,
+    run_for_trigger_types = list(string)
+  }
+  ))
   description = "Connection Notifications to be sent by the alert."
 }
 
 variable "email_notifications" {
-  type        = list(object(
-                {
-                  connection_type = string,
-                  recipients = list(string),
-                  subject = string,
-                  time_zone = string,
-                  message_body = string,
-                  run_for_trigger_types = list(string)
-                }
-    ))
+  type = list(object(
+  {
+    connection_type = string,
+    recipients = list(string),
+    subject = string,
+    time_zone = string,
+    message_body = string,
+    run_for_trigger_types = list(string)
+  }
+  ))
   description = "Email Notifications to be sent by the alert."
 }
 
 variable "group_notifications" {
-  type        = bool
+  type = bool
   description = "Whether or not to group notifications for individual items that meet the trigger condition. Defaults to true."
-  default     = true
+  default = true
 }

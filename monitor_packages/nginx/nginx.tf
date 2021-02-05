@@ -6,6 +6,7 @@ module "DroppedConnections" {
   monitor_description         = "This alert fires when we detect that the number of dropped connections is greater than 0 for 5 minutes."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -50,6 +51,7 @@ module "AccessFromMaliciousSource" {
   monitor_description         = "This alert fires when we detect that the number of Access Logs with Malicious Source (Client IP) is greater than 0 for 5 minutes."
   monitor_monitor_type        = "Logs"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -91,6 +93,7 @@ module "CriticalErrorMessage" {
   monitor_description         = "This alert fires when we detect that the number of Critical Error Messages is greater than 0 for 5 minutes."
   monitor_monitor_type        = "Logs"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -132,6 +135,7 @@ module "HighClientError" {
   monitor_description         = "This alert fires when there are too many HTTP requests (>5%) with a response status of 4xx within an interval of 5 minutes."
   monitor_monitor_type        = "Logs"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -173,6 +177,7 @@ module "HighServerError" {
   monitor_description         = "This alert fires when there are too many HTTP requests (>5%) with a response status of 5xx within an interval of 5 minutes."
   monitor_monitor_type        = "Logs"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
