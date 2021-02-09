@@ -8,4 +8,4 @@ environment         = "<DEPLOYMENT>"
 # The Sumo Logic monitors will be installed in a folder specified by this value.
 folder              = "Redis"
 # This flag determines whether to enable all monitors or not.
-monitors_disabled   = false
+monitors_disabled   = true
