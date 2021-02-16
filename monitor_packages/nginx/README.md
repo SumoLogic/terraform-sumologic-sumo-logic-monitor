@@ -74,8 +74,8 @@ email_notifications = [
 
 | Type (Metrics/Logs)|Name|Description|Trigger Type (Critical / Warning / MissingData)|
 |---|---|---|---|
-|Metrics|Nginx - Dropped Connections|This alert fires when we detect that the number of dropped connections is greater than 0 for 5 minutes.|Critical|
-|Logs|Nginx - Access from Malicious Source|This alert fires when we detect that the number of Access Logs with Malicious Source (Client IP) is greater than 0 for 5 minutes.|Critical|
-|Logs|Nginx - Critical Error Messages|This alert fires when we detect that the number of Critical Error Messages is greater than 0 for 5 minutes.|Critical|
-|Logs|Nginx - High Client (HTTP 4xx) Error Rate|This alert fires when there are too many HTTP requests (>5%) with a response status of 4xx within an interval of 5 minutes.|Critical|
-|Logs|Nginx - High Server (HTTP 5xx) Error Rate|This alert fires when there are too many HTTP requests (>5%) with a response status of 5xx within an interval of 5 minutes.|Critical|
+|Metrics|Nginx - Dropped Connections|This alert fires when we detect dropped connections for a given Nginx server.|Critical|
+|Logs|Nginx - Access from Highly Malicious Source|This alert fires when an Nginx is accessed from highly malicious IP addresses.|Critical|
+|Logs|Nginx - Critical Error Messages|This alert fires when we detect critical error messages for a given Nginx server.|Critical|
+|Logs|Nginx - High Client (HTTP 4xx) Error Rate|This alert fires when there are too many HTTP requests (>5%) with a response status of 4xx.|Critical|
+|Logs|Nginx - High Server (HTTP 5xx) Error Rate|This alert fires when there are too many HTTP requests (>5%) with a response status of 5xx.|Critical|

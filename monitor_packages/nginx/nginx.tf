@@ -3,15 +3,15 @@ module "DroppedConnections" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Nginx - Dropped Connections"
-  monitor_description         = "This alert fires when we detect that the number of dropped connections is greater than 0 for 5 minutes."
+  monitor_description         = "This alert fires when we detect dropped connections for a given Nginx server."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
   monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "${var.nginx_metric_data_source} metric = nginx_handled | sum by Server"
-    B = "${var.nginx_metric_data_source} metric = nginx_accepts | sum by Server"
+    A = "${var.metric_data_source} metric = nginx_handled | sum by Server"
+    B = "${var.metric_data_source} metric = nginx_accepts | sum by Server"
     C = "#B - #A along Server"
   }
 
@@ -44,18 +44,17 @@ module "DroppedConnections" {
 }
 
 # Sumo Logic Nginx Logs Monitor
-module "AccessFromMaliciousSource" {
+module "AccessFromHighlyMaliciousSource" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Nginx - Access from Malicious Source"
-  monitor_description         = "This alert fires when we detect that the number of Access Logs with Malicious Source (Client IP) is greater than 0 for 5 minutes."
+  monitor_name                = "Nginx - Access from Highly Malicious Sources"
+  monitor_description         = "This alert fires when an Nginx is accessed from highly malicious IP addresses."
   monitor_monitor_type        = "Logs"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
   monitor_is_disabled         = var.monitors_disabled
 
-  # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "${var.nginx_logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | parse regex field=nginx_log_message \"(?<Client_Ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\" | lookup type, actor, raw, threatlevel as Malicious_Confidence from sumo://threat/cs on threat=Client_Ip | where type=\"ip_address\" and !isNull(Malicious_Confidence)"
+    A = "${var.logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | _sourceHost as Server | parse regex field=nginx_log_message \"(?<ClientIp>\\\\d{1,3}\\\\.\\\\d{1,3}\\\\.\\\\d{1,3}\\\\.\\\\d{1,3})\" | where ClientIp != \"0.0.0.0\" and ClientIp != \"127.0.0.1\" | count as ip_count by ClientIp, Server | lookup type, actor, raw, threatlevel as MaliciousConfidence from sumo://threat/cs on threat=ClientIp  | json field=raw \"labels[*].name\" as LabelName  | replace(LabelName, \"\\/\",\"->\") as LabelName | replace(LabelName, \"\"\",\" \") as LabelName | where type=\"ip_address\" and MaliciousConfidence=\"high\" | if (isEmpty(actor), \"Unassigned\", actor) as Actor | sum (ip_count) as ThreatCount by ClientIp, Server, MaliciousConfidence, Actor, LabelName"
   }
 
   # Triggers
@@ -64,8 +63,8 @@ module "AccessFromMaliciousSource" {
                   threshold_type = "GreaterThan",
                   threshold = 0,
                   time_range = "5m",
-                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount"
+                  trigger_source = "AllResults"
                   trigger_type = "Critical",
                   detection_method = "StaticCondition"
                 },
@@ -73,8 +72,8 @@ module "AccessFromMaliciousSource" {
                   threshold_type = "LessThanOrEqual",
                   threshold = 0,
                   time_range = "5m",
-                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount"
+                  trigger_source = "AllResults"
                   trigger_type = "ResolvedCritical",
                   detection_method = "StaticCondition"
                 }
@@ -90,14 +89,13 @@ module "CriticalErrorMessage" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Nginx - Critical Error Messages"
-  monitor_description         = "This alert fires when we detect that the number of Critical Error Messages is greater than 0 for 5 minutes."
+  monitor_description         = "This alert fires when we detect critical error messages for a given Nginx server."
   monitor_monitor_type        = "Logs"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
   monitor_is_disabled         = var.monitors_disabled
 
-  # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "${var.nginx_logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | parse regex field=nginx_log_message \"\\s\\[(?<Log_Level>\\S+)\\]\\s\\d+#\\d+:\\s(?:\\*\\d+\\s|)(?<Message>[A-Za-z][^,]+)(?:,|$)\" | where log_level in (\"emerg\", \"alert\", \"crit\")"
+    A = "${var.logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | _sourceHost as Server | parse regex field=nginx_log_message \"\\\\s\\\\[(?<LogLevel>\\\\S+)\\\\]\\\\s\\\\d+#\\\\d+:\\\\s(?:\\\\*\\\\d+\\\\s|)(?<Message>[A-Za-z][^,]+)(?:,|$)\" | where LogLevel in (\"emerg\", \"alert\", \"crit\") | formatDate(_messageTime, \"MMM/dd/yyyy HH:mm:ss:SSS Z\") as MessageDate | count by MessageDate, Server, LogLevel, Message | fields MessageDate, Server, LogLevel, Message"
   }
 
   # Triggers
@@ -106,8 +104,8 @@ module "CriticalErrorMessage" {
                   threshold_type = "GreaterThan",
                   threshold = 0,
                   time_range = "5m",
-                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount"
+                  trigger_source = "AllResults"
                   trigger_type = "Critical",
                   detection_method = "StaticCondition"
                 },
@@ -115,8 +113,8 @@ module "CriticalErrorMessage" {
                   threshold_type = "LessThanOrEqual",
                   threshold = 0,
                   time_range = "5m",
-                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount"
+                  trigger_source = "AllResults"
                   trigger_type = "ResolvedCritical",
                   detection_method = "StaticCondition"
                 }
@@ -132,30 +130,29 @@ module "HighClientError" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Nginx - High Client (HTTP 4xx) Error Rate"
-  monitor_description         = "This alert fires when there are too many HTTP requests (>5%) with a response status of 4xx within an interval of 5 minutes."
+  monitor_description         = "This alert fires when there are too many HTTP requests (>5%) with a response status of 4xx."
   monitor_monitor_type        = "Logs"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
   monitor_is_disabled         = var.monitors_disabled
 
-  # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "${var.nginx_logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | parse regex field=nginx_log_message \"(?<Client_Ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\" | parse regex field=nginx_log_message \"(?<Method>[A-Z]+)\\s(?<URL>\\S+)\\sHTTP/[\\d\\.]+\\\"\\s(?<Status_Code>\\d+)\\s(?<Size>[\\d-]+)\\s\\\"(?<Referrer>.*?)\\\"\\s\\\"(?<User_Agent>.+?)\\\".*\" | if (Status_Code matches \"4*\", 1, 0) as Server_Error | sum(Server_Error) as Server_Error, count as Total_Requets | (Server_Error/Total_Requets) * 100 as Percent | fields Percent"
+    A = "${var.logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | _sourceHost as Server | parse regex field=nginx_log_message \"(?<Method>[A-Z]+)\\\\s(?<URL>\\\\S+)\\\\sHTTP/[\\\\d\\\\.]+\"\\\\s(?<StatusCode>\\\\d+)\\\\s(?<Size>[\\\\d-]+)\\\\s\"(?<Referrer>.*?)\"\\\\s\"(?<UserAgent>.+?)\".*\" | if (StatusCode matches \"4*\", 1, 0) as ServerError | sum(ServerError) as ServerErrors, count as TotalRequests by Server | (ServerErrors/TotalRequests) * 100 as ErrorPercentage | where ErrorPercentage > 5 | fields Server, ErrorPercentage, ServerErrors, TotalRequests"
   }
 
   # Triggers
   triggers = [
               {
                   threshold_type = "GreaterThan",
-                  threshold = 5,
+                  threshold = 0,
                   time_range = "5m",
-                  occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
-                  trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  occurrence_type = "ResultCount"
+                  trigger_source = "AllResults"
                   trigger_type = "Critical",
                   detection_method = "StaticCondition"
                 },
                 {
                   threshold_type = "LessThanOrEqual",
-                  threshold = 5,
+                  threshold = 0,
                   time_range = "5m",
                   occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
                   trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
@@ -174,21 +171,21 @@ module "HighServerError" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Nginx - High Server (HTTP 5xx) Error Rate"
-  monitor_description         = "This alert fires when there are too many HTTP requests (>5%) with a response status of 5xx within an interval of 5 minutes."
+  monitor_description         = "This alert fires when there are too many HTTP requests (>5%) with a response status of 5xx."
   monitor_monitor_type        = "Logs"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
   monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "${var.nginx_logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | parse regex field=nginx_log_message \"(?<Client_Ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\" | parse regex field=nginx_log_message \"(?<Method>[A-Z]+)\\s(?<URL>\\S+)\\sHTTP/[\\d\\.]+\\\"\\s(?<Status_Code>\\d+)\\s(?<Size>[\\d-]+)\\s\\\"(?<Referrer>.*?)\\\"\\s\\\"(?<User_Agent>.+?)\\\".*\" | if (Status_Code matches \"5*\", 1, 0) as Server_Error | sum(Server_Error) as Server_Error, count as Total_Requets | (Server_Error/Total_Requets) * 100 as Percent | fields Percent"
+    A = "${var.logs_data_source} | json auto maxdepth 1 nodrop | if (isEmpty(log), _raw, log) as nginx_log_message | _sourceHost as Server | parse regex field=nginx_log_message \"(?<Method>[A-Z]+)\\\\s(?<URL>\\\\S+)\\\\sHTTP/[\\\\d\\\\.]+\"\\\\s(?<StatusCode>\\\\d+)\\\\s(?<Size>[\\\\d-]+)\\\\s\"(?<Referrer>.*?)\"\\\\s\"(?<UserAgent>.+?)\".*\" | if (StatusCode matches \"5*\", 1, 0) as ServerError | sum(ServerError) as ServerErrors, count as TotalRequests by Server | (ServerErrors/TotalRequests) * 100 as ErrorPercentage | where ErrorPercentage > 5 | fields Server, ErrorPercentage, ServerErrors, TotalRequests"
   }
 
   # Triggers
   triggers = [
               {
                   threshold_type = "GreaterThan",
-                  threshold = 5,
+                  threshold = 0,
                   time_range = "5m",
                   occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
                   trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
@@ -197,7 +194,7 @@ module "HighServerError" {
                 },
                 {
                   threshold_type = "LessThanOrEqual",
-                  threshold = 5,
+                  threshold = 0,
                   time_range = "5m",
                   occurrence_type = "ResultCount" # Options: Always, AtLeastOnce and MissingData for Metrics
                   trigger_source = "AllResults" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger

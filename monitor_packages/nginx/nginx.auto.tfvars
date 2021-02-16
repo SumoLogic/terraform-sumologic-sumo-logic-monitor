@@ -9,9 +9,9 @@ folder = "nginx"
 # This flag determines whether to enable all monitors or not.
 monitors_disabled = true
 # This is the nginx metric data source in sumo logic.
-nginx_metric_data_source = ""
+metric_data_source = ""
 # This is the nginx logs data source in sumo logic
-nginx_logs_data_source = ""
+logs_data_source = ""
 group_notifications = true
 connection_notifications = []
 email_notifications = []

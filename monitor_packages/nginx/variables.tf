@@ -55,14 +55,14 @@ variable "monitors_disabled" {
   default = true
 }
 
-variable "nginx_metric_data_source" {
+variable "metric_data_source" {
   type = string
-  description = "Nginx Metrics Sumo Logic Data Source. For eg: _sourceCategory=Nginx/Metrics"
+  description = "Sumo Logic Metrics Data Source. For eg: _sourceCategory=Nginx/Metrics"
 }
 
-variable "nginx_logs_data_source" {
+variable "logs_data_source" {
   type = string
-  description = "Nginx Logs Sumo Logic Data Source. For eg: _sourceCategory=Nginx/Logs"
+  description = "Sumo Logic Logs Data Source. For eg: _sourceCategory=Nginx/Logs"
 }
 
 variable "connection_notifications" {
