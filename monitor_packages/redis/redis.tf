@@ -6,6 +6,7 @@ module "Redis-HighCPUUsage" {
   monitor_description         = "This alert is fired if user and system cpu usage for a host exceeds 80%."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -49,6 +50,7 @@ module "Redis-Instancedown" {
   monitor_description         = "This alert fires when the Redis instance is down."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -90,6 +92,7 @@ module "Redis-Master-SlaveIO" {
   monitor_description         = "It has been 60 seconds that the io between master and slave was down."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -131,6 +134,7 @@ module "Redis-MemFragmentationRatioHigherthan" {
   monitor_description         = "Compares Compares Redis memory usage to Linux virtual memory pages (mapped to physical memory chunks). A high ratio will lead to swapping and performance degradation."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -173,6 +177,7 @@ module "Redis-MissingMaster" {
   monitor_description         = "This alert fires when we detect that a Redis cluster has no node marked as master."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -214,6 +219,7 @@ module "Redis-OutOfMemory" {
   monitor_description         = "This alert fires when we detect that a Redis node is running out of memory (> 90%)."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -257,6 +263,7 @@ module "Redis-RejectedConnections" {
   monitor_description         = "This alert fires when we detect that some connections to a Redis cluster has been rejected."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -298,6 +305,7 @@ module "Redis-ReplicaLag" {
   monitor_description         = "Replica - Lag (sec) greater than 60 sec."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -339,6 +347,7 @@ module "Redis-ReplicationBroken" {
   monitor_description         = "This alert fires when we detect that a Redis instance has lost all slaves."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -380,6 +389,7 @@ module "Redis-ReplicationOffset" {
   monitor_description         = "Redis Replication Offset is greater than 1 MB for last five minutes."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
@@ -421,6 +431,7 @@ module "Redis-TooManyConnections" {
   monitor_description         = "This alert fires when we detect a given Redis server has too many connections (over 100)."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
