@@ -40,7 +40,7 @@
     },
     {
       "name": "Redis - Too Many Connections",
-      "description": "This alert fires when we detect a given Redis instance has too many connections (over 100).",
+      "description": "This alert fires when we detect a given Redis server has too many connections (over 100).",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "queries": [

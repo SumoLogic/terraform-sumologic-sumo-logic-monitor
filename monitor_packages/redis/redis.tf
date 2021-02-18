@@ -339,7 +339,7 @@ module "Redis-TooManyConnections" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Redis - Too Many Connections"
-  monitor_description         = "This alert fires when we detect a given Redis instance has too many connections (over 100)."
+  monitor_description         = "This alert fires when we detect a given Redis server has too many connections (over 100)."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
