@@ -3,7 +3,7 @@ module "KubeAPIDown" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Kubernetes - Kube API Down"
-  monitor_description         = "KubeAPI disappeared from Prometheus target discovery."
+  monitor_description         = "This alert is fired when KubeAPI disappears from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -63,7 +63,7 @@ module "KubeControllerManagerDown" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Kubernetes - Kube Controller Manager Down"
-  monitor_description         = "KubeControllerManager has disappeared from Prometheus target discovery."
+  monitor_description         = "This alert is fired when KubeControllerManager disappears from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -123,7 +123,7 @@ module "KubeletDown" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Kubernetes - Kubelet Down"
-  monitor_description         = "Kubelet has disappeared from Prometheus target discovery."
+  monitor_description         = "This alert is fired when Kubelet disappears from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -183,7 +183,7 @@ module "KubeNodeNotReady" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Kubernetes - Kube Node Not Ready"
-  monitor_description         = "Node is not ready."
+  monitor_description         = "This alert is fired when a node is not ready."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -243,7 +243,7 @@ module "KubeSchedulerDown" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Kubernetes - Kube Scheduler Down"
-  monitor_description         = "Kube Scheduler has disappeared from Prometheus target discovery."
+  monitor_description         = "This alert is fired when Kube Scheduler disappears from Prometheus target discovery."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -303,8 +303,8 @@ module "KubeSchedulerDown" {
 module "ClusterCPUUtilizationHigh" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Kubernetes - Cluster CPU utilization High"
-  monitor_description         = "Alerts when Cluster CPU utlization is high."
+  monitor_name                = "Kubernetes - Cluster CPU Utilization High"
+  monitor_description         = "This alert is fired when Cluster CPU utlization is high."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -364,7 +364,7 @@ module "PrometheusRemoteStorageFailures" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Kubernetes - Prometheus Remote Storage Failures"
-  monitor_description         = "Prometheus fails to send samples to remote storage."
+  monitor_description         = "This alert is fired when Prometheus fails to send samples to remote storage."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -407,8 +407,8 @@ module "PrometheusRemoteStorageFailures" {
 module "MultipleTerminatedPodsFounds" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Kubernetes - Multiple Terminated pods founds"
-  monitor_description         = "Alerts when there are pods that have been terminated."
+  monitor_name                = "Kubernetes - Multiple Terminated Pods"
+  monitor_description         = "This alert is fired when we determine that there are pods that have been terminated."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -449,8 +449,8 @@ module "MultipleTerminatedPodsFounds" {
 module "KubePodCrashLooping" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Kubernetes - Kube Pod Crash Looping"
-  monitor_description         = "Pod is crash looping."
+  monitor_name                = "Kubernetes - Pod Crash Looping"
+  monitor_description         = "This alert is fired when we determine that a pod is crash looping."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -491,8 +491,8 @@ module "KubePodCrashLooping" {
 module "KubeContainerWaiting" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Kubernetes - Kube Container Waiting"
-  monitor_description         = "Pod container waiting longer than 1 hour."
+  monitor_name                = "Kubernetes - Container Waiting"
+  monitor_description         = "This alert is fired when a pod container waiting longer than 1 hour."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -532,8 +532,8 @@ module "KubeContainerWaiting" {
 module "KubeDaemonSetNotScheduled" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Kubernetes - Kube DaemonSet Not Scheduled"
-  monitor_description         = "DaemonSet pods are not scheduled."
+  monitor_name                = "Kubernetes - DaemonSet Not Scheduled"
+  monitor_description         = "This alert is fired when DaemonSet pods are not scheduled."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -575,8 +575,8 @@ module "KubeDaemonSetNotScheduled" {
 module "KubeDaemonSetMisScheduled" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Kubernetes - Kube DaemonSet MisScheduled"
-  monitor_description         = "DaemonSet pods are misscheduled."
+  monitor_name                = "Kubernetes - DaemonSet Misscheduled"
+  monitor_description         = "This alert is fired when DaemonSet pods are miss-scheduled."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -616,8 +616,8 @@ module "KubeDaemonSetMisScheduled" {
 module "KubeStatefulSetGenerationMismatch" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Kubernetes - Kube StatefulSet Generation Mismatch"
-  monitor_description         = "StatefulSet generation mismatch due to possible roll-back."
+  monitor_name                = "Kubernetes - StatefulSet Generation Mismatch"
+  monitor_description         = "This alert is fired when StatefulSet generation mismatch is determined due to possible roll-back."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -659,8 +659,8 @@ module "KubeStatefulSetGenerationMismatch" {
 module "KubeHpaMaxedOut" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Kubernetes - Kube Hpa Maxed Out"
-  monitor_description         = "HPA is running at max replicas."
+  monitor_name                = "Kubernetes - HPA Maxed Out"
+  monitor_description         = "This alert is fired when HPA is running at maximum replicas."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -703,7 +703,7 @@ module "etcdInsufficientMembers" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Kubernetes - etcd Insufficient Members"
-  monitor_description         = "etcd cluster has insufficient members."
+  monitor_description         = "This alert is fired when we determine that etcd cluster has insufficient members."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -747,7 +747,7 @@ module "MultipleContainersOOMKilled" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Kubernetes - Multiple Containers OOM Killed"
-  monitor_description         = "Multiple Containers are OOM Killed."
+  monitor_description         = "This alert is fired when multiple containers are OOM Killed."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
