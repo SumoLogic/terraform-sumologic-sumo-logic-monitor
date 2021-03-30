@@ -9,7 +9,7 @@ module "Postgresql-LowCommits" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=postgresql_xact_commit environment=* db_system=postgresql db_cluster=* db=* host=* | quantize using sum | sum by environment,db_cluster,db,host | rate"
+    A = "${var.postgresql_data_source} metric=postgresql_xact_commit environment=* db_system=postgresql db_cluster=* db=* host=* | quantize using sum | sum by environment,db_cluster,db,host | rate"
   }
 
   # Triggers
@@ -50,7 +50,7 @@ module "Postgresql-SlowQueries" {
 
   # Queries - Only one query is allowed for Logs monitor
   queries = {
-    A = "environment=* db_system=postgresql db_cluster=* duration | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | parse regex field=msg \"duration: (?<execution_time_ms>[\\S]+) ms  (?<query>.+)\"| count by environment, db_cluster, db"
+    A = "${var.postgresql_data_source} environment=* db_system=postgresql db_cluster=* duration | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | parse regex field=msg \"duration: (?<execution_time_ms>[\\S]+) ms  (?<query>.+)\"| count by environment, db_cluster, db"
   }
 
   # Triggers
@@ -93,7 +93,7 @@ module "Postgresql-HighRateofStatementTimeout" {
 
   # Queries - Only one query is allowed for Logs monitor
   queries = {
-    A = "environment=* db_system=postgresql db_cluster=* \"statement timeout\" | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | count by environment, db_cluster, db | (queryEndTime() - queryStartTime())/1000 as duration_sec | _count/duration_sec as timeout_rate | where timeout_rate > 3 "
+    A = "${var.postgresql_data_source} environment=* db_system=postgresql db_cluster=* \"statement timeout\" | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | count by environment, db_cluster, db | (queryEndTime() - queryStartTime())/1000 as duration_sec | _count/duration_sec as timeout_rate | where timeout_rate > 3 "
   }
 
   # Triggers
@@ -136,7 +136,7 @@ module "Postgresql-InstanceDown" {
 
   # Queries - Only one query is allowed for Logs monitor
   queries = {
-    A = "environment=* db_system=postgresql db_cluster=* host=* (\"database system\" AND \"shut down\") | parse \"* * * [*] *:  *\" as date,time,time_zone,thread_id,severity,msg | count by environment, db_cluster, host"
+    A = "${var.postgresql_data_source} environment=* db_system=postgresql db_cluster=* host=* (\"database system\" AND \"shut down\") | parse \"* * * [*] *:  *\" as date,time,time_zone,thread_id,severity,msg | count by environment, db_cluster, host"
   }
 
   # Triggers
@@ -179,7 +179,7 @@ module "Postgresql-HighRateDeadlock" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=postgresql_deadlocks environment=* db_system=postgresql db_cluster=* db=* host=* | quantize using sum| sum by environment, db_cluster, host, db | rate | eval(_value*60)"
+    A = "${var.postgresql_data_source} metric=postgresql_deadlocks environment=* db_system=postgresql db_cluster=* db=* host=* | quantize using sum| sum by environment, db_cluster, host, db | rate | eval(_value*60)"
   }
 
   # Triggers
@@ -220,7 +220,7 @@ module "Postgresql-TooManyConnections" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=postgresql_numbackends environment=* db_system=postgresql db_cluster=*  host=* "
+    A = "${var.postgresql_data_source} metric=postgresql_numbackends environment=* db_system=postgresql db_cluster=*  host=* "
   }
 
   # Triggers
@@ -261,7 +261,7 @@ module "Postgresql-TooManyLocksAcquired" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=postgresql_num_locks environment=* db_system=postgresql db_cluster=*  host=*  db=* mode=*| sum by environment, db_cluster, host, db | eval(_value / 100*64)"
+    A = "${var.postgresql_data_source} metric=postgresql_num_locks environment=* db_system=postgresql db_cluster=*  host=*  db=* mode=*| sum by environment, db_cluster, host, db | eval(_value / 100*64)"
   }
 
   # Triggers
@@ -302,7 +302,7 @@ module "Postgresql-AccessFromHighlyMaliciousSources" {
 
   # Queries - Only one query is allowed for Logs monitor
   queries = {
-    A = "environment=* db_system=postgresql db_cluster=* connection | parse \"connection received: host=* port=*\" as ip,port | count by ip, environment, db_cluster | lookup type, actor, raw, threatlevel as malicious_confidence from sumo://threat/cs on threat=ip | where type=\"ip_address\" | count by environment, db_cluster, ip, type, actor, malicious_confidence"
+    A = "${var.postgresql_data_source} environment=* db_system=postgresql db_cluster=* connection | parse \"connection received: host=* port=*\" as ip,port | count by ip, environment, db_cluster | lookup type, actor, raw, threatlevel as malicious_confidence from sumo://threat/cs on threat=ip | where type=\"ip_address\" | count by environment, db_cluster, ip, type, actor, malicious_confidence"
   }
 
   # Triggers
@@ -345,7 +345,7 @@ module "Postgresql-SSLCompressionActive" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "environment=* db_system=postgresql db_cluster=*  host=* metric=postgresql_stat_ssl_compression_count"
+    A = "${var.postgresql_data_source} environment=* db_system=postgresql db_cluster=*  host=* metric=postgresql_stat_ssl_compression_count"
   }
 
   # Triggers

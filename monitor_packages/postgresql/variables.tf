@@ -30,6 +30,11 @@ variable "folder" {
   default = "Kubernetes"
 }
 
+variable "postgresql_data_source" {
+  type = string
+  description = "Sumo Logic PostgreSQL Data Source. For eg: _sourceCategory=PostgreSQL/Dev/*"
+}
+
 variable "monitors_disabled" {
   type = bool
   description = "Whether the monitors are enabled or not?"
