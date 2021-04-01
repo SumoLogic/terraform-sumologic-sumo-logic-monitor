@@ -4,32 +4,67 @@
   "type": "MonitorsLibraryFolderExport",
   "children": [
     {
-      "name": "Redis - Missing Master",
-      "description": "This alert fires when we detect that a Redis cluster has no node marked as master for 5 minutes.",
+      "name": "Redis - Replication Offset",
+      "description": "This alert fires when the replication offset in a given Redis cluster is greater than 1 MB for last five minutes. Please review how replication has been configured.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "queries": [
         {
           "rowId": "A",
-          "query": " db_system=redis db_cluster=* metric=redis_uptime (replication_role=master or role=master) | count by db_cluster"
+          "query": "metric=redis_replication_offset | eval _value/1000000"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
           "timeRange": "-5m",
-          "triggerType": "Critical",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "AtLeastOnce",
+          "triggerType": "Warning",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
         },
         {
           "detectionMethod": "StaticCondition",
           "timeRange": "-5m",
-          "triggerType": "ResolvedCritical",
-          "threshold": 0,
+          "triggerType": "ResolvedWarning",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Redis - Too Many Connections",
+      "description": "This alert fires when we detect a given Redis server has too many connections (over 100).",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=redis_clients | sum by server"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Warning",
+          "threshold": 100,
           "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedWarning",
+          "threshold": 100,
+          "thresholdType": "LessThanOrEqual",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
         }
@@ -46,7 +81,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": " db_system=redis db_cluster=* metric=redis_master_last_io_seconds_ago"
+          "query": "metric=redis_master_last_io_seconds_ago"
         }
       ],
       "triggers": [
@@ -74,32 +109,32 @@
       "groupNotifications": true
     },
     {
-      "name": "Redis - Too Many Connections",
-      "description": "This alert fires when we detect a given Redis server has too many connections (over 100).",
+      "name": "Redis - High Memory Fragmentation Ratio",
+      "description": "This alert fires when the ration of Redis memory usage to Linux virtual memory pages (mapped to physical memory chunks) is higher than 1.5. A high ratio will lead to swapping and can adversely affect performance.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "queries": [
         {
           "rowId": "A",
-          "query": " db_system=redis db_cluster=*  metric=redis_clients | sum by server,db_cluster"
+          "query": "metric=redis_mem_fragmentation_ratio"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
+          "timeRange": "-15m",
           "triggerType": "Warning",
-          "threshold": 100,
-          "thresholdType": "GreaterThan",
+          "threshold": 1.5,
+          "thresholdType": "GreaterThanOrEqual",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
+          "timeRange": "-15m",
           "triggerType": "ResolvedWarning",
-          "threshold": 100,
-          "thresholdType": "LessThanOrEqual",
+          "threshold": 1.5,
+          "thresholdType": "LessThan",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
         }
@@ -116,7 +151,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": " db_system=redis db_cluster=* metric=redis_uptime"
+          "query": "metric=redis_uptime"
         }
       ],
       "triggers": [
@@ -144,49 +179,14 @@
       "groupNotifications": true
     },
     {
-      "name": "Redis - Replication Offset",
-      "description": "This alert fires when the replication offset in a given Redis cluster is greater than 1 MB for last five minutes. Please review how replication has been configured.",
+      "name": "Redis - Missing Master",
+      "description": "This alert fires when we detect that a Redis cluster has no node marked as master for 5 minutes.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "queries": [
         {
           "rowId": "A",
-          "query": " db_system=redis db_cluster=* metric=redis_replication_offset | eval _value/1000000"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "Warning",
-          "threshold": 1,
-          "thresholdType": "GreaterThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "ResolvedWarning",
-          "threshold": 1,
-          "thresholdType": "LessThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "Redis - Replication Broken",
-      "description": "This alert fires when we detect that a Redis instance has lost all slaves. This will affect the redundancy of data stored in Redis. Please review how replication has been configured.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": " db_system=redis db_cluster=* metric=redis_connected_slaves | quantize 1m | delta"
+          "query": "metric=redis_uptime (replication_role=master or role=master) | count"
         }
       ],
       "triggers": [
@@ -195,8 +195,8 @@
           "timeRange": "-5m",
           "triggerType": "Critical",
           "threshold": 0,
-          "thresholdType": "LessThan",
-          "occurrenceType": "Always",
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "AtLeastOnce",
           "triggerSource": "AnyTimeSeries"
         },
         {
@@ -204,42 +204,7 @@
           "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
           "threshold": 0,
-          "thresholdType": "GreaterThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "Redis - High Memory Fragmentation Ratio",
-      "description": "This alert fires when the ration of Redis memory usage to Linux virtual memory pages (mapped to physical memory chunks) is higher than 1.5. A high ratio will lead to swapping and can adversely affect performance.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": " db_system=redis db_cluster=* metric=redis_mem_fragmentation_ratio"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "Warning",
-          "threshold": 1.5,
-          "thresholdType": "GreaterThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "ResolvedWarning",
-          "threshold": 1.5,
-          "thresholdType": "LessThan",
+          "thresholdType": "GreaterThan",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
         }
@@ -256,7 +221,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": " db_system=redis db_cluster=* metric=redis_replication_lag"
+          "query": "metric=redis_replication_lag"
         }
       ],
       "triggers": [
@@ -291,7 +256,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": " db_system=redis db_cluster=*  metric=redis_rejected_connections | quantize 1m | delta"
+          "query": "metric=redis_rejected_connections | quantize 1m | delta"
         }
       ],
       "triggers": [
@@ -310,6 +275,41 @@
           "triggerType": "ResolvedCritical",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Redis - Replication Broken",
+      "description": "This alert fires when we detect that a Redis instance has lost all slaves. This will affect the redundancy of data stored in Redis. Please review how replication has been configured.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=redis_connected_slaves | quantize 1m | delta"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
         }
