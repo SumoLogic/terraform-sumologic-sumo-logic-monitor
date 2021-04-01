@@ -67,3 +67,8 @@ variable "group_notifications" {
   description = "Whether or not to group notifications for individual items that meet the trigger condition. Defaults to true."
   default     = true
 }
+
+variable "redis_cluster_filter" {
+  type = string
+  description = "Sumo Logic Redis Cluster Filter. For eg: db_cluster=redis.prod.01"
+}
