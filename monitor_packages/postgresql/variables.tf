@@ -27,7 +27,7 @@ variable "environment" {
 variable "folder" {
   type = string
   description = "Folder where monitors will be created."
-  default = "Kubernetes"
+  default = "PostgreSQL"
 }
 
 variable "postgresql_data_source" {

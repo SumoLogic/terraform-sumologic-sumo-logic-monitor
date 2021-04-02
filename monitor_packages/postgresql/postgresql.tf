@@ -1,4 +1,4 @@
-# Sumo Logic Redis Metric Monitors
+# Sumo Logic PostgreSQL Metric Monitors
 module "Postgresql-LowCommits" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
