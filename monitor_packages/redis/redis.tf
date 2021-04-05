@@ -10,7 +10,7 @@ module "Redis-Instancedown" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=redis_uptime"
+    A = "${var.redis_cluster_filter} db_system=redis db_cluster=* metric=redis_uptime"
   }
 
   # Triggers
@@ -52,7 +52,7 @@ module "Redis-Master-SlaveIO" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=redis_master_last_io_seconds_ago"
+    A = "${var.redis_cluster_filter} db_system=redis db_cluster=* metric=redis_master_last_io_seconds_ago"
   }
 
   # Triggers
@@ -94,7 +94,7 @@ module "Redis-MemFragmentationRatioHigherthan" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=redis_mem_fragmentation_ratio"
+    A = "${var.redis_cluster_filter} db_system=redis db_cluster=* metric=redis_mem_fragmentation_ratio"
   }
 
   # Triggers
@@ -137,7 +137,7 @@ module "Redis-MissingMaster" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=redis_uptime (replication_role=master or role=master) | count"
+    A = "${var.redis_cluster_filter} db_system=redis db_cluster=* metric=redis_uptime (replication_role=master or role=master) | count by db_cluster"
   }
 
   # Triggers
@@ -178,7 +178,7 @@ module "Redis-RejectedConnections" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=redis_rejected_connections | quantize 1m | delta"
+    A = "${var.redis_cluster_filter} db_system=redis db_cluster=*  metric=redis_rejected_connections | quantize 1m | delta"
   }
 
   # Triggers
@@ -220,7 +220,7 @@ module "Redis-ReplicaLag" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=redis_replication_lag"
+    A = "${var.redis_cluster_filter} db_system=redis db_cluster=* metric=redis_replication_lag"
   }
 
   # Triggers
@@ -262,7 +262,7 @@ module "Redis-ReplicationBroken" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=redis_connected_slaves | quantize 1m | delta"
+    A = "${var.redis_cluster_filter} db_system=redis db_cluster=* metric=redis_connected_slaves | quantize 1m | delta"
   }
 
   # Triggers
@@ -304,7 +304,7 @@ module "Redis-ReplicationOffset" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=redis_replication_offset | eval _value/1000000"
+    A = "${var.redis_cluster_filter} db_system=redis db_cluster=* metric=redis_replication_offset | eval _value/1000000"
   }
 
   # Triggers
@@ -346,7 +346,7 @@ module "Redis-TooManyConnections" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=redis_clients | sum by server"
+    A = "${var.redis_cluster_filter} db_system=redis db_cluster=*  metric=redis_clients | sum by server,db_cluster"
   }
 
   # Triggers

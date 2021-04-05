@@ -9,3 +9,5 @@ environment         = "<DEPLOYMENT>"
 folder              = "Redis"
 # This flag determines whether to enable all monitors or not.
 monitors_disabled   = true
+# Redis Custom Cluster Filter. Use this variable to narrow down the scope of alerts. e.g. for sending alerts for a specific cluster, db_cluster=redis.prod.01. Leave blank to set scope to include all clusters.
+redis_cluster_filter = ""
