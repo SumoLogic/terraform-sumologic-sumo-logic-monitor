@@ -9,3 +9,5 @@ environment         = "<DEPLOYMENT>"
 folder              = "Kafka"
 # This flag determines whether to enable all monitors or not.
 monitors_disabled   = true
+# Kakfa data source. Use this variable to narrow down the scope of alerts. e.g. for sending alerts for a specific cluster, kafka_data_source = "messaging_cluster=kafka.prod.01" .Leave blank to set scope to include all clusters.
+kafka_data_source = ""

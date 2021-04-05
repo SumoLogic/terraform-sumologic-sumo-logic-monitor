@@ -10,7 +10,7 @@ module "HighBrokerDiskUtilization" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "messaging_system=kafka messaging_cluster=*  host=* metric=*disk_used_percent | avg by messaging_cluster, host"
+    A = "messaging_system=kafka ${var.kafka_data_source}  host=* metric=*disk_used_percent | avg by messaging_cluster, host"
   }
 
   # Triggers
@@ -52,7 +52,7 @@ module "FailedZookeeperconnections" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "messaging_system=kafka messaging_cluster=* metric=kafka_zookeeper_auth_failures_Count jolokia_agent_url=* | parse field=jolokia_agent_url * as Server"
+    A = "messaging_system=kafka ${var.kafka_data_source} metric=kafka_zookeeper_auth_failures_Count jolokia_agent_url=* | parse field=jolokia_agent_url * as Server"
   }
 
   # Triggers
@@ -94,7 +94,7 @@ module "HighLeaderElectionRate" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "messaging_system=kafka messaging_cluster=* metric=kafka_controller_LeaderElectionRateAndTimeMs_MeanRate jolokia_agent_url=* | parse field=jolokia_agent_url * as Server"
+    A = "messaging_system=kafka ${var.kafka_data_source} metric=kafka_controller_LeaderElectionRateAndTimeMs_MeanRate jolokia_agent_url=* | parse field=jolokia_agent_url * as Server"
   }
 
   # Triggers
@@ -137,7 +137,7 @@ module "GarbageCollection" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "messaging_system=kafka messaging_cluster=* metric=*java_lang_GarbageCollector_LastGcInfo_duration jolokia_agent_url =* | avg by messaging_cluster, host"
+    A = "messaging_system=kafka ${var.kafka_data_source} metric=*java_lang_GarbageCollector_LastGcInfo_duration jolokia_agent_url =* | avg by messaging_cluster, host"
   }
 
   # Triggers
@@ -180,7 +180,7 @@ module "OfflinePartitions" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "messaging_system=kafka messaging_cluster=* metric=kafka_controller_OfflinePartitionsCount_Value jolokia_agent_url=* | parse field=jolokia_agent_url * as Server"
+    A = "messaging_system=kafka ${var.kafka_data_source} metric=kafka_controller_OfflinePartitionsCount_Value jolokia_agent_url=* | parse field=jolokia_agent_url * as Server"
   }
 
   # Triggers
@@ -223,7 +223,7 @@ module "FatalEventonBroker" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "\nmessaging_system=kafka messaging_cluster=* \n| json auto maxdepth 1 nodrop\n| if (isEmpty(log), _raw, log) as kafka_log_message\n| parse field=kafka_log_message \"[*] * *\" as date_time,severity,msg\n| where severity =\"FATAL\""
+    A = "\nmessaging_system=kafka ${var.kafka_data_source} \n| json auto maxdepth 1 nodrop\n| if (isEmpty(log), _raw, log) as kafka_log_message\n| parse field=kafka_log_message \"[*] * *\" as date_time,severity,msg\n| where severity =\"FATAL\""
   }
 
   # Triggers
@@ -268,7 +268,7 @@ module "UnderreplicatedPartitions" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "messaging_system=kafka messaging_cluster=*  metric=kafka_partition_UnderReplicatedPartitions  jolokia_agent_url=* | parse field=jolokia_agent_url * as Server | sum by Server,messaging_cluster"
+    A = "messaging_system=kafka ${var.kafka_data_source}  metric=kafka_partition_UnderReplicatedPartitions  jolokia_agent_url=* | parse field=jolokia_agent_url * as Server | sum by Server,messaging_cluster"
   }
 
   # Triggers
@@ -313,7 +313,7 @@ module "BrokerErrors" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "messaging_cluster=* messaging_system=kafka\n| json auto maxdepth 1 nodrop\n| if (isEmpty(log), _raw, log) as kafka_log_message\n| parse field=kafka_log_message \"[*] * *\" as date_time,severity,msg\n| where severity in (\"ERROR\")"
+    A = "${var.kafka_data_source} messaging_system=kafka\n| json auto maxdepth 1 nodrop\n| if (isEmpty(log), _raw, log) as kafka_log_message\n| parse field=kafka_log_message \"[*] * *\" as date_time,severity,msg\n| where severity in (\"ERROR\")"
   }
 
   # Triggers
@@ -358,7 +358,7 @@ module "HighCPUBrokerNode" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "messaging_system=kafka messaging_custer=* metric=*java_lang_OperatingSystem_SystemCpuLoad jolokia_agent_url=* | eval(_value*100) | avg by messaging_cluster, jolokia_agent_url"
+    A = "messaging_system=kafka ${var.kafka_data_source} metric=*java_lang_OperatingSystem_SystemCpuLoad jolokia_agent_url=* | eval(_value*100) | avg by messaging_cluster, jolokia_agent_url"
   }
 
   # Triggers
@@ -404,7 +404,7 @@ module "OutOfSyncFollowers" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "messaging_system=kafka messaging_cluster=* metric=kafka_replica_manager_UnderMinIsrPartitionCount_Value jolokia_agent_url=*| parse field=jolokia_agent_url * as Server"
+    A = "messaging_system=kafka ${var.kafka_data_source} metric=kafka_replica_manager_UnderMinIsrPartitionCount_Value jolokia_agent_url=*| parse field=jolokia_agent_url * as Server"
   }
 
   # Triggers
@@ -450,8 +450,8 @@ module "HighBrokerMemUtilization" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "messaging_system=kafka messaging_cluster=* metric=**java_lang_OperatingSystem_FreePhysicalMemorySize jolokia_agent_url=* | avg by messaging_cluster, jolokia_agent_url\n"
-    B = "messaging_system=kafka messaging_cluster=* metric=**java_lang_OperatingSystem_TotalPhysicalMemorySize jolokia_agent_url=* | avg by messaging_cluster, jolokia_agent_url\n"
+    A = "messaging_system=kafka ${var.kafka_data_source} metric=**java_lang_OperatingSystem_FreePhysicalMemorySize jolokia_agent_url=* | avg by messaging_cluster, jolokia_agent_url\n"
+    B = "messaging_system=kafka ${var.kafka_data_source} metric=**java_lang_OperatingSystem_TotalPhysicalMemorySize jolokia_agent_url=* | avg by messaging_cluster, jolokia_agent_url\n"
     C = "(1 - (#A / #B)) * 100"
   }
 

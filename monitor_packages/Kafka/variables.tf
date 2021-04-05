@@ -67,3 +67,8 @@ variable "group_notifications" {
   description = "Whether or not to group notifications for individual items that meet the trigger condition. Defaults to true."
   default     = true
 }
+
+variable "kafka_data_source" {
+  type = string
+  description = "Sumo Logic Kafka Cluster Filter. For eg: kafka_data_source = messaging_cluster=kafka.prod.01"
+}
