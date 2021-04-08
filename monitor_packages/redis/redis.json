@@ -39,6 +39,49 @@
       "groupNotifications": true
     },
     {
+      "name": "Redis - Out Of Memory",
+      "description": "This alert fires when we detect that a Redis node is running out of memory (Memory Usage > 90%).",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": " db_system=redis db_cluster=* metric=redis_used_memory"
+        },
+        {
+          "rowId": "B",
+          "query": " db_system=redis db_cluster=* metric=redis_total_system_memory"
+        },
+        {
+          "rowId": "C",
+          "query": "(#A/#B)*100"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 90,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 90,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
       "name": "Redis - Potential Master-Slave Communication Failure",
       "description": "This alert fires when we detect that communication between the Redis master and slave nodes has not occurred for the past 60 seconds or more.",
       "type": "MonitorsLibraryMonitorExport",
@@ -274,6 +317,49 @@
           "timeRange": "-5m",
           "triggerType": "ResolvedWarning",
           "threshold": 60,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Redis - High CPU Usage",
+      "description": "This alert is fired if user and system cpu usage for a host exceeds 80%.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": " db_system=redis db_cluster=* metric=redis_used_cpu_sys | quantize 1m | rate | sum by host, db_cluster"
+        },
+        {
+          "rowId": "B",
+          "query": " db_system=redis db_cluster=* metric=redis_used_cpu_user | quantize 1m | rate | sum by host, db_cluster"
+        },
+        {
+          "rowId": "C",
+          "query": "#A+#B"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 80,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 80,
           "thresholdType": "LessThanOrEqual",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
