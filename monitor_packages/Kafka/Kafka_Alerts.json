@@ -1,0 +1,400 @@
+{
+  "name": "Kafka",
+  "description": "",
+  "type": "MonitorsLibraryFolderExport",
+  "children": [
+    {
+      "name": "Kafka - High Broker Disk Utilization",
+      "description": "This alert fires when we detect that a disk on a broker node is more than 85% full.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=kafka $$kafka_data_source  host=* metric=*disk_used_percent | avg by messaging_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 85,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 85,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kafka - Failed Zookeeper connections",
+      "description": "This alert fires when we detect Broker to Zookeeper connection failures.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=kafka $$kafka_data_source metric=kafka_zookeeper_auth_failures_Count jolokia_agent_url=* | parse field=jolokia_agent_url * as Server  "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "AtLeastOnce",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kafka - High Leader election rate",
+      "description": "This alert fires when we detect high leader election rate.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=kafka $$kafka_data_source metric=kafka_controller_LeaderElectionRateAndTimeMs_MeanRate jolokia_agent_url=* | parse field=jolokia_agent_url * as Server "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kafka - Garbage collection",
+      "description": "This alert fires when we detect that the average Garbage Collection time on a given Kafka broker node over a 5 minute interval is more than one second.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=kafka $$kafka_data_source metric=*java_lang_GarbageCollector_LastGcInfo_duration jolokia_agent_url =* | avg by messaging_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 1000,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 1000,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kafka - Offline Partitions",
+      "description": "This alert fires when we detect offline partitions on a given Kafka broker.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=kafka $$kafka_data_source metric=kafka_controller_OfflinePartitionsCount_Value jolokia_agent_url=* | parse field=jolokia_agent_url * as Server "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "AtLeastOnce",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kafka - Fatal Event on Broker",
+      "description": "This alert fires when we detect a fatal operation on a Kafka broker node",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "\nmessaging_system=kafka $$kafka_data_source \n| json auto maxdepth 1 nodrop\n| if (isEmpty(log), _raw, log) as kafka_log_message\n| parse field=kafka_log_message \"[*] * *\" as date_time,severity,msg\n| where severity =\"FATAL\""
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kafka - Underreplicated Partitions",
+      "description": "This alert fires when we detect underreplicated partitions on a given Kafka broker.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=kafka $$kafka_data_source  metric=kafka_partition_UnderReplicatedPartitions  jolokia_agent_url=* | parse field=jolokia_agent_url * as Server | sum by Server,messaging_cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "AtLeastOnce",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kafka - Large number of broker errors",
+      "description": "This alert fires when we detect that there are 5 or more errors on a Broker node within a time interval of 5 minutes.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kafka_data_source messaging_system=kafka\n| json auto maxdepth 1 nodrop\n| if (isEmpty(log), _raw, log) as kafka_log_message\n| parse field=kafka_log_message \"[*] * *\" as date_time,severity,msg\n| where severity in (\"ERROR\")"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 5,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 5,
+          "thresholdType": "LessThan",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kafka - High CPU on Broker node",
+      "description": "This alert fires when we detect that the average CPU utilization for a broker node is high (>=85%) for an interval of 5 minutes.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=kafka $$kafka_data_source metric=*java_lang_OperatingSystem_SystemCpuLoad jolokia_agent_url=* | eval(_value*100) | avg by messaging_cluster, jolokia_agent_url"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 85,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 85,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kafka - Out of Sync Followers",
+      "description": "This alert fires when we detect that there are Out of Sync Followers within a time interval of 5 minutes.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=kafka $$kafka_data_source metric=kafka_replica_manager_UnderMinIsrPartitionCount_Value jolokia_agent_url=*| parse field=jolokia_agent_url * as Server"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kafka - High Broker Memory Utilization",
+      "description": "This alert fires when the average memory utilization within a 5 minute interval for a given Kafka node is high (>=85%).",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=kafka $$kafka_data_source metric=**java_lang_OperatingSystem_FreePhysicalMemorySize jolokia_agent_url=* | avg by messaging_cluster, jolokia_agent_url\n"
+        },
+        {
+          "rowId": "B",
+          "query": "messaging_system=kafka $$kafka_data_source metric=**java_lang_OperatingSystem_TotalPhysicalMemorySize jolokia_agent_url=* | avg by messaging_cluster, jolokia_agent_url\n"
+        },
+        {
+          "rowId": "C",
+          "query": "(1 - (#A / #B)) * 100"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "Critical",
+          "threshold": 85,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "timeRange": "-5m",
+          "triggerType": "ResolvedCritical",
+          "threshold": 85,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    }
+  ]
+}
