@@ -11,7 +11,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "messaging_system=kafka $$kafka_data_source  host=* metric=*disk_used_percent | avg by messaging_cluster, host"
+          "query": "messaging_system=kafka host=* metric=*disk_used_percent | avg by messaging_cluster, host"
         }
       ],
       "triggers": [
@@ -46,7 +46,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "messaging_system=kafka $$kafka_data_source metric=kafka_zookeeper_auth_failures_Count jolokia_agent_url=* | parse field=jolokia_agent_url * as Server  "
+          "query": "messaging_system=kafka metric=kafka_zookeeper_auth_failures_Count jolokia_agent_url=* | parse field=jolokia_agent_url * as Server  "
         }
       ],
       "triggers": [
@@ -81,7 +81,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "messaging_system=kafka $$kafka_data_source metric=kafka_controller_LeaderElectionRateAndTimeMs_MeanRate jolokia_agent_url=* | parse field=jolokia_agent_url * as Server "
+          "query": "messaging_system=kafka metric=kafka_controller_LeaderElectionRateAndTimeMs_MeanRate jolokia_agent_url=* | parse field=jolokia_agent_url * as Server "
         }
       ],
       "triggers": [
@@ -116,7 +116,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "messaging_system=kafka $$kafka_data_source metric=*java_lang_GarbageCollector_LastGcInfo_duration jolokia_agent_url =* | avg by messaging_cluster, host"
+          "query": "messaging_system=kafka metric=*java_lang_GarbageCollector_LastGcInfo_duration jolokia_agent_url =* | avg by messaging_cluster, host"
         }
       ],
       "triggers": [
@@ -151,7 +151,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "messaging_system=kafka $$kafka_data_source metric=kafka_controller_OfflinePartitionsCount_Value jolokia_agent_url=* | parse field=jolokia_agent_url * as Server "
+          "query": "messaging_system=kafka metric=kafka_controller_OfflinePartitionsCount_Value jolokia_agent_url=* | parse field=jolokia_agent_url * as Server "
         }
       ],
       "triggers": [
@@ -186,7 +186,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "\nmessaging_system=kafka $$kafka_data_source \n| json auto maxdepth 1 nodrop\n| if (isEmpty(log), _raw, log) as kafka_log_message\n| parse field=kafka_log_message \"[*] * *\" as date_time,severity,msg\n| where severity =\"FATAL\""
+          "query": "\nmessaging_system=kafka \n| json auto maxdepth 1 nodrop\n| if (isEmpty(log), _raw, log) as kafka_log_message\n| parse field=kafka_log_message \"[*] * *\" as date_time,severity,msg\n| where severity =\"FATAL\""
         }
       ],
       "triggers": [
@@ -221,7 +221,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "messaging_system=kafka $$kafka_data_source  metric=kafka_partition_UnderReplicatedPartitions  jolokia_agent_url=* | parse field=jolokia_agent_url * as Server | sum by Server,messaging_cluster"
+          "query": "messaging_system=kafka metric=kafka_partition_UnderReplicatedPartitions  jolokia_agent_url=* | parse field=jolokia_agent_url * as Server | sum by Server,messaging_cluster"
         }
       ],
       "triggers": [
@@ -256,7 +256,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "$$kafka_data_source messaging_system=kafka\n| json auto maxdepth 1 nodrop\n| if (isEmpty(log), _raw, log) as kafka_log_message\n| parse field=kafka_log_message \"[*] * *\" as date_time,severity,msg\n| where severity in (\"ERROR\")"
+          "query": " messaging_system=kafka\n| json auto maxdepth 1 nodrop\n| if (isEmpty(log), _raw, log) as kafka_log_message\n| parse field=kafka_log_message \"[*] * *\" as date_time,severity,msg\n| where severity in (\"ERROR\")"
         }
       ],
       "triggers": [
@@ -291,7 +291,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "messaging_system=kafka $$kafka_data_source metric=*java_lang_OperatingSystem_SystemCpuLoad jolokia_agent_url=* | eval(_value*100) | avg by messaging_cluster, jolokia_agent_url"
+          "query": "messaging_system=kafka metric=*java_lang_OperatingSystem_SystemCpuLoad jolokia_agent_url=* | eval(_value*100) | avg by messaging_cluster, jolokia_agent_url"
         }
       ],
       "triggers": [
@@ -326,7 +326,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "messaging_system=kafka $$kafka_data_source metric=kafka_replica_manager_UnderMinIsrPartitionCount_Value jolokia_agent_url=*| parse field=jolokia_agent_url * as Server"
+          "query": "messaging_system=kafka metric=kafka_replica_manager_UnderMinIsrPartitionCount_Value jolokia_agent_url=*| parse field=jolokia_agent_url * as Server"
         }
       ],
       "triggers": [
@@ -361,11 +361,11 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "messaging_system=kafka $$kafka_data_source metric=**java_lang_OperatingSystem_FreePhysicalMemorySize jolokia_agent_url=* | avg by messaging_cluster, jolokia_agent_url\n"
+          "query": "messaging_system=kafka metric=**java_lang_OperatingSystem_FreePhysicalMemorySize jolokia_agent_url=* | avg by messaging_cluster, jolokia_agent_url\n"
         },
         {
           "rowId": "B",
-          "query": "messaging_system=kafka $$kafka_data_source metric=**java_lang_OperatingSystem_TotalPhysicalMemorySize jolokia_agent_url=* | avg by messaging_cluster, jolokia_agent_url\n"
+          "query": "messaging_system=kafka metric=**java_lang_OperatingSystem_TotalPhysicalMemorySize jolokia_agent_url=* | avg by messaging_cluster, jolokia_agent_url\n"
         },
         {
           "rowId": "C",
