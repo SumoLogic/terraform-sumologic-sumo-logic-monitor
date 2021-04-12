@@ -1,7 +1,7 @@
 # sumologic-mysql-monitors
 
 This Terraform script configures pre-packaged Sumo Logic Monitors for MySQL using Terraform modules.
-For installation and configuration, please look at Sumo Logic MySQL help document.
+For installation and configuration, please look at Sumo Logic MySQL [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/12Databases/MySQL/MySQL-App-Dashboards).
 
 ## License
 
