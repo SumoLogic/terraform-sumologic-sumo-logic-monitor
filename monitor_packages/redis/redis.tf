@@ -1,4 +1,92 @@
 # Sumo Logic Redis Metric Monitors
+module "Redis-HighCPUUsage" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Redis - High CPU Usage"
+  monitor_description         = "This alert is fired if user and system cpu usage for a host exceeds 80%."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
+
+  # Queries - Multiple queries allowed for Metrics monitor
+  queries = {
+    A = "${var.redis_cluster_filter} db_system=redis db_cluster=* metric=redis_used_cpu_sys | quantize 1m | rate | sum by host, db_cluster"
+    B = "${var.redis_cluster_filter} db_system=redis db_cluster=* metric=redis_used_cpu_user | quantize 1m | rate | sum by host, db_cluster"
+    C = "#A+#B"
+  }
+
+  # Triggers
+  triggers = [
+              {
+                  threshold_type = "GreaterThan",
+                  threshold = 80,
+                  time_range = "5m",
+                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "Critical",
+                  detection_method = "StaticCondition"
+                },
+                {
+                  threshold_type = "LessThanOrEqual",
+                  threshold = 80,
+                  time_range = "5m",
+                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "ResolvedCritical",
+                  detection_method = "StaticCondition"
+                }
+            ]
+
+  # Notifications
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+}
+
+module "Redis-OutOfMemory" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Redis - Out Of Memory"
+  monitor_description         = "This alert fires when we detect that a Redis node is running out of memory (Memory Usage > 90%)."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
+
+  # Queries - Multiple queries allowed for Metrics monitor
+  queries = {
+    A = "${var.redis_cluster_filter} db_system=redis db_cluster=* metric=redis_used_memory"
+    B = "${var.redis_cluster_filter} db_system=redis db_cluster=* metric=redis_total_system_memory"
+    C = "(#A/#B)*100"
+  }
+
+  # Triggers
+  triggers = [
+              {
+                  threshold_type = "GreaterThan",
+                  threshold = 90,
+                  time_range = "5m",
+                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "Critical",
+                  detection_method = "StaticCondition"
+                },
+                {
+                  threshold_type = "LessThanOrEqual",
+                  threshold = 90,
+                  time_range = "5m",
+                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "ResolvedCritical",
+                  detection_method = "StaticCondition"
+                }
+            ]
+
+  # Notifications
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+}
+
 module "Redis-Instancedown" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
