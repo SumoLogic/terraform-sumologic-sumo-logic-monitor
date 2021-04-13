@@ -3,7 +3,7 @@
 This script configures Sumo Logic Monitors for Kafka using Terraform modules.
 
 This Terraform script configures pre-packaged Sumo Logic Monitors for Kafka using Terraform modules.
-For installation and configuration, please look at Sumo Logic Kafka [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kafka/Install_the_Kafka_App_and_view_the_Dashboards).
+For installation and configuration, please look at Sumo Logic Kafka [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kafka/Install_the_Kafka_App%2C_Alerts%2C_and_view_the_Dashboards).
 ## License
 
 The Kafka Terraform script is licensed under the apache v2.0 license.
