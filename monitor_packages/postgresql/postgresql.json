@@ -4,111 +4,6 @@
   "type": "MonitorsLibraryFolderExport",
   "children": [
     {
-      "name": "Postgresql- High Rate Deadlock",
-      "description": "This alert fires when we detect deadlocks in a Postgres instance",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=postgresql_deadlocks db_system=postgresql db_cluster=* db=* host=* | quantize using sum| sum by  db_cluster, host, db | rate | eval(_value*60)"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "Critical",
-          "threshold": 1,
-          "thresholdType": "GreaterThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "ResolvedCritical",
-          "threshold": 1,
-          "thresholdType": "LessThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": false,
-      "groupNotifications": true
-    },
-    {
-      "name": "PostgreSQL - SlowQueries",
-      "description": "This alert fires when we detect that the PostgreSQL instance is executing slow queries",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Logs",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "db_system=postgresql db_cluster=* duration | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | parse regex field=msg \"duration: (?<execution_time_ms>[\\S]+) ms  (?<query>.+)\"| count by db_cluster, db"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "Warning",
-          "threshold": 1,
-          "thresholdType": "GreaterThanOrEqual",
-          "occurrenceType": "ResultCount",
-          "triggerSource": "AllResults"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "ResolvedWarning",
-          "threshold": 1,
-          "thresholdType": "LessThan",
-          "occurrenceType": "MissingData",
-          "triggerSource": "AllResults"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": false,
-      "groupNotifications": true
-    },
-    {
-      "name": "PostgreSQL - High Rate of Statement Timeout",
-      "description": "This alert fires when we detect Postgres transactions show a high rate of statement timeouts",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Logs",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "db_system=postgresql db_cluster=* \"statement timeout\" | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | count by  db_cluster, db | (queryEndTime() - queryStartTime())/1000 as duration_sec | _count/duration_sec as timeout_rate | where timeout_rate > 3 "
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "Critical",
-          "threshold": 1,
-          "thresholdType": "GreaterThanOrEqual",
-          "occurrenceType": "ResultCount",
-          "triggerSource": "AllResults"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "ResolvedCritical",
-          "threshold": 1,
-          "thresholdType": "LessThan",
-          "occurrenceType": "MissingData",
-          "triggerSource": "AllResults"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": false,
-      "groupNotifications": true
-    },
-    {
       "name": "PostgreSQL - Access from Highly Malicious Sources",
       "description": "This alert will fire when a Postgres instance is accessed from known malicious IP addresses.",
       "type": "MonitorsLibraryMonitorExport",
@@ -116,14 +11,14 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "db_system=postgresql db_cluster=* connection | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"connection received: host=* port=*\" as ip,port | count by ip,  db_cluster | lookup type, actor, raw, threatlevel as malicious_confidence from sumo://threat/cs on threat=ip | where type=\"ip_address\" | count by  db_cluster, ip, type, actor, malicious_confidence"
+          "query": " db_system=postgresql db_cluster=* connection | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"connection received: host=* port=*\" as ip,port | count by ip,  db_cluster | lookup type, actor, raw, threatlevel as malicious_confidence from sumo://threat/cs on threat=ip | where type=\"ip_address\" | count by  db_cluster, ip, type, actor, malicious_confidence"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
+          "timeRange": "-5m",
           "threshold": 1,
           "thresholdType": "GreaterThanOrEqual",
           "occurrenceType": "ResultCount",
@@ -131,12 +26,47 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
           "threshold": 1,
           "thresholdType": "LessThan",
           "occurrenceType": "MissingData",
           "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": false,
+      "groupNotifications": true
+    },
+    {
+      "name": "Postgresql - Too Many Locks Acquired",
+      "description": "This alert fires when we detect that there are too many locks acquired on the database. If this alert happens frequently, you may need to increase the postgres setting max_locks_per_transaction.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": " metric=postgresql_num_locks db_system=postgresql db_cluster=*  host=*  db=* mode=*| sum by  db_cluster, host, db | eval(_value / 100*64)"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0.2,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0.2,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
         }
       ],
       "notifications": [],
@@ -151,14 +81,14 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=postgresql_numbackends db_system=postgresql db_cluster=*  host=* "
+          "query": " metric=postgresql_numbackends db_system=postgresql db_cluster=*  host=* "
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
+          "timeRange": "-5m",
           "threshold": 90,
           "thresholdType": "GreaterThanOrEqual",
           "occurrenceType": "Always",
@@ -166,45 +96,10 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
           "threshold": 90,
           "thresholdType": "LessThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": false,
-      "groupNotifications": true
-    },
-    {
-      "name": "Postgresql - SSL Compression Active",
-      "description": "This alert fires when we detect database connections with SSL compression are enabled. This may add significant jitter in replication delay. Replicas should turn off SSL compression via `sslcompression=0` in `recovery.conf`",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "db_system=postgresql db_cluster=*  host=* metric=postgresql_stat_ssl_compression_count"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "Critical",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "ResolvedCritical",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
         }
@@ -221,14 +116,14 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=postgresql_xact_commit db_system=postgresql db_cluster=* db=* host=* | quantize using sum | sum by db_cluster,db,host | rate"
+          "query": " metric=postgresql_xact_commit db_system=postgresql db_cluster=* db=* host=* | quantize using sum | sum by db_cluster,db,host | rate"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
+          "timeRange": "-5m",
           "threshold": 10,
           "thresholdType": "LessThan",
           "occurrenceType": "Always",
@@ -236,8 +131,8 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
           "threshold": 10,
           "thresholdType": "GreaterThanOrEqual",
           "occurrenceType": "Always",
@@ -249,34 +144,69 @@
       "groupNotifications": true
     },
     {
-      "name": "Postgresql - Too Many Locks Acquired",
-      "description": "This alert fires when we detect that there are too many locks acquired on the database. If this alert happens frequently, you may need to increase the postgres setting max_locks_per_transaction.",
+      "name": "PostgreSQL - High Replication Lag",
+      "description": "This alert fires when we detect that the Postgres Replication lag (in bytes) is high.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=postgresql_num_locks db_system=postgresql db_cluster=*  host=*  db=* mode=*| sum by  db_cluster, host, db | eval(_value / 100*64)"
+          "query": " db_system=postgresql db_cluster=*  host=* metric=postgresql_replay_lag"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
-          "threshold": 0.2,
-          "thresholdType": "GreaterThanOrEqual",
+          "timeRange": "-5m",
+          "threshold": 1000000000,
+          "thresholdType": "GreaterThan",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
-          "threshold": 0.2,
-          "thresholdType": "LessThan",
+          "timeRange": "-5m",
+          "threshold": 1000000000,
+          "thresholdType": "LessThanOrEqual",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": false,
+      "groupNotifications": true
+    },
+    {
+      "name": "PostgreSQL - SlowQueries",
+      "description": "This alert fires when we detect that the PostgreSQL instance is executing slow queries",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": " db_system=postgresql db_cluster=* duration | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | parse regex field=msg \"duration: (?<execution_time_ms>[\\S]+) ms  (?<query>.+)\"| count by db_cluster, db"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AllResults"
         }
       ],
       "notifications": [],
@@ -291,14 +221,14 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "db_system=postgresql db_cluster=* host=* (\"database system\" AND \"shut down\") | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"* * * [*] *:  *\" as date,time,time_zone,thread_id,severity,msg | count by  db_cluster, host"
+          "query": " db_system=postgresql db_cluster=* host=* (\"database system\" AND \"shut down\") | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"* * * [*] *:  *\" as date,time,time_zone,thread_id,severity,msg | count by  db_cluster, host"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
+          "timeRange": "-5m",
           "threshold": 1,
           "thresholdType": "GreaterThanOrEqual",
           "occurrenceType": "ResultCount",
@@ -306,12 +236,117 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
           "threshold": 1,
           "thresholdType": "LessThan",
           "occurrenceType": "MissingData",
           "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": false,
+      "groupNotifications": true
+    },
+    {
+      "name": "Postgresql- High Rate Deadlock",
+      "description": "This alert fires when we detect deadlocks in a Postgres instance",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": " metric=postgresql_deadlocks db_system=postgresql db_cluster=* db=* host=* | quantize using sum| sum by  db_cluster, host, db | rate | eval(_value*60)"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": false,
+      "groupNotifications": true
+    },
+    {
+      "name": "PostgreSQL - High Rate of Statement Timeout",
+      "description": "This alert fires when we detect Postgres transactions show a high rate of statement timeouts",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": " db_system=postgresql db_cluster=* \"statement timeout\" | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | count by  db_cluster, db | (queryEndTime() - queryStartTime())/1000 as duration_sec | _count/duration_sec as timeout_rate | where timeout_rate > 3 "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": false,
+      "groupNotifications": true
+    },
+    {
+      "name": "Postgresql - SSL Compression Active",
+      "description": "This alert fires when we detect database connections with SSL compression are enabled. This may add significant jitter in replication delay. Replicas should turn off SSL compression via `sslcompression=0` in `recovery.conf`",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": " db_system=postgresql db_cluster=*  host=* metric=postgresql_stat_ssl_compression_count"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
         }
       ],
       "notifications": [],
