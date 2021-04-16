@@ -10,4 +10,4 @@ folder              = "PostgreSQL"
 # This flag determines whether to enable all monitors or not.
 monitors_disabled   = true
 
-postgresql_data_source = "_sourceCategory=/postgresql/*"
+postgresql_data_source = ""
