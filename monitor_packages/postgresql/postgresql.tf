@@ -50,7 +50,7 @@ module "Postgresql-SlowQueries" {
 
   # Queries - Only one query is allowed for Logs monitor
   queries = {
-    A = "${var.postgresql_data_source} db_system=postgresql db_cluster=* duration | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | parse regex field=msg \"duration: (?<execution_time_ms>[\\S]+) ms  (?<query>.+)\"| count by db_cluster, db"
+    A = "${var.postgresql_data_source} db_system=postgresql db_cluster=* duration | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | parse regex field=msg \"duration: (?<execution_time_ms>[\\S]+) ms  (?<query>.+)\"| count by db_cluster, db"
   }
 
   # Triggers
@@ -93,7 +93,7 @@ module "Postgresql-HighRateofStatementTimeout" {
 
   # Queries - Only one query is allowed for Logs monitor
   queries = {
-    A = "${var.postgresql_data_source} db_system=postgresql db_cluster=* \"statement timeout\" | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | count by  db_cluster, db | (queryEndTime() - queryStartTime())/1000 as duration_sec | _count/duration_sec as timeout_rate | where timeout_rate > 3 "
+    A = "${var.postgresql_data_source} db_system=postgresql db_cluster=* \"statement timeout\" | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"* * * [*] *@* *:  *\" as date,time,time_zone,thread_id,user,db,severity,msg | count by  db_cluster, db | (queryEndTime() - queryStartTime())/1000 as duration_sec | _count/duration_sec as timeout_rate | where timeout_rate > 3 "
   }
 
   # Triggers
@@ -136,7 +136,7 @@ module "Postgresql-InstanceDown" {
 
   # Queries - Only one query is allowed for Logs monitor
   queries = {
-    A = "${var.postgresql_data_source} db_system=postgresql db_cluster=* host=* (\"database system\" AND \"shut down\") | parse \"* * * [*] *:  *\" as date,time,time_zone,thread_id,severity,msg | count by  db_cluster, host"
+    A = "${var.postgresql_data_source} db_system=postgresql db_cluster=* host=* (\"database system\" AND \"shut down\") | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"* * * [*] *:  *\" as date,time,time_zone,thread_id,severity,msg | count by  db_cluster, host"
   }
 
   # Triggers
@@ -302,7 +302,7 @@ module "Postgresql-AccessFromHighlyMaliciousSources" {
 
   # Queries - Only one query is allowed for Logs monitor
   queries = {
-    A = "${var.postgresql_data_source} db_system=postgresql db_cluster=* connection | parse \"connection received: host=* port=*\" as ip,port | count by ip,  db_cluster | lookup type, actor, raw, threatlevel as malicious_confidence from sumo://threat/cs on threat=ip | where type=\"ip_address\" | count by  db_cluster, ip, type, actor, malicious_confidence"
+    A = "${var.postgresql_data_source} db_system=postgresql db_cluster=* connection | json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse \"connection received: host=* port=*\" as ip,port | count by ip,  db_cluster | lookup type, actor, raw, threatlevel as malicious_confidence from sumo://threat/cs on threat=ip | where type=\"ip_address\" | count by  db_cluster, ip, type, actor, malicious_confidence"
   }
 
   # Triggers
@@ -362,6 +362,47 @@ module "Postgresql-SSLCompressionActive" {
                 {
                   threshold_type = "LessThanOrEqual",
                   threshold = 0,
+                  time_range = "5m",
+                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "ResolvedCritical",
+                  detection_method = "StaticCondition"
+                }
+            ]
+
+  # Notifications
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+}
+
+module "Postgresql-HighReplicationLag" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "PostgreSQL - High Replication Lag"
+  monitor_description         = "This alert fires when we detect that the Postgres Replication lag (in bytes) is high."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+
+  # Queries - Multiple queries allowed for Metrics monitor
+  queries = {
+    A = "${var.postgresql_data_source} db_system=postgresql db_cluster=*  host=* metric=postgresql_replay_lag"
+  }
+
+  # Triggers
+  triggers = [
+              {
+                  threshold_type = "GreaterThan",
+                  threshold = 1000000000,
+                  time_range = "5m",
+                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "Critical",
+                  detection_method = "StaticCondition"
+                },
+                {
+                  threshold_type = "LessThanOrEqual",
+                  threshold = 1000000000,
                   time_range = "5m",
                   occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
                   trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
