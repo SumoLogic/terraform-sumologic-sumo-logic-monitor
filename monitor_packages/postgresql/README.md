@@ -26,7 +26,7 @@ Logs|PostgreSQL - SlowQueries| This alert fires when we detect that the PostgreS
 Metrics |   PostgreSQL - Commit Rate Low|  This alert fires when we detect that Postgres seems to be processing very few transactions. |Critical
 Logs|PostgreSQL - High Rate of Statement Timeout| This alert fires when we detect Postgres transactions show a high rate of statement timeouts  |Critical
 Metrics |   PostgreSQL - High Rate Deadlock| This alert fires when we detect deadlocks in a Postgres instance  |Critical
-Metrics |   PostgreSQL - High Replication Lag| This alert fires when we detect that the Postgres Replication lag (in bytes) is high. |Critical
+Metrics |   PostgreSQL - High Replication Delay| This alert fires when we detect that the Postgres Replication Delay  is high. |Critical
 Metrics | pg_stat_ssl View  PostgreSQL - SSL Compression| Active This alert fires when we detect database connections with SSL compression are enabled. This may add significant jitter in replication delay. Replicas should turn off SSL compression via `sslcompression=0` in `recovery.conf` |Critical
 Metrics |   PostgreSQL - Too Many Locks Acquired|  This alert fires when we detect that there are too many locks acquired on the database. If this alert happens frequently, you may need to increase the postgres setting max_locks_per_transaction.  |Critical
 Logs|PostgreSQL - Access from Highly Malicious Sources| This alert will fire when a Postgres instance is accessed from known malicious IP addresses.  |Critical

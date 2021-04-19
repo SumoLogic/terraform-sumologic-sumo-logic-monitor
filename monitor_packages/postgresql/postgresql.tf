@@ -379,21 +379,21 @@ module "Postgresql-SSLCompressionActive" {
 module "Postgresql-HighReplicationLag" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "PostgreSQL - High Replication Lag"
-  monitor_description         = "This alert fires when we detect that the Postgres Replication lag (in bytes) is high."
+  monitor_name                = "PostgreSQL - High Replication Delay"
+  monitor_description         = "This alert fires when we detect that the Postgres Replication Delay is high."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "${var.postgresql_data_source} db_system=postgresql db_cluster=*  host=* metric=postgresql_replay_lag"
+    A = "${var.postgresql_data_source} db_system=postgresql db_cluster=*  host=* metric=postgresql_replication_delay"
   }
 
   # Triggers
   triggers = [
               {
                   threshold_type = "GreaterThan",
-                  threshold = 1000000000,
+                  threshold = 3600,
                   time_range = "5m",
                   occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
                   trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
@@ -402,7 +402,7 @@ module "Postgresql-HighReplicationLag" {
                 },
                 {
                   threshold_type = "LessThanOrEqual",
-                  threshold = 1000000000,
+                  threshold = 3600,
                   time_range = "5m",
                   occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
                   trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
