@@ -70,5 +70,5 @@ variable "group_notifications" {
 
 variable "kubernetes_data_source" {
   type = string
-  description = "Sumo Logic Kubernetes data source. For eg: kubernetes_data_source=cluster=production"
+  description = "Sumo Logic Kubernetes data source. For eg: kubernetes_data_source=\"cluster=production\""
 }
