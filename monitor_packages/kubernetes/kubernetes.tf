@@ -10,7 +10,7 @@ module "KubeAPIDown" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=up job=apiserver"
+    A = "${var.kubernetes_data_source} metric=up job=apiserver | sum by cluster,instance,service"
   }
 
   # Triggers
@@ -70,7 +70,7 @@ module "KubeControllerManagerDown" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=up job=kube-controller-manager"
+    A = "${var.kubernetes_data_source} metric=up job=kube-controller-manager | sum by cluster,instance,service"
   }
 
   # Triggers
@@ -130,7 +130,7 @@ module "KubeletDown" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=up job=kubelet metrics_path=/metrics"
+    A = "${var.kubernetes_data_source} metric=up job=kubelet metrics_path=/metrics | sum by cluster,instance,service"
   }
 
   # Triggers
@@ -190,7 +190,7 @@ module "KubeNodeNotReady" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=kube_node_status_condition job=kube-state-metrics condition=ready status=true"
+    A = "${var.kubernetes_data_source} metric=kube_node_status_condition job=kube-state-metrics condition=ready status=true | sum by cluster,node"
   }
 
   # Triggers
@@ -250,7 +250,7 @@ module "KubeSchedulerDown" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=up job=scheduler"
+    A = "${var.kubernetes_data_source} metric=up job=scheduler | sum by cluster,instance,service"
   }
 
   # Triggers
@@ -300,18 +300,18 @@ module "KubeSchedulerDown" {
 }
 
 
-module "ClusterCPUUtilizationHigh" {
+module "NodeCPUUtilizationHigh" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Kubernetes - Cluster CPU Utilization High"
-  monitor_description         = "This alert is fired when Cluster CPU utlization is high."
+  monitor_name                = "Kubernetes - Node CPU Utilization High"
+  monitor_description         = "This alert is fired when Node CPU utlization is high."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=node:node_cpu_utilisation:avg1m"
+    A = "${var.kubernetes_data_source} metric=node:node_cpu_utilisation:avg1m | sum by cluster,node"
   }
 
   # Triggers
@@ -371,8 +371,8 @@ module "PrometheusRemoteStorageFailures" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=prometheus_remote_storage_failed_samples_total (job=collection-kube-prometheus-prometheus  or job=collection-prometheus-oper-prometheus) | quantize 5m | rate"
-    B = "metric=prometheus_remote_storage_succeeded_samples_total (job=collection-kube-prometheus-prometheus  or job=collection-prometheus-oper-prometheus) | quantize 5m | rate"
+    A = "${var.kubernetes_data_source} metric=prometheus_remote_storage_failed_samples_total (job=collection-kube-prometheus-prometheus  or job=collection-prometheus-oper-prometheus) | quantize 5m | rate"
+    B = "${var.kubernetes_data_source} metric=prometheus_remote_storage_succeeded_samples_total (job=collection-kube-prometheus-prometheus  or job=collection-prometheus-oper-prometheus) | quantize 5m | rate"
     C = "100*(#A/(#A+#B)) along namespace,pod"
   }
 
@@ -404,10 +404,136 @@ module "PrometheusRemoteStorageFailures" {
   email_notifications       = var.email_notifications
 }
 
-module "MultipleTerminatedPodsFounds" {
+module "MultipleTerminatedPodsErroredOut" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Kubernetes - Multiple Terminated Pods"
+  monitor_name                = "Kubernetes - Multiple Terminated Pods (Errored Out)"
+  monitor_description         = "This alert is fired when we determine that there are pods that have been terminated because of errors."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
+
+  # Queries - Multiple queries allowed for Metrics monitor
+  queries = {
+    A = "${var.kubernetes_data_source} metric=kube_pod_container_status_terminated_reason reason=error | sum by cluster"
+  }
+
+  # Triggers
+  triggers = [
+              {
+                  threshold_type = "GreaterThan",
+                  threshold = 5,
+                  time_range = "5m",
+                  occurrence_type = "AtLeastOnce" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "Critical",
+                  detection_method = "StaticCondition"
+                },
+                {
+                  threshold_type = "LessThanOrEqual",
+                  threshold = 5,
+                  time_range = "5m",
+                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "ResolvedCritical",
+                  detection_method = "StaticCondition"
+                }
+            ]
+
+  # Notifications
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+}
+
+module "MultipleTerminatedPodsContainerCannotRun" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Kubernetes - Multiple Terminated Pods (Container Cannot Run)"
+  monitor_description         = "This alert is fired when we determine that there are pods that have been terminated as the container cannot run."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
+
+  # Queries - Multiple queries allowed for Metrics monitor
+  queries = {
+    A = "${var.kubernetes_data_source} metric=kube_pod_container_status_terminated_reason reason=containercannotrun | sum by cluster"
+  }
+
+  # Triggers
+  triggers = [
+              {
+                  threshold_type = "GreaterThan",
+                  threshold = 5,
+                  time_range = "5m",
+                  occurrence_type = "AtLeastOnce" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "Critical",
+                  detection_method = "StaticCondition"
+                },
+                {
+                  threshold_type = "LessThanOrEqual",
+                  threshold = 5,
+                  time_range = "5m",
+                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "ResolvedCritical",
+                  detection_method = "StaticCondition"
+                }
+            ]
+
+  # Notifications
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+}
+
+module "MultipleTerminatedPodsOOMKilled" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Kubernetes - Multiple Terminated Pods (OOM Killed)"
+  monitor_description         = "This alert is fired when we determine that there are pods that have been OOM Killed."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
+
+  # Queries - Multiple queries allowed for Metrics monitor
+  queries = {
+    A = "${var.kubernetes_data_source} metric=kube_pod_container_status_terminated_reason reason=oomkilled | sum by cluster"
+  }
+
+  # Triggers
+  triggers = [
+              {
+                  threshold_type = "GreaterThan",
+                  threshold = 5,
+                  time_range = "5m",
+                  occurrence_type = "AtLeastOnce" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "Critical",
+                  detection_method = "StaticCondition"
+                },
+                {
+                  threshold_type = "LessThanOrEqual",
+                  threshold = 5,
+                  time_range = "5m",
+                  occurrence_type = "Always" # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                  trigger_type = "ResolvedCritical",
+                  detection_method = "StaticCondition"
+                }
+            ]
+
+  # Notifications
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+}
+
+module "MultipleTerminatedPodsDeadlineexceeded" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Kubernetes - Multiple Terminated Pods (Deadline Exceeded)"
   monitor_description         = "This alert is fired when we determine that there are pods that have been terminated."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
@@ -415,7 +541,7 @@ module "MultipleTerminatedPodsFounds" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=kube_pod_container_status_terminated_reason !reason=completed | sum"
+    A = "${var.kubernetes_data_source} metric=kube_pod_container_status_terminated_reason reason=deadlineexceeded | sum by cluster"
   }
 
   # Triggers
@@ -457,7 +583,7 @@ module "KubePodCrashLooping" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=kube_pod_container_status_restarts_total job=kube-state-metrics | quantize 5m | rate | eval _value * 60 * 5"
+    A = "${var.kubernetes_data_source} metric=kube_pod_container_status_restarts_total job=kube-state-metrics | quantize 5m | rate | eval _value * 60 * 5"
   }
 
   # Triggers
@@ -498,7 +624,7 @@ module "KubeContainerWaiting" {
   monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=kube_pod_container_status_waiting_reason job=kube-state-metrics | sum by cluster, namespace, container, pod"
+    A = "${var.kubernetes_data_source} metric=kube_pod_container_status_waiting_reason job=kube-state-metrics | sum by cluster, namespace, container, pod"
   }
 
   # Triggers
@@ -539,8 +665,8 @@ module "KubeDaemonSetNotScheduled" {
   monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=kube_daemonset_status_desired_number_scheduled job=kube-state-metrics"
-    B = "metric=kube_daemonset_status_current_number_scheduled job=kube-state-metrics"
+    A = "${var.kubernetes_data_source} metric=kube_daemonset_status_desired_number_scheduled job=kube-state-metrics"
+    B = "${var.kubernetes_data_source} metric=kube_daemonset_status_current_number_scheduled job=kube-state-metrics"
     C = "#A - #B along daemonset, cluster"
   }
 
@@ -582,7 +708,7 @@ module "KubeDaemonSetMisScheduled" {
   monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=kube_daemonset_status_number_misscheduled job=kube-state-metrics"
+    A = "${var.kubernetes_data_source} metric=kube_daemonset_status_number_misscheduled job=kube-state-metrics | sum by cluster"
   }
 
   # Triggers
@@ -623,8 +749,8 @@ module "KubeStatefulSetGenerationMismatch" {
   monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=kube_statefulset_status_observed_generation job=kube-state-metrics"
-    B = "metric=kube_statefulset_metadata_generation job=kube-state-metrics"
+    A = "${var.kubernetes_data_source} metric=kube_statefulset_status_observed_generation job=kube-state-metrics"
+    B = "${var.kubernetes_data_source} metric=kube_statefulset_metadata_generation job=kube-state-metrics"
     C = "#B - #A along statefulset, cluster"
   }
 
@@ -666,8 +792,8 @@ module "KubeHpaMaxedOut" {
   monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=kube_hpa_status_current_replicas job=kube-state-metrics"
-    B = "metric=kube_hpa_spec_max_replicas job=kube-state-metrics"
+    A = "${var.kubernetes_data_source} metric=kube_hpa_status_current_replicas job=kube-state-metrics"
+    B = "${var.kubernetes_data_source} metric=kube_hpa_spec_max_replicas job=kube-state-metrics"
     C = "#B - #A along cluster"
   }
 
@@ -709,8 +835,8 @@ module "etcdInsufficientMembers" {
   monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=up job=*etcd* | sum by job"
-    B = "metric=up job=*etcd* | count by job | eval _value + 1 | eval _value /2"
+    A = "${var.kubernetes_data_source} metric=up job=*etcd* | sum by job"
+    B = "${var.kubernetes_data_source} metric=up job=*etcd* | count by job | eval _value + 1 | eval _value /2"
     C = "#B - #A along cluster"
   }
 
@@ -753,8 +879,8 @@ module "MultipleContainersOOMKilled" {
   monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "metric=kube_pod_container_status_restarts_total | quantize to 12m | rate increasing | max by namespace, container, pod"
-    B = "metric=kube_pod_container_status_last_terminated_reason reason=\"OOMKilled\" | max by namespace, container, pod | filter max =1"
+    A = "${var.kubernetes_data_source} metric=kube_pod_container_status_restarts_total | quantize to 12m | rate increasing | max by namespace, container, pod"
+    B = "${var.kubernetes_data_source} metric=kube_pod_container_status_last_terminated_reason reason=\"OOMKilled\" | max by namespace, container, pod | filter max =1"
     C = "#A + #B "
   }
 
