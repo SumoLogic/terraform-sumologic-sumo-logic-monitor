@@ -4,313 +4,6 @@
   "type": "MonitorsLibraryFolderExport",
   "children": [
     {
-      "name": "Kubernetes - Kube API Down",
-      "description": "This alert is fired when KubeAPI disappears from Prometheus target discovery.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=up job=apiserver"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "Critical",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "ResolvedCritical",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "MissingData",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "MissingData",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "ResolvedMissingData",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "MissingData",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "Kubernetes - StatefulSet Generation Mismatch",
-      "description": "This alert is fired when StatefulSet generation mismatch is determined due to possible roll-back.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=kube_statefulset_status_observed_generation job=kube-state-metrics"
-        },
-        {
-          "rowId": "B",
-          "query": "metric=kube_statefulset_metadata_generation job=kube-state-metrics"
-        },
-        {
-          "rowId": "C",
-          "query": "#B - #A along statefulset, cluster"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "Warning",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "ResolvedWarning",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "Kubernetes - Kube Scheduler Down",
-      "description": "This alert is fired when Kube Scheduler disappears from Prometheus target discovery.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=up job=scheduler"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "Critical",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "ResolvedCritical",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "MissingData",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "MissingData",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "ResolvedMissingData",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "MissingData",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "Kubernetes - Pod Crash Looping",
-      "description": "This alert is fired when we determine that a pod is crash looping.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=kube_pod_container_status_restarts_total job=kube-state-metrics | quantize 5m | rate | eval _value * 60 * 5"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "Warning",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "ResolvedWarning",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "Kubernetes - Cluster CPU Utilization High",
-      "description": "This alert is fired when Cluster CPU utlization is high.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=node:node_cpu_utilisation:avg1m"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "Critical",
-          "threshold": 0.9,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "AtLeastOnce",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "ResolvedCritical",
-          "threshold": 0.9,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "Warning",
-          "threshold": 0.75,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "AtLeastOnce",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "ResolvedWarning",
-          "threshold": 0.75,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "Kubernetes - DaemonSet Misscheduled",
-      "description": "This alert is fired when DaemonSet pods are miss-scheduled.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=kube_daemonset_status_number_misscheduled job=kube-state-metrics"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "Warning",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "ResolvedWarning",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "Kubernetes - Multiple Terminated Pods",
-      "description": "This alert is fired when we determine that there are pods that have been terminated.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=kube_pod_container_status_terminated_reason !reason=completed | sum"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "Critical",
-          "threshold": 5,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "AtLeastOnce",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "ResolvedCritical",
-          "threshold": 5,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
       "name": "Kubernetes - Kube Node Not Ready",
       "description": "This alert is fired when a node is not ready.",
       "type": "MonitorsLibraryMonitorExport",
@@ -318,14 +11,14 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=kube_node_status_condition job=kube-state-metrics condition=ready status=true"
+          "query": "$$kubernetes_data_source metric=kube_node_status_condition job=kube-state-metrics condition=ready status=true | sum by cluster,node"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
           "occurrenceType": "Always",
@@ -333,8 +26,8 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
           "occurrenceType": "Always",
@@ -342,61 +35,8 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "MissingData",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "MissingData",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
           "timeRange": "-5m",
-          "triggerType": "ResolvedMissingData",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "MissingData",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "Kubernetes - Kubelet Down",
-      "description": "This alert is fired when Kubelet disappears from Prometheus target discovery.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=up job=kubelet metrics_path=/metrics"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "Critical",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "ResolvedCritical",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "MissingData",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
           "occurrenceType": "MissingData",
@@ -404,104 +44,8 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
           "triggerType": "ResolvedMissingData",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "MissingData",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "Kubernetes - etcd Insufficient Members",
-      "description": "This alert is fired when we determine that etcd cluster has insufficient members.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=up job=*etcd* | sum by job"
-        },
-        {
-          "rowId": "B",
-          "query": "metric=up job=*etcd* | count by job | eval _value + 1 | eval _value /2"
-        },
-        {
-          "rowId": "C",
-          "query": "#B - #A along cluster"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
           "timeRange": "-5m",
-          "triggerType": "Critical",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
-          "triggerType": "ResolvedCritical",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "Kubernetes - Kube Controller Manager Down",
-      "description": "This alert is fired when KubeControllerManager disappears from Prometheus target discovery.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=up job=kube-controller-manager"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "Critical",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "ResolvedCritical",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "MissingData",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "occurrenceType": "MissingData",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
-          "triggerType": "ResolvedMissingData",
           "threshold": 0,
           "thresholdType": "GreaterThan",
           "occurrenceType": "MissingData",
@@ -520,11 +64,11 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=kube_daemonset_status_desired_number_scheduled job=kube-state-metrics"
+          "query": "$$kubernetes_data_source metric=kube_daemonset_status_desired_number_scheduled job=kube-state-metrics"
         },
         {
           "rowId": "B",
-          "query": "metric=kube_daemonset_status_current_number_scheduled job=kube-state-metrics"
+          "query": "$$kubernetes_data_source metric=kube_daemonset_status_current_number_scheduled job=kube-state-metrics"
         },
         {
           "rowId": "C",
@@ -534,8 +78,8 @@
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Warning",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
           "occurrenceType": "Always",
@@ -543,8 +87,8 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
           "occurrenceType": "Always",
@@ -556,39 +100,144 @@
       "groupNotifications": true
     },
     {
-      "name": "Kubernetes - Prometheus Remote Storage Failures",
-      "description": "This alert is fired when Prometheus fails to send samples to remote storage.",
+      "name": "Kubernetes - etcd Insufficient Members",
+      "description": "This alert is fired when we determine that etcd cluster has insufficient members.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=prometheus_remote_storage_failed_samples_total (job=collection-kube-prometheus-prometheus  or job=collection-prometheus-oper-prometheus) | quantize 5m | rate"
+          "query": "$$kubernetes_data_source metric=up job=*etcd* | sum by job"
         },
         {
           "rowId": "B",
-          "query": "metric=prometheus_remote_storage_succeeded_samples_total (job=collection-kube-prometheus-prometheus  or job=collection-prometheus-oper-prometheus) | quantize 5m | rate"
+          "query": "$$kubernetes_data_source metric=up job=*etcd* | count by job | eval _value + 1 | eval _value /2"
         },
         {
           "rowId": "C",
-          "query": "100*(#A/(#A+#B)) along namespace,pod"
+          "query": "#B - #A along cluster"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
-          "threshold": 1,
+          "timeRange": "-5m",
+          "threshold": 0,
           "thresholdType": "GreaterThan",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
-          "threshold": 1,
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - Pod Crash Looping",
+      "description": "This alert is fired when we determine that a pod is crash looping.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=kube_pod_container_status_restarts_total job=kube-state-metrics | quantize 5m | rate | eval _value * 60 * 5"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - Multiple Terminated Pods (Errored Out)",
+      "description": "This alert is fired when we determine that there are pods that have been terminated because of errors.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=kube_pod_container_status_terminated_reason reason=error | sum by cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "AtLeastOnce",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - Multiple Terminated Pods (OOM Killed)",
+      "description": "This alert is fired when we determine that there are pods that have been OOM Killed.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=kube_pod_container_status_terminated_reason reason=oomkilled | sum by cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "AtLeastOnce",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 5,
           "thresholdType": "LessThanOrEqual",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
@@ -606,14 +255,14 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=kube_pod_container_status_waiting_reason job=kube-state-metrics | sum by cluster, namespace, container, pod"
+          "query": "$$kubernetes_data_source metric=kube_pod_container_status_waiting_reason job=kube-state-metrics | sum by cluster, namespace, container, pod"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Warning",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
           "occurrenceType": "Always",
@@ -621,9 +270,465 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
           "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - Kubelet Down",
+      "description": "This alert is fired when Kubelet disappears from Prometheus target discovery.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=up job=kubelet metrics_path=/metrics | sum by cluster,instance,service"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "MissingData",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedMissingData",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - Kube API Down",
+      "description": "This alert is fired when KubeAPI disappears from Prometheus target discovery.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=up job=apiserver | sum by cluster,instance,service"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "MissingData",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedMissingData",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - Node CPU Utilization High",
+      "description": "This alert is fired when Node CPU utlization is high.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=node:node_cpu_utilisation:avg1m | sum by cluster,node"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0.9,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "AtLeastOnce",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0.9,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0.75,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "AtLeastOnce",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0.75,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - Prometheus Remote Storage Failures",
+      "description": "This alert is fired when Prometheus fails to send samples to remote storage.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=prometheus_remote_storage_failed_samples_total (job=collection-kube-prometheus-prometheus  or job=collection-prometheus-oper-prometheus) | quantize 5m | rate"
+        },
+        {
+          "rowId": "B",
+          "query": "$$kubernetes_data_source metric=prometheus_remote_storage_succeeded_samples_total (job=collection-kube-prometheus-prometheus  or job=collection-prometheus-oper-prometheus) | quantize 5m | rate"
+        },
+        {
+          "rowId": "C",
+          "query": "100*(#A/(#A+#B)) along namespace,pod"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - Kube Controller Manager Down",
+      "description": "This alert is fired when KubeControllerManager disappears from Prometheus target discovery.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=up job=kube-controller-manager | sum by cluster,instance,service"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "MissingData",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedMissingData",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - DaemonSet Misscheduled",
+      "description": "This alert is fired when DaemonSet pods are miss-scheduled.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=kube_daemonset_status_number_misscheduled job=kube-state-metrics | sum by cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - Kube Scheduler Down",
+      "description": "This alert is fired when Kube Scheduler disappears from Prometheus target discovery.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=up job=scheduler | sum by cluster,instance,service"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "MissingData",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedMissingData",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - StatefulSet Generation Mismatch",
+      "description": "This alert is fired when StatefulSet generation mismatch is determined due to possible roll-back.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=kube_statefulset_status_observed_generation job=kube-state-metrics"
+        },
+        {
+          "rowId": "B",
+          "query": "$$kubernetes_data_source metric=kube_statefulset_metadata_generation job=kube-state-metrics"
+        },
+        {
+          "rowId": "C",
+          "query": "#B - #A along statefulset, cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-15m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - Multiple Terminated Pods (Deadline Exceeded)",
+      "description": "This alert is fired when we determine that there are pods that have been terminated.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=kube_pod_container_status_terminated_reason reason=deadlineexceeded | sum by cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "AtLeastOnce",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "Kubernetes - Multiple Terminated Pods (Container Cannot Run)",
+      "description": "This alert is fired when we determine that there are pods that have been terminated as the container cannot run.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$kubernetes_data_source metric=kube_pod_container_status_terminated_reason reason=containercannotrun | sum by cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "AtLeastOnce",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 5,
           "thresholdType": "LessThanOrEqual",
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
@@ -641,11 +746,11 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=kube_pod_container_status_restarts_total | quantize to 12m | rate increasing | max by namespace, conatiner, pod"
+          "query": "$$kubernetes_data_source metric=kube_pod_container_status_restarts_total | quantize to 12m | rate increasing | max by namespace, conatiner, pod"
         },
         {
           "rowId": "B",
-          "query": "metric=kube_pod_container_status_last_terminated_reason reason=\"OOMKilled\" | max by namespace, conatiner, pod | filter max =1"
+          "query": "$$kubernetes_data_source metric=kube_pod_container_status_last_terminated_reason reason=\"OOMKilled\" | max by namespace, conatiner, pod | filter max =1"
         },
         {
           "rowId": "C",
@@ -655,8 +760,8 @@
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
           "triggerType": "Warning",
+          "timeRange": "-15m",
           "threshold": 5,
           "thresholdType": "GreaterThanOrEqual",
           "occurrenceType": "Always",
@@ -664,8 +769,8 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
           "triggerType": "ResolvedWarning",
+          "timeRange": "-15m",
           "threshold": 5,
           "thresholdType": "LessThan",
           "occurrenceType": "Always",
@@ -684,11 +789,11 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=kube_hpa_status_current_replicas job=kube-state-metrics"
+          "query": "$$kubernetes_data_source metric=kube_hpa_status_current_replicas job=kube-state-metrics"
         },
         {
           "rowId": "B",
-          "query": "metric=kube_hpa_spec_max_replicas job=kube-state-metrics"
+          "query": "$$kubernetes_data_source metric=kube_hpa_spec_max_replicas job=kube-state-metrics"
         },
         {
           "rowId": "C",
@@ -698,8 +803,8 @@
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
           "triggerType": "Warning",
+          "timeRange": "-15m",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
           "occurrenceType": "Always",
@@ -707,8 +812,8 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-15m",
           "triggerType": "ResolvedWarning",
+          "timeRange": "-15m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
           "occurrenceType": "Always",
