@@ -879,8 +879,8 @@ module "MultipleContainersOOMKilled" {
   monitor_is_disabled         = var.monitors_disabled
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "${var.kubernetes_data_source} metric=kube_pod_container_status_restarts_total | quantize to 12m | rate increasing | max by namespace, conatiner, pod"
-    B = "${var.kubernetes_data_source} metric=kube_pod_container_status_last_terminated_reason reason=\"OOMKilled\" | max by namespace, conatiner, pod | filter max =1"
+    A = "${var.kubernetes_data_source} metric=kube_pod_container_status_restarts_total | quantize to 12m | rate increasing | max by namespace, container, pod"
+    B = "${var.kubernetes_data_source} metric=kube_pod_container_status_last_terminated_reason reason=\"OOMKilled\" | max by namespace, container, pod | filter max =1"
     C = "#A + #B "
   }
 

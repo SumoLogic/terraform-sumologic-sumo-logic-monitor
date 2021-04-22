@@ -746,11 +746,11 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "$$kubernetes_data_source metric=kube_pod_container_status_restarts_total | quantize to 12m | rate increasing | max by namespace, conatiner, pod"
+          "query": "$$kubernetes_data_source metric=kube_pod_container_status_restarts_total | quantize to 12m | rate increasing | max by namespace, container, pod"
         },
         {
           "rowId": "B",
-          "query": "$$kubernetes_data_source metric=kube_pod_container_status_last_terminated_reason reason=\"OOMKilled\" | max by namespace, conatiner, pod | filter max =1"
+          "query": "$$kubernetes_data_source metric=kube_pod_container_status_last_terminated_reason reason=\"OOMKilled\" | max by namespace, container, pod | filter max =1"
         },
         {
           "rowId": "C",
