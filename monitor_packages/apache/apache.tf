@@ -85,7 +85,7 @@ module "Apache-CriticalErrorMessages" {
 }
 
 # Sumo Logic Apache Log Monitors
-module "Apache-HighClient(HTTP4xx)ErrorRate" {
+module "Apache-HighClientHTTP4xxErrorRate" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Apache - High Client (HTTP 4xx) Error Rate"
@@ -128,7 +128,7 @@ module "Apache-HighClient(HTTP4xx)ErrorRate" {
 }
 
 # Sumo Logic Apache Log Monitors
-module "Apache-HighServer(HTTP5xx)ErrorRate" {
+module "Apache-HighServerHTTP5xxErrorRate" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Apache - High Server (HTTP 5xx) Error Rate"
