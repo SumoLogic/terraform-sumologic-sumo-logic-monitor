@@ -169,3 +169,89 @@ module "Apache-HighServer(HTTP5xx)ErrorRate" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
 }
+
+# Sumo Logic Apache Metric Monitors
+module "Apache-HighCPUUtilization" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Apache - High CPU Utilization"
+  monitor_description         = "This alert fires when the average CPU utilization within a 5 minute interval for an Apache Webserver farm instance is high (>=85%)."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
+  monitor_is_disabled         = var.monitors_disabled
+
+  # Queries - Multiple queries allowed for Metrics monitor
+  queries = {
+    A = "${var.apache_data_source} webserver_system=apache metric=apache_CPUSystem webserver_farm=* server=* port=* host=* | avg by webserver_farm, server, port, host"
+  }
+
+  # Triggers
+  triggers = [
+                {
+                  detection_method = "StaticCondition",
+                  time_range = "5m",
+                  trigger_type = "Critical",
+                  threshold = 85,
+                  threshold_type = "GreaterThanOrEqual",
+                  occurrence_type = "Always", # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger  
+                },
+                {
+                  detection_method = "StaticCondition",
+                  time_range = "5m",
+                  trigger_type = "ResolvedCritical",
+                  threshold = 85,
+                  threshold_type = "LessThan",
+                  occurrence_type = "Always",
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                }
+            ]
+
+  # Notifications
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+}
+
+# Sumo Logic Apache Metric Monitors
+module "Apache-ServerRestarted" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Apache - Server Restarted"
+  monitor_description         = "This alert fires when we detect low uptime (<= 10 minutes) for a given Apache server within a 5 minute interval."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder.id
+  monitor_is_disabled         = var.monitors_disabled
+
+  # Queries - Multiple queries allowed for Metrics monitor
+  queries = {
+    A = "${var.apache_data_source} webserver_system=apache metric=apache_uptime webserver_farm=* server=* port=* host=* | filter latest < 600 | avg by webserver_farm, server, port, host"
+  }
+
+  # Triggers
+  triggers = [
+                {
+                  detection_method = "StaticCondition",
+                  time_range = "5m",
+                  trigger_type = "Critical",
+                  threshold = 600,
+                  threshold_type = "LessThanOrEqual",
+                  occurrence_type = "Always", # Options: Always, AtLeastOnce and MissingData for Metrics
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger  
+                },
+                {
+                  detection_method = "StaticCondition",
+                  time_range = "5m",
+                  trigger_type = "ResolvedCritical",
+                  threshold = 600,
+                  threshold_type = "GreaterThan",
+                  occurrence_type = "Always",
+                  trigger_source = "AnyTimeSeries" # Options: AllTimeSeries and AnyTimeSeries for Metrics. 'AnyTimeSeries' is the only valid triggerSource for 'Critical' trigger
+                }
+            ]
+
+  # Notifications
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+}
