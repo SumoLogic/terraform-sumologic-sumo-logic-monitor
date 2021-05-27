@@ -1,10 +1,10 @@
-# sumologic-redis-monitors
+# sumologic-mongodb-monitors
 
-This Terraform script configures pre-packaged Sumo Logic Monitors for Redis using Terraform modules.
-For installation and configuration, please look at Sumo Logic Redis [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/12Databases/Redis_ULM/Install_the_Redis_ULM_App_and_View_the_Dashboards).
+This Terraform script configures pre-packaged Sumo Logic Monitors for MongoDB using Terraform modules.
+For installation and configuration, please look at Sumo Logic MongoDB [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/12Databases/MongoDB/MongoDB-App-Dashboards).
 ## License
 
-The Redis Terraform script is licensed under the apache v2.0 license.
+The MongoDB Terraform script is licensed under the apache v2.0 license.
 
 ## Issues
 
