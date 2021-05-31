@@ -57,7 +57,7 @@ module "SQLServer-AppDomain" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "SQL Server - AppDomain"
-  monitor_description         = ""
+  monitor_description         = "This alert fires when we detect that the SQL Server AppDomain."
   monitor_monitor_type        = "Logs"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
