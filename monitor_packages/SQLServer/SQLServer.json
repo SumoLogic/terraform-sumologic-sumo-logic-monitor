@@ -1,0 +1,401 @@
+{
+  "name": "SQL Server",
+  "description": "Folder for SQL Server Monitors",
+  "type": "MonitorsLibraryFolderExport",
+  "children": [
+    {
+      "name": "SQL Server - Disk Usage",
+      "description": "This alert fires when the Disk usage within a 5 minute interval for an SQL Server  instance is high (70% - 80% for Warning and >=80% for Critical).",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=sqlserver_volume_space_total_space_bytes db_cluster=* db_system=sqlserver  | sum by host, db_cluster"
+        },
+        {
+          "rowId": "B",
+          "query": "metric=sqlserver_volume_space_used_space_bytes db_cluster=* db_system=sqlserver  | sum by host, db_cluster"
+        },
+        {
+          "rowId": "C",
+          "query": "#B*100/#A along host, db_cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 70,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 70,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "SQL Server - AppDomain",
+      "description": "",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=sqlserver  (AppDomain or \"memory pressure\" or \"out of memory\") |json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw\n| parse \"AppDomain * (*) is marked for unload due to *.\" as AppDomainID, detail, reason nodrop\n| parse \"AppDomain * was unloaded by escalation policy to ensure the consistency of your application. * happened while accessing a critical resource\" as detail, reason nodrop\n| Parse \"Failed to initialize the Common Language Runtime * due to *.\" as detail, reason nodrop\n| parse \"Error: *, Severity: *, State: *. .NET Framework execution was aborted by escalation policy because of *.\" as error, severity, state, reason\n| count"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "SQL Server - Processes Blocked",
+      "description": "This alert fires when we detect that SQL Server has blocked processes.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=sqlserver_performance_value counter=\"processes blocked\" db_system=sqlserver db_cluster=*"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "SQL Server - Backup Fail",
+      "description": "This alert fires when we detect that the SQL Server backup failed.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=sqlserver backup !Restore !\"[180] Job\" | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| parse \"BackupDiskFile::*: Backup device '*' * to *. Operating system error *(*).\" as media, backup_path, backup_status, operation, error_code, reason nodrop\n| parse \"Backup      BackupIoRequest::ReportIoError: * * on backup device '*'. Operating system error *(*).\" as operation, backup_status, backup_path, error_code, reason nodrop\n| parse \"Extend Disk Backup:  * on backup device '*'. Operating system error *(*).\" as backup_status, backup_path, error_code, reason nodrop\n| parse \"BackupVirtualDeviceFile::RequestDurableMedia: * * on backup device '*'. Operating system error *(*).\" as operation, backup_status, backup_path, error_code, reason nodrop\n| parse \"Backup      BACKUP * to complete the command BACKUP DATABASE *. Check the backup application log for detailed messages.\" as backup_status, database\n| if (backup_status in (\"failed\", \"failure\"), \"Failure\", backup_status) as backup_status\n| timeslice 1d\n| count"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "SQL Server - Mirroring Error",
+      "description": "This alert fires when we detect that the SQL Server mirroring has error.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=sqlserver mirror* | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| parse \"A * has occurred while attempting to establish a connection to availability replica '*' with id [*].\" as reason, replica, replicaID nodrop\n| parse \"An error occurred in a Service Broker/Database Mirroring transport connection endpoint, Error: *, State: *. (Near endpoint role: *, far endpoint address: *)\" as error, state, near_endpoint, far_endpoint\n| count"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "SQL Server - Cpu High Usage",
+      "description": "This alert fires when the CPU usage within a 5 minute interval for an SQL Server  instance is high (70% - 80% for Warning and >=80% for Critical).",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=sqlserver_cpu_sqlserver_process_cpu db_cluster=* db_system=sqlserver "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 70,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 70,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "SQL Server - Instance Down",
+      "description": "This alert fires when we detect that the SQL Server instance is down for 5 minutes.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=sqlserver db_cluster=* metric=sqlserver_server_properties_uptime "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "MissingData",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedMissingData",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "SQL Server - Insufficient Space",
+      "description": "This alert fires when SQL Server instance could not allocate a new page for database because of insufficient disk space in filegroup.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=sqlserver \"Could not allocate\" (space or page) |json \"log\" as _rawlog nodrop | if (isEmpty(_rawlog), _raw, _rawlog) as _raw\n| parse \"Could not allocate space for object '*' in database '*' because *. Create disk space by deleting unneeded files, dropping objects in the filegroup, adding additional files to the filegroup, or setting autogrowth on for existing files in the filegroup.\" as object, database, reason nodrop\n| parse \"Could not allocate a new * for database '*' because *. Create the necessary space by dropping objects in the filegroup, adding additional files to the filegroup, or setting autogrowth on for existing files in the filegroup.\" as object, database, reason\n| count"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "SQL Server - Deadlock",
+      "description": "This alert fires when we detect deadlocks in a SQL Server instance.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* _sourceHost=* db_system=sqlserver deadlocked| count"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "SQL Server - Login Fail",
+      "description": "This alert fires when we detect that the user cannot login to SQL Server.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* _sourceHost=* db_system=sqlserver Logon | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| parse \"Logon       Login * for user '*'. Reason: * '*'. [CLIENT: *]\" as logon_status, userName, reason, database, client_ip nodrop\n| parse \"Logon       Login * for user '*'. Reason: *. [CLIENT: *]\" as logon_status, userName, reason, client_ip nodrop\n| parse \"Logon       Login * for user '*' because *  [CLIENT: *]\" as logon_status, userName, reason, client_ip nodrop\n| parse \"Logon       SSPI handshake * with error code *, state * while establishing a connection with integrated security; the connection has been closed. Reason: *.  [CLIENT: *].\" as logon_status, error_code, state, reason, client_ip nodrop\n| parse \"Logon       * database '*' because *\" as logon_status, database, reason nodrop\n| parse \"Logon       The target database, '*', is participating in an availability group and is currently * for queries. *\" as database, logon_status, reason\n| parse field=reason \"* '*'\" as reason, database nodrop\n| count"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    }
+  ]
+}
