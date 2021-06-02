@@ -1,7 +1,7 @@
 # sumologic-nginx-plus-monitors
 
 This Terraform script configures pre-packaged Sumo Logic Monitors for Nginx Plus using Terraform modules.
-For installation and configuration, please look at Sumo Logic Nginx [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/24Web_Servers/Nginx_ULM/Install_the_Nginx_ULM_App_and_View_the_Dashboards).
+For installation and configuration, please look at Sumo Logic Nginx [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/24Web_Servers/Nginx_Plus).
 
 ## License
 
