@@ -27,7 +27,7 @@ variable "environment" {
 variable "folder" {
   type = string
   description = "Folder where monitors will be created."
-  default = "MongoDB"
+  default = "SQL Server"
 }
 
 variable "monitors_disabled" {
@@ -67,7 +67,7 @@ variable "group_notifications" {
   description = "Whether or not to group notifications for individual items that meet the trigger condition. Defaults to true."
   default     = true
 }
-variable "mongodb_data_source" {
+variable "sqlserver_data_source" {
   type = string
-  description = "Sumo Logic MongoDB Cluster Filter. For eg: db_cluster=mongodb.prod.01"
+  description = "Sumo Logic SQL Server Cluster Filter. For eg: db_cluster=sqlserver.prod.01"
 }

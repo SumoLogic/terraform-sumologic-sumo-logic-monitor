@@ -8,6 +8,6 @@ environment         = "<DEPLOYMENT>"
 # This flag determines whether to enable all monitors or not.
 monitors_disabled   = true
 # The Sumo Logic monitors will be installed in a folder specified by this value.
-folder              = "MongoDB"
-# Sumo Logic MongoDB Cluster Filter. For eg: db_cluster=mongodb.prod.01
-mongodb_data_source = ""
+folder              = "SQLServer"
+# Sumo Logic SQL Server Cluster Filter. For eg: db_cluster=sqlserver.prod.01
+sqlserver_data_source = ""
