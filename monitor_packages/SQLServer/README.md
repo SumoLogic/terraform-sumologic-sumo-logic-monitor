@@ -1,7 +1,7 @@
 # sumologic-sqlserver-monitors
 
 This Terraform script configures pre-packaged Sumo Logic Monitors for SQL Server using Terraform modules.
-For installation and configuration, please look at Sumo Logic SQL Server [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/04Microsoft-and-Azure/Microsoft_SQL_Server).
+For installation and configuration, please look at Sumo Logic SQL Server [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/04Microsoft-and-Azure/Microsoft_SQL_Server/Microsoft-SQL-Server-App-Dashboards).
 ## License
 
 The SQL Server Terraform script is licensed under the apache v2.0 license.
