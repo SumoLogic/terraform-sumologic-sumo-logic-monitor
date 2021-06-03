@@ -164,7 +164,7 @@
     },
     {
       "name": "SQL Server - AppDomain",
-      "description": "This alert fires when we detect that the SQL Server AppDomain.",
+      "description": "This alert fires when we detect AppDomain related issues in your SQL Server instance.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Logs",
       "queries": [
