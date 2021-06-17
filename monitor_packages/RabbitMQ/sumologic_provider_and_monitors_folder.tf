@@ -8,5 +8,5 @@ provider "sumologic" {
 #Sumo Logic Monitor Folder
 resource "sumologic_monitor_folder" "tf_monitor_folder" {
   name        = var.folder
-  description = "Folder for rabbitmq Monitors"
+  description = "Folder for RabbitMQ Monitors"
 }

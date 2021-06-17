@@ -4,215 +4,14 @@
   "type": "MonitorsLibraryFolderExport",
   "children": [
     {
-      "name": "RabbitMQ - Disk Usage",
-      "description": "Percentage of available disk space (storeUsage) used by the broker’s persistent message store. Critical Alert > 80%",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "messaging_cluster=* host=* metric=rabbitmq_node_disk_free | eval _value/1024"
-        },
-        {
-          "rowId": "B",
-          "query": "messaging_cluster=* host=* metric=rabbitmq_node_disk_free_limit"
-        },
-        {
-          "rowId": "C",
-          "query": "100-(#A/#B)*100 along host | avg by host,messaging_cluster"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "Critical",
-          "timeRange": "-5m",
-          "threshold": 80,
-          "thresholdType": "GreaterThanOrEqual",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedCritical",
-          "timeRange": "-5m",
-          "threshold": 80,
-          "thresholdType": "LessThan",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "RabbitMQ - Broker Memory",
-      "description": "Percentage of available memory used by the broker. Critical Alert > 80%",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "messaging_cluster=* host=* metric=rabbitmq_node_mem_used"
-        },
-        {
-          "rowId": "B",
-          "query": "messaging_cluster=* host=* metric=rabbitmq_node_mem_limit "
-        },
-        {
-          "rowId": "C",
-          "query": "(#A/#B)*100 along host,node"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "Critical",
-          "timeRange": "-5m",
-          "threshold": 80,
-          "thresholdType": "GreaterThanOrEqual",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedCritical",
-          "timeRange": "-5m",
-          "threshold": 80,
-          "thresholdType": "LessThan",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "RabbitMQ - Consumer",
-      "description": "A queue has less than 1 consumer",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "messaging_cluster=* host=* metric=rabbitmq_queue_consumers"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "Critical",
-          "timeRange": "-5m",
-          "threshold": 1,
-          "thresholdType": "LessThan",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedCritical",
-          "timeRange": "-5m",
-          "threshold": 1,
-          "thresholdType": "GreaterThanOrEqual",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "RabbitMQ - Too Much Connections",
-      "description": "The total connections of a cluster is too high >1000",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "messaging_cluster=* host=* metric=rabbitmq_overview_connections| avg by messaging_cluster"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "Critical",
-          "timeRange": "-5m",
-          "threshold": 1000,
-          "thresholdType": "GreaterThanOrEqual",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedCritical",
-          "timeRange": "-5m",
-          "threshold": 1000,
-          "thresholdType": "LessThan",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "RabbitMQ - UnAck Message",
-      "description": "Too much unacknowledged messages: greater than 1000",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "messaging_cluster=* host=* metric=rabbitmq_overview_messages_unacked |avg by messaging_cluster "
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "Critical",
-          "timeRange": "-5m",
-          "threshold": 1000,
-          "thresholdType": "GreaterThanOrEqual",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedCritical",
-          "timeRange": "-5m",
-          "threshold": 1000,
-          "thresholdType": "LessThan",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
       "name": "RabbitMQ - Node Down",
-      "description": "Rabbitmq node down  when greater than 1 node down.",
+      "description": "This alert fires when a node in the RabbitMQ cluster is down.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Logs",
       "queries": [
         {
           "rowId": "A",
-          "query": "messaging_system=\"rabbitmq\" messaging_cluster=* \"down\"\n| json \"log\" as _rawlog nodrop\n| if(isEmpty(_rawlog),_raw,_rawlog) as _raw\n| where (_raw contains \"rabbit on node\")"
+          "query": "messaging_system=\"rabbitmq\" messaging_cluster=* \"down\"\n| json \"log\" as _rawlog nodrop\n| if(isEmpty(_rawlog),_raw,_rawlog) as _raw\n| where (_raw contains \"rabbit on node\")\n| fields messaging_cluster, _raw"
         }
       ],
       "triggers": [
@@ -242,18 +41,256 @@
       "groupNotifications": true
     },
     {
-      "name": "RabbitMQ - File Descriptors Usage",
-      "description": "A node use more than 90% of file descriptors",
+      "name": "RabbitMQ - High Memory Usage",
+      "description": "This alert fires when memory usage on a node in a RabbitMQ cluster is high.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "queries": [
         {
           "rowId": "A",
-          "query": "messaging_cluster=* host=* metric=rabbitmq_node_fd_used "
+          "query": "messaging_cluster=* host=* metric=rabbitmq_node_mem_used | avg by messaging_cluster, host"
         },
         {
           "rowId": "B",
-          "query": "messaging_cluster=* host=* metric=rabbitmq_node_fd_total"
+          "query": "messaging_cluster=* host=* metric=rabbitmq_node_mem_limit  | avg by messaging_cluster, host"
+        },
+        {
+          "rowId": "C",
+          "query": "(#A/#B)*100 along host,messaging_cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "RabbitMQ - High Disk Usage",
+      "description": "This alert fires when there is high disk usage on a node in a RabbitMQ cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=rabbitmq_node_disk_free | eval _value/1024 | avg by messaging_cluster, host"
+        },
+        {
+          "rowId": "B",
+          "query": "messaging_cluster=* host=* metric=rabbitmq_node_disk_free_limit | avg by messaging_cluster, host"
+        },
+        {
+          "rowId": "C",
+          "query": "100-(#A/#B)*100 along host,messaging_cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "RabbitMQ - Too Many Un-acknowledged Messages",
+      "description": "This alert fires when there are too many un-acknowledged messages on a node in a RabbitMQ cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=rabbitmq_overview_messages_unacked |avg by messaging_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "RabbitMQ - No Consumers",
+      "description": "This alert fires when a RabbitMQ queue has no consumers.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* queue=* metric=rabbitmq_queue_consumers | avg by messaging_cluster, queue"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "RabbitMQ - Un-routable Messages",
+      "description": "This alert fires when a node in the RabbitMQ cluster has un-routable messages",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=rabbitmq_overview_return_unroutable | avg by messaging_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "RabbitMQ - Too Many Connections",
+      "description": "This alert fires when there are too many connections to a node in a RabbitMQ cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=rabbitmq_overview_connections| avg by messaging_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true
+    },
+    {
+      "name": "RabbitMQ - High Number of File Descriptors in use",
+      "description": "This alert fires when the percentage of file descriptors used by a node in a RabbitMQ cluster is high.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=rabbitmq_node_fd_used | avg by messaging_cluster, host"
+        },
+        {
+          "rowId": "B",
+          "query": "messaging_cluster=* host=* metric=rabbitmq_node_fd_total | avg by messaging_cluster, host"
         },
         {
           "rowId": "C",
@@ -276,43 +313,6 @@
           "triggerType": "ResolvedCritical",
           "timeRange": "-5m",
           "threshold": 90,
-          "thresholdType": "LessThan",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true
-    },
-    {
-      "name": "RabbitMQ - Unroutable Message",
-      "description": "A queue has unroutable messages",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "messaging_cluster=* host=* metric=rabbitmq_overview_return_unroutable | avg by messaging_cluster"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "Critical",
-          "timeRange": "-5m",
-          "threshold": 1,
-          "thresholdType": "GreaterThanOrEqual",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedCritical",
-          "timeRange": "-5m",
-          "threshold": 1,
           "thresholdType": "LessThan",
           "field": null,
           "occurrenceType": "Always",
