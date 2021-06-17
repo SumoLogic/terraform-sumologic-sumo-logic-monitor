@@ -8,6 +8,6 @@ environment = "<DEPLOYMENT>"
 # This flag determines whether to enable all monitors or not.
 monitors_disabled = true
 # The Sumo Logic monitors will be installed in a folder specified by this value.
-folder = "rabbitmq"
+folder = "RabbitMQ"
 # Sumo Logic RabbitMQ Cluster Filter. For eg: messaging_cluster=rabbitmq.prod.01
 rabbitmq_data_source = ""

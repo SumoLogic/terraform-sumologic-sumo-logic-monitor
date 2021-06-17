@@ -27,7 +27,7 @@ variable "environment" {
 variable "folder" {
   type        = string
   description = "Folder where monitors will be created."
-  default     = "Kubernetes"
+  default     = "RabbitMQ"
 }
 
 variable "monitors_disabled" {
