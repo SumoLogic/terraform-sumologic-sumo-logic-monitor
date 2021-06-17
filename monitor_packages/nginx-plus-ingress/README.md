@@ -5,7 +5,7 @@ For installation and configuration, please look at Sumo Logic Nginx Plus Ingress
 
 ## License
 
-The Nginx-Ingress Terraform script is licensed under the apache v2.0 license.
+The Nginx-Plus-Ingress Terraform script is licensed under the apache v2.0 license.
 
 ## Issues
 
