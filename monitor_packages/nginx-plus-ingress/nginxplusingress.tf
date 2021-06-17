@@ -10,9 +10,7 @@ module "DroppedConnections" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "_origin=kubernetes metric = nginx_ingress_nginx_connections_handled Cluster = * Deployment = * Namespace = * Pod=* | sum by cluster, deployment, namespace, pod"
-    B = "_origin=kubernetes metric = nginx_ingress_nginx_connections_accepted Cluster = * Deployment = * Namespace = * Pod=* | sum by cluster, deployment, namespace, pod"
-    C = "#B - #A along cluster, deployment, namespace, pod"
+    A = "_origin=kubernetes metric = nginx_ingress_nginxplus_connections_dropped | sum by cluster, deployment, namespace, pod, instance"
   }
 
   # Triggers

@@ -1,10 +1,10 @@
 {
-  "name": "Nginx Ingress",
-  "description": "Folder for Nginx Ingress Monitors",
+  "name": "Nginx Plus Ingress",
+  "description": "Folder for Nginx Plus Ingress Monitors",
   "type": "MonitorsLibraryFolderExport",
   "children": [
     {
-      "name": "Nginx Ingress - Access from Highly Malicious Sources",
+      "name": "Nginx Plus Ingress - Access from Highly Malicious Sources",
       "description": "This alert fires when an Nginx is accessed from highly malicious IP addresses.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Logs",
@@ -17,19 +17,21 @@
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
+          "field": null,
           "occurrenceType": "ResultCount",
           "triggerSource": "AllResults"
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
+          "field": null,
           "occurrenceType": "ResultCount",
           "triggerSource": "AllResults"
         }
@@ -39,8 +41,8 @@
       "groupNotifications": true
     },
     {
-      "name": "Nginx Ingress - Critical Error Messages",
-      "description": "This alert fires when we detect critical error messages for a given Nginx server.",
+      "name": "Nginx Plus Ingress - Critical Error Messages",
+      "description": "This alert fires when we detect critical error messages for a given Nginx Plus server.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Logs",
       "queries": [
@@ -52,19 +54,21 @@
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
+          "field": null,
           "occurrenceType": "ResultCount",
           "triggerSource": "AllResults"
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
+          "field": null,
           "occurrenceType": "ResultCount",
           "triggerSource": "AllResults"
         }
@@ -74,40 +78,34 @@
       "groupNotifications": true
     },
     {
-      "name": "Nginx Ingress - Dropped Connections",
-      "description": "This alert fires when we detect dropped connections for a given Nginx server.",
+      "name": "Nginx Plus Ingress - Dropped Connections",
+      "description": "This alert fires when we detect dropped connections for a given Nginx Plus server.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "queries": [
         {
           "rowId": "A",
-          "query": "_origin=kubernetes metric = nginx_ingress_nginx_connections_handled Cluster = * Deployment = * Namespace = * Pod=* | sum by cluster, deployment, namespace, pod"
-        },
-        {
-          "rowId": "B",
-          "query": "_origin=kubernetes metric = nginx_ingress_nginx_connections_accepted Cluster = * Deployment = * Namespace = * Pod=* | sum by cluster, deployment, namespace, pod"
-        },
-        {
-          "rowId": "C",
-          "query": "#B - #A along cluster, deployment, namespace, pod"
+          "query": "_origin=kubernetes metric = nginx_ingress_nginxplus_connections_dropped | sum by cluster, deployment, namespace, pod, instance"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
+          "field": null,
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
+          "field": null,
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
         }
@@ -117,7 +115,7 @@
       "groupNotifications": true
     },
     {
-      "name": "Nginx Ingress - High Client (HTTP 4xx) Error Rate",
+      "name": "Nginx Plus Ingress - High Client (HTTP 4xx) Error Rate",
       "description": "This alert fires when there are too many HTTP requests (>5%) with a response status of 4xx.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Logs",
@@ -130,19 +128,21 @@
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
+          "field": null,
           "occurrenceType": "ResultCount",
           "triggerSource": "AllResults"
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
+          "field": null,
           "occurrenceType": "ResultCount",
           "triggerSource": "AllResults"
         }
@@ -152,7 +152,7 @@
       "groupNotifications": true
     },
     {
-      "name": "Nginx Ingress - High Server (HTTP 5xx) Error Rate",
+      "name": "Nginx Plus Ingress - High Server (HTTP 5xx) Error Rate",
       "description": "This alert fires when there are too many HTTP requests (>5%) with a response status of 5xx.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Logs",
@@ -165,19 +165,21 @@
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "Critical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
+          "field": null,
           "occurrenceType": "ResultCount",
           "triggerSource": "AllResults"
         },
         {
           "detectionMethod": "StaticCondition",
-          "timeRange": "-5m",
           "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
+          "field": null,
           "occurrenceType": "ResultCount",
           "triggerSource": "AllResults"
         }
