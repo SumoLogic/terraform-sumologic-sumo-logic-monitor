@@ -203,7 +203,7 @@ module "MongoDB-ReplicationHeartbeatError" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*REPL*\" | json field=_raw \"attr.heartbeatMessage\" as heartbeatMessage | where heartbeatMessage matches \"Error*\" | count"
+    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*REPL*\" | json field=_raw \"attr.heartbeatMessage\" as heartbeatMessage | where heartbeatMessage matches \"Error*\""
   }
   triggers = [
 			  {
@@ -293,7 +293,7 @@ module "MongoDB-SecondaryNodeReplicationFailure" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*REPL*\" and msg matches \"*too stale*\" |count"
+    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*REPL*\" and msg matches \"*too stale*\""
   }
   triggers = [
 			  {
@@ -328,7 +328,7 @@ module "MongoDB-SlowQueries" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.mongodb_data_source}  db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*COMMAND*\" | json field=_raw \"attr.type\" as type | where type matches \"*command*\" | json field=_raw \"attr.command\" as command | replace (command,\"{\",\"\") as command | replace (command,\"}\",\"\") as command | parse regex field=command \"(?<db_cmd>[\\w\\-\\.]+):*\" | where db_cmd matches \"*find*\" or db_cmd matches \"*insert*\" or db_cmd matches \"*remove*\" or db_cmd matches \"*delete*\" or db_cmd matches \"*update*\" | json field=_raw \"attr.durationMillis\" as dur | number(dur) | where dur > 100 | count"
+    A = "${var.mongodb_data_source}  db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*COMMAND*\" | json field=_raw \"attr.type\" as type | where type matches \"*command*\" | json field=_raw \"attr.command\" as command | replace (command,\"{\",\"\") as command | replace (command,\"}\",\"\") as command | parse regex field=command \"(?<db_cmd>[\\w\\-\\.]+):*\" | where db_cmd matches \"*find*\" or db_cmd matches \"*insert*\" or db_cmd matches \"*remove*\" or db_cmd matches \"*delete*\" or db_cmd matches \"*update*\" | json field=_raw \"attr.durationMillis\" as dur | number(dur) | where dur > 100"
   }
   triggers = [
 			  {
@@ -363,7 +363,7 @@ module "MongoDB-ShardingWarning" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*SHARDING*\" and severity = \"W\"  | count "
+    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*SHARDING*\" and severity = \"W\" "
   }
   triggers = [
 			  {
@@ -398,7 +398,7 @@ module "MongoDB-ShardingChunkSplitFailure" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*SHARDING*\" and severity = \"W\" and msg matches \"*splitChunk failed*\" | count"
+    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*SHARDING*\" and severity = \"W\" and msg matches \"*splitChunk failed*\""
   }
   triggers = [
 			  {
@@ -433,7 +433,7 @@ module "MongoDB-ShardingError" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*SHARDING*\" and severity = \"E\"  | count "
+    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*SHARDING*\" and severity = \"E\" "
   }
   triggers = [
 			  {
@@ -468,7 +468,7 @@ module "MongoDB-ReplicationError" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where severity = \"E\" and  component matches \"*REPL*\" | count "
+    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where severity = \"E\" and  component matches \"*REPL*\" "
   }
   triggers = [
 			  {
@@ -503,7 +503,7 @@ module "MongoDB-ShardingBalancerFailure" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where severity not in  (\"W\", \"E\") and context matches \"*Balancer*\" | count"
+    A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where severity not in  (\"W\", \"E\") and context matches \"*Balancer*\""
   }
   triggers = [
 			  {
