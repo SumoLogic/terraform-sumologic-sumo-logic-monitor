@@ -204,3 +204,4 @@ module "sumologic-metrics-monitor" {
 - [SQL Server](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/SQLServer)
 - [Nginx Plus](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/nginx-plus)
 - [RabbitMQ](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/RabbitMQ)
+- [ActiveMQ](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/ActiveMQ)
