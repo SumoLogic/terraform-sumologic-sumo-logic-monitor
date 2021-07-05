@@ -70,7 +70,7 @@ module "ApacheTomcat-Error" {
 			  }
 			]
 }
-module "ApacheTomcat-HighClient(HTTP4xx)ErrorRate" {
+module "ApacheTomcat-HighClient-HTTP4xx-ErrorRate" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Apache Tomcat - High Client (HTTP 4xx) Error Rate"
@@ -105,7 +105,7 @@ module "ApacheTomcat-HighClient(HTTP4xx)ErrorRate" {
 			  }
 			]
 }
-module "ApacheTomcat-HighServer(HTTP5xx)ErrorRate" {
+module "ApacheTomcat-HighServer-HTTP5xx-ErrorRate" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Apache Tomcat - High Server (HTTP 5xx) Error Rate"
