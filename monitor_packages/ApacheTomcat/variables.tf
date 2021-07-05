@@ -67,7 +67,7 @@ variable "group_notifications" {
   description = "Whether or not to group notifications for individual items that meet the trigger condition. Defaults to true."
   default     = true
 }
-variable "sqlserver_data_source" {
+variable "apachetomcat_data_source" {
   type = string
   description = "Sumo Logic Apache Tomcat Farm Filter. For eg: webserver_farm=tomcat.prod.01"
 }

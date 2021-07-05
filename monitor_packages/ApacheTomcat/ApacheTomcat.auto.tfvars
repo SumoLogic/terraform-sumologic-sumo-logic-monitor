@@ -10,4 +10,4 @@ monitors_disabled   = true
 # The Sumo Logic monitors will be installed in a folder specified by this value.
 folder              = "ApacheTomcat"
 # Sumo Logic Apache Tomcat Farm Filter. For eg: webserver_farm=tomcat.prod.01
-sqlserver_data_source = ""
+apachetomcat_data_source = ""

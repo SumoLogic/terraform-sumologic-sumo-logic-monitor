@@ -10,8 +10,8 @@ module "ApacheTomcat-HighMemoryUsage" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.sqlserver_data_source} metric=tomcat_jmx_OperatingSystem_TotalPhysicalMemorySize webserver_farm=* host=* webserver_system=tomcat | eval _value/1024/1024 | sum by webserver_farm,host"
-    B = "${var.sqlserver_data_source} metric=tomcat_jmx_OperatingSystem_FreePhysicalMemorySize webserver_farm=* host=* webserver_system=tomcat | eval _value/1024/1024 | sum by webserver_farm,host"
+    A = "${var.apachetomcat_data_source} metric=tomcat_jmx_OperatingSystem_TotalPhysicalMemorySize webserver_farm=* host=* webserver_system=tomcat | eval _value/1024/1024 | sum by webserver_farm,host"
+    B = "${var.apachetomcat_data_source} metric=tomcat_jmx_OperatingSystem_FreePhysicalMemorySize webserver_farm=* host=* webserver_system=tomcat | eval _value/1024/1024 | sum by webserver_farm,host"
     C = "(1 - (#B / #A)) * 100 along webserver_farm,host"
   }
   triggers = [
@@ -47,7 +47,7 @@ module "ApacheTomcat-Error" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.sqlserver_data_source} metric=tomcat_connector_error_count webserver_farm=* webserver_system=tomcat |sum by  host, webserver_farm"
+    A = "${var.apachetomcat_data_source} metric=tomcat_connector_error_count webserver_farm=* webserver_system=tomcat |sum by  host, webserver_farm"
   }
   triggers = [
 			  {
@@ -82,7 +82,7 @@ module "ApacheTomcat-HighClient(HTTP4xx)ErrorRate" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.sqlserver_data_source} webserver_system=tomcat webserver_farm=* | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | if (isEmpty(pod),_sourceHost,pod) as Server | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop | parse regex \"\\\"\\s+\\d+\\s+[\\d-]+\\s+(?<timetaken>[\\d-]+)\" | if (status_code matches \"4*\", 1, 0) as ServerError | sum(ServerError) as ServerErrors, count as TotalRequests by Server | (ServerErrors/TotalRequests) * 100 as ErrorPercentage | where ErrorPercentage > 5 | fields Server, ErrorPercentage, ServerErrors, TotalRequests"
+    A = "${var.apachetomcat_data_source} webserver_system=tomcat webserver_farm=* | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | if (isEmpty(pod),_sourceHost,pod) as Server | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop | parse regex \"\\\"\\s+\\d+\\s+[\\d-]+\\s+(?<timetaken>[\\d-]+)\" | if (status_code matches \"4*\", 1, 0) as ServerError | sum(ServerError) as ServerErrors, count as TotalRequests by Server | (ServerErrors/TotalRequests) * 100 as ErrorPercentage | where ErrorPercentage > 5 | fields Server, ErrorPercentage, ServerErrors, TotalRequests"
   }
   triggers = [
 			  {
@@ -117,7 +117,7 @@ module "ApacheTomcat-HighServer(HTTP5xx)ErrorRate" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.sqlserver_data_source} webserver_system=tomcat webserver_farm=* | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | if (isEmpty(pod),_sourceHost,pod) as Server | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop | parse regex \"\\\"\\s+\\d+\\s+[\\d-]+\\s+(?<timetaken>[\\d-]+)\" | if (status_code matches \"5*\", 1, 0) as ServerError | sum(ServerError) as ServerErrors, count as TotalRequests by Server | (ServerErrors/TotalRequests) * 100 as ErrorPercentage | where ErrorPercentage > 5 | fields Server, ErrorPercentage, ServerErrors, TotalRequests"
+    A = "${var.apachetomcat_data_source} webserver_system=tomcat webserver_farm=* | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | if (isEmpty(pod),_sourceHost,pod) as Server | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop | parse regex \"\\\"\\s+\\d+\\s+[\\d-]+\\s+(?<timetaken>[\\d-]+)\" | if (status_code matches \"5*\", 1, 0) as ServerError | sum(ServerError) as ServerErrors, count as TotalRequests by Server | (ServerErrors/TotalRequests) * 100 as ErrorPercentage | where ErrorPercentage > 5 | fields Server, ErrorPercentage, ServerErrors, TotalRequests"
   }
   triggers = [
 			  {
@@ -152,7 +152,7 @@ module "ApacheTomcat-AccessfromHighlyMaliciousSources" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.sqlserver_data_source} webserver_system=tomcat webserver_farm=* | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop | parse regex \"\\\"\\s+\\d+\\s+[\\d-]+\\s+(?<timetaken>[\\d-]+)\" | lookup type, actor, raw, threatlevel as Malicious_Confidence from sumo://threat/cs on threat=remote_ip  | where  type=\"ip_address\" and !isNull(Malicious_Confidence) | json field=raw \"labels[*].name\" as label_name  | replace(label_name, \"\\\\/\",\"->\") as label_name | replace(label_name, \"\\\"\",\" \") as label_name | if (isEmpty(actor), \"Unassigned\", actor) as Actor | where Malicious_Confidence matches \"high\" | fields raw,Malicious_Confidence,remote_ip, actor, _raw"
+    A = "${var.apachetomcat_data_source} webserver_system=tomcat webserver_farm=* | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop | parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop | parse regex \"\\\"\\s+\\d+\\s+[\\d-]+\\s+(?<timetaken>[\\d-]+)\" | lookup type, actor, raw, threatlevel as Malicious_Confidence from sumo://threat/cs on threat=remote_ip  | where  type=\"ip_address\" and !isNull(Malicious_Confidence) | json field=raw \"labels[*].name\" as label_name  | replace(label_name, \"\\\\/\",\"->\") as label_name | replace(label_name, \"\\\"\",\" \") as label_name | if (isEmpty(actor), \"Unassigned\", actor) as Actor | where Malicious_Confidence matches \"high\" | fields raw,Malicious_Confidence,remote_ip, actor, _raw"
   }
   triggers = [
 			  {
