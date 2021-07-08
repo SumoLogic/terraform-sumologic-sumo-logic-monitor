@@ -212,7 +212,7 @@ module "Varnish-BackendBusy" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Varnish - Backend Busy"
-  monitor_description         = "This alert is fired when a backend was unhealthy"
+  monitor_description         = "This alert is fired when a backend busy"
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled

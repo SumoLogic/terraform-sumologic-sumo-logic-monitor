@@ -239,7 +239,7 @@
     },
     {
       "name": "Varnish - Backend Busy",
-      "description": "This alert is fired when a backend was unhealthy",
+      "description": "This alert is fired when a backend busy",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "evaluationDelay": "0m",
