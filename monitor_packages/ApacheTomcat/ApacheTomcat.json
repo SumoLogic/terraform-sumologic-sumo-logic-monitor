@@ -1,0 +1,210 @@
+{
+  "name": "Tomcat",
+  "description": "Folder for Tomcat Monitors",
+  "type": "MonitorsLibraryFolderExport",
+  "children": [
+    {
+      "name": "Apache Tomcat - High Memory Usage",
+      "description": "This alert fires when the memory usage is more than 80 %.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=tomcat_jmx_OperatingSystem_TotalPhysicalMemorySize webserver_farm=* host=* webserver_system=tomcat | eval _value/1024/1024 | sum by webserver_farm,host"
+        },
+        {
+          "rowId": "B",
+          "query": "metric=tomcat_jmx_OperatingSystem_FreePhysicalMemorySize webserver_farm=* host=* webserver_system=tomcat | eval _value/1024/1024 | sum by webserver_farm,host"
+        },
+        {
+          "rowId": "C",
+          "query": "(1 - (#B / #A)) * 100 along webserver_farm,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "Apache Tomcat - Error",
+      "description": "This alert fies when error count is greater than 0.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=tomcat_connector_error_count webserver_farm=* webserver_system=tomcat |sum by  host, webserver_farm"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "Apache Tomcat - High Client (HTTP 4xx) Error Rate",
+      "description": "This alert fires when there are too many HTTP requests (>5%) with a response status of 4xx.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "webserver_system=tomcat webserver_farm=* | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw\n| if (isEmpty(pod),_sourceHost,pod) as Server\n| parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop\n| parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop\n| parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop\n| parse regex \"\\\"\\s+\\d+\\s+[\\d-]+\\s+(?<timetaken>[\\d-]+)\"\n| if (status_code matches \"4*\", 1, 0) as ServerError\n| sum(ServerError) as ServerErrors, count as TotalRequests by Server\n| (ServerErrors/TotalRequests) * 100 as ErrorPercentage\n| where ErrorPercentage > 5\n| fields Server, ErrorPercentage, ServerErrors, TotalRequests"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "Apache Tomcat - High Server (HTTP 5xx) Error Rate",
+      "description": "This alert fires when there are too many HTTP requests (>5%) with a response status of 5xx.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "webserver_system=tomcat webserver_farm=* | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw\n| if (isEmpty(pod),_sourceHost,pod) as Server\n| parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop\n| parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop\n| parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop\n| parse regex \"\\\"\\s+\\d+\\s+[\\d-]+\\s+(?<timetaken>[\\d-]+)\"\n| if (status_code matches \"5*\", 1, 0) as ServerError\n| sum(ServerError) as ServerErrors, count as TotalRequests by Server\n| (ServerErrors/TotalRequests) * 100 as ErrorPercentage\n| where ErrorPercentage > 5\n| fields Server, ErrorPercentage, ServerErrors, TotalRequests"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "Apache Tomcat - Access from Highly Malicious Sources",
+      "description": "This alert fires when a Tomcat server is accessed from highly malicious IP addresses.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "webserver_system=tomcat webserver_farm=* | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop\n| parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<user>\\S+)\\s+(?<hostname>[\\S]+)\\s+\\[\" nodrop\n| parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop\n| parse regex \"\\\"\\s+\\d+\\s+[\\d-]+\\s+(?<timetaken>[\\d-]+)\"\n| lookup type, actor, raw, threatlevel as Malicious_Confidence from sumo://threat/cs on threat=remote_ip \n| where  type=\"ip_address\" and !isNull(Malicious_Confidence)\n| json field=raw \"labels[*].name\" as label_name \n| replace(label_name, \"\\\\/\",\"->\") as label_name\n| replace(label_name, \"\\\"\",\" \") as label_name\n| if (isEmpty(actor), \"Unassigned\", actor) as Actor\n| where Malicious_Confidence matches \"high\"\n| fields raw,Malicious_Confidence,remote_ip, actor, _raw"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    }
+  ]
+}
