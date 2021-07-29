@@ -4,6 +4,45 @@
   "type": "MonitorsLibraryFolderExport",
   "children": [
     {
+      "name": "Varnish - Backend failed connections",
+      "description": "This alert is fired when backend failed connections",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=varnish_backend_fail proxy_cluster=* host=* | sum by proxy_cluster,host "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
       "name": "Varnish - High Client (HTTP 4xx) Error Rate",
       "description": "This alert fires when there are too many HTTP requests (>5%) with a response status of 4xx.",
       "type": "MonitorsLibraryMonitorExport",
@@ -40,11 +79,50 @@
       "notifications": [],
       "isDisabled": true,
       "groupNotifications": true,
-      "notes": ""
+      "playbook": ""
+    },
+    {
+      "name": "Varnish - Backend connection retries",
+      "description": "This alert is fired when backend connection retries",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=varnish_backend_retry proxy_cluster=* host=* | sum by proxy_cluster,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
     },
     {
       "name": "Varnish - Access from Highly Malicious Sources",
-      "description": "This alert fires when an Varnish is accessed from highly malicious IP addresses.",
+      "description": "This alert fires whenVarnish is accessed from highly malicious IP addresses.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Logs",
       "evaluationDelay": "0m",
@@ -79,24 +157,24 @@
       "notifications": [],
       "isDisabled": true,
       "groupNotifications": true,
-      "notes": ""
+      "playbook": ""
     },
     {
-      "name": "Varnish - Backend connection retries",
-      "description": "This alert is fired when backend connection retries",
+      "name": "Varnish - Backend was unhealthy",
+      "description": "This alert is fired when a backend was unhealthy",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "evaluationDelay": "0m",
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=varnish_backend_retry proxy_cluster=* host=* | sum by proxy_cluster,host |  rate increasing | fillmissing 0"
+          "query": "metric=varnish_backend_unhealthy proxy_system=varnish proxy_cluster=* host=* | sum by proxy_cluster,host "
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
-          "triggerType": "Warning",
+          "triggerType": "Critical",
           "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
@@ -106,7 +184,7 @@
         },
         {
           "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedWarning",
+          "triggerType": "ResolvedCritical",
           "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
@@ -118,7 +196,7 @@
       "notifications": [],
       "isDisabled": true,
       "groupNotifications": true,
-      "notes": ""
+      "playbook": ""
     },
     {
       "name": "Varnish - High Server (HTTP 5xx) Error Rate",
@@ -157,85 +235,7 @@
       "notifications": [],
       "isDisabled": true,
       "groupNotifications": true,
-      "notes": ""
-    },
-    {
-      "name": "Varnish - Backend was unhealthy",
-      "description": "This alert is fired when a backend was unhealthy",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "evaluationDelay": "0m",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=varnish_backend_unhealthy proxy_system=varnish proxy_cluster=* host=* | sum by proxy_cluster,host |  rate increasing"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "Critical",
-          "timeRange": "-5m",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedCritical",
-          "timeRange": "-5m",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true,
-      "notes": ""
-    },
-    {
-      "name": "Varnish - Backend failed connections",
-      "description": "This alert is fired when backend failed connections",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "evaluationDelay": "0m",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=varnish_backend_fail proxy_cluster=* host=* | sum by proxy_cluster,host |  rate increasing | fillmissing 0"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "Warning",
-          "timeRange": "-5m",
-          "threshold": 0,
-          "thresholdType": "GreaterThan",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedWarning",
-          "timeRange": "-5m",
-          "threshold": 0,
-          "thresholdType": "LessThanOrEqual",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true,
-      "notes": ""
+      "playbook": ""
     },
     {
       "name": "Varnish - Backend Busy",
@@ -246,7 +246,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=varnish_backend_unhealthy proxy_system=varnish proxy_cluster=* host=* | sum by proxy_cluster,host |  rate increasing"
+          "query": "metric=varnish_backend_unhealthy proxy_system=varnish proxy_cluster=* host=* | sum by proxy_cluster,host"
         }
       ],
       "triggers": [
@@ -274,7 +274,7 @@
       "notifications": [],
       "isDisabled": true,
       "groupNotifications": true,
-      "notes": ""
+      "playbook": ""
     },
     {
       "name": "Varnish - Thread creation failed",
@@ -313,7 +313,7 @@
       "notifications": [],
       "isDisabled": true,
       "groupNotifications": true,
-      "notes": ""
+      "playbook": ""
     }
   ]
 }

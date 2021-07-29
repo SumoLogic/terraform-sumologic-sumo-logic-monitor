@@ -1,3 +1,38 @@
+module "Varnish-Backendfailedconnections" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Varnish - Backend failed connections"
+  monitor_description         = "This alert is fired when backend failed connections"
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+  queries = {
+    A = "${var.varnish_data_source} metric=varnish_backend_fail proxy_cluster=* host=* | sum by proxy_cluster,host "
+  }
+  triggers = [
+			  {
+				threshold_type = "GreaterThan",
+				threshold = 0,
+				time_range = "5m",
+				occurrence_type = "Always"
+				trigger_source = "AnyTimeSeries"
+				trigger_type = "Warning",
+				detection_method = "StaticCondition"
+			  },
+			  {
+				threshold_type = "LessThanOrEqual",
+				threshold = 0,
+				time_range = "5m",
+				occurrence_type = "Always"
+				trigger_source = "AnyTimeSeries"
+				trigger_type = "ResolvedWarning",
+				detection_method = "StaticCondition"
+			  }
+			]
+}
 module "Varnish-HighClient-HTTP4xx-ErrorRate" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -33,11 +68,46 @@ module "Varnish-HighClient-HTTP4xx-ErrorRate" {
 			  }
 			]
 }
+module "Varnish-Backendconnectionretries" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Varnish - Backend connection retries"
+  monitor_description         = "This alert is fired when backend connection retries"
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+  queries = {
+    A = "${var.varnish_data_source} metric=varnish_backend_retry proxy_cluster=* host=* | sum by proxy_cluster,host"
+  }
+  triggers = [
+			  {
+				threshold_type = "GreaterThan",
+				threshold = 5,
+				time_range = "5m",
+				occurrence_type = "Always"
+				trigger_source = "AnyTimeSeries"
+				trigger_type = "Warning",
+				detection_method = "StaticCondition"
+			  },
+			  {
+				threshold_type = "LessThanOrEqual",
+				threshold = 5,
+				time_range = "5m",
+				occurrence_type = "Always"
+				trigger_source = "AnyTimeSeries"
+				trigger_type = "ResolvedWarning",
+				detection_method = "StaticCondition"
+			  }
+			]
+}
 module "Varnish-AccessfromHighlyMaliciousSources" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
   monitor_name                = "Varnish - Access from Highly Malicious Sources"
-  monitor_description         = "This alert fires when an Varnish is accessed from highly malicious IP addresses."
+  monitor_description         = "This alert fires whenVarnish is accessed from highly malicious IP addresses."
   monitor_monitor_type        = "Logs"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -68,11 +138,11 @@ module "Varnish-AccessfromHighlyMaliciousSources" {
 			  }
 			]
 }
-module "Varnish-Backendconnectionretries" {
+module "Varnish-Backendwasunhealthy" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Varnish - Backend connection retries"
-  monitor_description         = "This alert is fired when backend connection retries"
+  monitor_name                = "Varnish - Backend was unhealthy"
+  monitor_description         = "This alert is fired when a backend was unhealthy"
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -80,7 +150,7 @@ module "Varnish-Backendconnectionretries" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.varnish_data_source} metric=varnish_backend_retry proxy_cluster=* host=* | sum by proxy_cluster,host |  rate increasing | fillmissing 0"
+    A = "${var.varnish_data_source} metric=varnish_backend_unhealthy proxy_system=varnish proxy_cluster=* host=* | sum by proxy_cluster,host "
   }
   triggers = [
 			  {
@@ -89,7 +159,7 @@ module "Varnish-Backendconnectionretries" {
 				time_range = "5m",
 				occurrence_type = "Always"
 				trigger_source = "AnyTimeSeries"
-				trigger_type = "Warning",
+				trigger_type = "Critical",
 				detection_method = "StaticCondition"
 			  },
 			  {
@@ -98,7 +168,7 @@ module "Varnish-Backendconnectionretries" {
 				time_range = "5m",
 				occurrence_type = "Always"
 				trigger_source = "AnyTimeSeries"
-				trigger_type = "ResolvedWarning",
+				trigger_type = "ResolvedCritical",
 				detection_method = "StaticCondition"
 			  }
 			]
@@ -138,76 +208,6 @@ module "Varnish-HighServer-HTTP5xx-ErrorRate" {
 			  }
 			]
 }
-module "Varnish-Backendwasunhealthy" {
-  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
-  #version                  = "{revision}"
-  monitor_name                = "Varnish - Backend was unhealthy"
-  monitor_description         = "This alert is fired when a backend was unhealthy"
-  monitor_monitor_type        = "Metrics"
-  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-  monitor_is_disabled         = var.monitors_disabled
-  group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
-  queries = {
-    A = "${var.varnish_data_source} metric=varnish_backend_unhealthy proxy_system=varnish proxy_cluster=* host=* | sum by proxy_cluster,host |  rate increasing"
-  }
-  triggers = [
-			  {
-				threshold_type = "GreaterThan",
-				threshold = 0,
-				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
-				trigger_type = "Critical",
-				detection_method = "StaticCondition"
-			  },
-			  {
-				threshold_type = "LessThanOrEqual",
-				threshold = 0,
-				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
-				trigger_type = "ResolvedCritical",
-				detection_method = "StaticCondition"
-			  }
-			]
-}
-module "Varnish-Backendfailedconnections" {
-  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
-  #version                  = "{revision}"
-  monitor_name                = "Varnish - Backend failed connections"
-  monitor_description         = "This alert is fired when backend failed connections"
-  monitor_monitor_type        = "Metrics"
-  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-  monitor_is_disabled         = var.monitors_disabled
-  group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
-  queries = {
-    A = "${var.varnish_data_source} metric=varnish_backend_fail proxy_cluster=* host=* | sum by proxy_cluster,host |  rate increasing | fillmissing 0"
-  }
-  triggers = [
-			  {
-				threshold_type = "GreaterThan",
-				threshold = 0,
-				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
-				trigger_type = "Warning",
-				detection_method = "StaticCondition"
-			  },
-			  {
-				threshold_type = "LessThanOrEqual",
-				threshold = 0,
-				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
-				trigger_type = "ResolvedWarning",
-				detection_method = "StaticCondition"
-			  }
-			]
-}
 module "Varnish-BackendBusy" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -220,7 +220,7 @@ module "Varnish-BackendBusy" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.varnish_data_source} metric=varnish_backend_unhealthy proxy_system=varnish proxy_cluster=* host=* | sum by proxy_cluster,host |  rate increasing"
+    A = "${var.varnish_data_source} metric=varnish_backend_unhealthy proxy_system=varnish proxy_cluster=* host=* | sum by proxy_cluster,host"
   }
   triggers = [
 			  {
