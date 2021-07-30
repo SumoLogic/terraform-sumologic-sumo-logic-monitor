@@ -2,7 +2,7 @@
 
 This script configures Sumo Logic Monitors for Varnish using Terraform modules.
 
-This Terraform script configures pre-packaged Sumo Logic Monitors for Apache Tomcat using Terraform modules.
+This Terraform script configures pre-packaged Sumo Logic Monitors for Varnish using Terraform modules.
 For installation and configuration, please look at Sumo Logic Varnish [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/08App_Development/Varnish).
 ## License
 

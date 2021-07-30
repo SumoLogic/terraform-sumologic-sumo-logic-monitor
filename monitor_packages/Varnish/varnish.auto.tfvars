@@ -8,6 +8,6 @@ environment         = "<DEPLOYMENT>"
 # This flag determines whether to enable all monitors or not.
 monitors_disabled   = true
 # The Sumo Logic monitors will be installed in a folder specified by this value.
-folder              = "varnish"
+folder              = "Varnish"
 # Sumo Logic Varnish cluster Filter. For eg: proxy_cluster=varnish.prod.01
 varnish_data_source = ""
