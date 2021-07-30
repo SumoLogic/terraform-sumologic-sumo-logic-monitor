@@ -243,10 +243,10 @@ module "Varnish-BackendConnectionRetries" {
 			  }
 			]
 }
-module "Varnish-Threadcreationfailed" {
+module "Varnish-ThreadCreationFailed" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Varnish - Thread creation failed"
+  monitor_name                = "Varnish - Thread Creation Failed"
   monitor_description         = "This alert fires when Varnish is unable to create threads, which indicates either under-provisioning or misconfiguration."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id

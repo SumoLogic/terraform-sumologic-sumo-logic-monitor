@@ -277,7 +277,7 @@
       "playbook": ""
     },
     {
-      "name": "Varnish - Thread creation failed",
+      "name": "Varnish - Thread Creation Failed",
       "description": "This alert fires when Varnish is unable to create threads, which indicates either under-provisioning or misconfiguration.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
