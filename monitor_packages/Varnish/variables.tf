@@ -69,5 +69,5 @@ variable "group_notifications" {
 }
 variable "varnish_data_source" {
   type = string
-  description = "Sumo Logic Varnish cluster Filter. For eg: proxy_cluster=varnish.prod.01"
+  description = "Sumo Logic Varnish cluster Filter. For eg: cache_cluster=varnish.prod.01"
 }
