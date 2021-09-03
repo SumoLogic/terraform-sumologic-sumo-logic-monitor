@@ -207,3 +207,4 @@ module "sumologic-metrics-monitor" {
 - [RabbitMQ](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/RabbitMQ)
 - [Apache Tomcat](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/ApacheTomcat)
 - [Varnish](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/Varnish)
+- [Elasticsearch](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/Elasticsearch)
