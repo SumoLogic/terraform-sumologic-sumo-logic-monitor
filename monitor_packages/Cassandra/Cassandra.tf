@@ -348,38 +348,3 @@ module "Cassandra-HighNumberofFlushWriterBlockedTasksGreaterThan15" {
 			  }
 			]
 }
-module "Cassandra-ManyCompactionTasksArePending" {
-  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
-  #version                  = "{revision}"
-  monitor_name                = "Cassandra - Many Compaction Tasks Are Pending"
-  monitor_description         = "Many Cassandra compaction tasks are pending"
-  monitor_monitor_type        = "Metrics"
-  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-  monitor_is_disabled         = var.monitors_disabled
-  group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
-  queries = {
-    A = "${var.cassandra_data_source} metric=cassandra_TableMetrics_PendingCompactions_Value db_cluster=* db_system=cassandra | sum by db_cluster, host"
-  }
-  triggers = [
-			  {
-				threshold_type = "GreaterThan",
-				threshold = 100,
-				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
-				trigger_type = "Warning",
-				detection_method = "StaticCondition"
-			  },
-			  {
-				threshold_type = "LessThanOrEqual",
-				threshold = 100,
-				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
-				trigger_type = "ResolvedWarning",
-				detection_method = "StaticCondition"
-			  }
-			]
-}

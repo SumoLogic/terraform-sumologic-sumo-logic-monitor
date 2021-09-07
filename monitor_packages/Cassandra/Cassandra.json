@@ -392,45 +392,6 @@
       "isDisabled": true,
       "groupNotifications": true,
       "playbook": ""
-    },
-    {
-      "name": "Cassandra - Many Compaction Tasks Are Pending",
-      "description": "Many Cassandra compaction tasks are pending",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "evaluationDelay": "0m",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=cassandra_TableMetrics_PendingCompactions_Value db_cluster=* db_system=cassandra | sum by db_cluster, host"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "Warning",
-          "timeRange": "-5m",
-          "threshold": 100,
-          "thresholdType": "GreaterThan",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedWarning",
-          "timeRange": "-5m",
-          "threshold": 100,
-          "thresholdType": "LessThanOrEqual",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true,
-      "playbook": ""
     }
   ]
 }
