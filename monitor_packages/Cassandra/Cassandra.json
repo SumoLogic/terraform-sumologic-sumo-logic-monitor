@@ -4,6 +4,45 @@
   "type": "MonitorsLibraryFolderExport",
   "children": [
     {
+      "name": "Cassandra - Compaction Task Pending",
+      "description": "This alert fires when there are more than 15 Commitlog tasks which are pending.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=cassandra_TableMetrics_* name=pendingcompactionss db_cluster=* db_system=cassandra | avg by db_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 100,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 100,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
       "name": "Cassandra - Node Down",
       "description": "This alert fires when one or more Cassandra nodes are down",
       "type": "MonitorsLibraryMonitorExport",
@@ -71,45 +110,6 @@
           "timeRange": "-5m",
           "threshold": 85,
           "thresholdType": "GreaterThanOrEqual",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true,
-      "playbook": ""
-    },
-    {
-      "name": "Cassandra - High Number of Compaction Executor Blocked Tasks (>15)",
-      "description": "This alert fires when there are more than 15 compaction executor tasks blocked for more than 5 minutes.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "evaluationDelay": "0m",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=cassandra_ThreadPoolMetrics_* scope=compactionexecutor name=currentlyblockedtasks db_cluster=* db_system=cassandra | sum by db_cluster, host"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "Warning",
-          "timeRange": "-5m",
-          "threshold": 15,
-          "thresholdType": "GreaterThan",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedWarning",
-          "timeRange": "-5m",
-          "threshold": 15,
-          "thresholdType": "LessThanOrEqual",
           "field": null,
           "occurrenceType": "Always",
           "triggerSource": "AnyTimeSeries"
@@ -199,45 +199,6 @@
       "playbook": ""
     },
     {
-      "name": "Cassandra - Compaction Task Pending (>100)",
-      "description": "This alert fires when there are many Cassandra compaction tasks  which are pending. You might need to increase I/O capacity by adding nodes to the cluster.",
-      "type": "MonitorsLibraryMonitorExport",
-      "monitorType": "Metrics",
-      "evaluationDelay": "0m",
-      "queries": [
-        {
-          "rowId": "A",
-          "query": "metric=cassandra_TableMetrics_* name=pendingcompactionss db_cluster=* db_system=cassandra | avg by db_cluster, host"
-        }
-      ],
-      "triggers": [
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "Warning",
-          "timeRange": "-5m",
-          "threshold": 100,
-          "thresholdType": "GreaterThan",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        },
-        {
-          "detectionMethod": "StaticCondition",
-          "triggerType": "ResolvedWarning",
-          "timeRange": "-5m",
-          "threshold": 100,
-          "thresholdType": "LessThanOrEqual",
-          "field": null,
-          "occurrenceType": "Always",
-          "triggerSource": "AnyTimeSeries"
-        }
-      ],
-      "notifications": [],
-      "isDisabled": true,
-      "groupNotifications": true,
-      "playbook": ""
-    },
-    {
       "name": "Cassandra - Increase in Authentication Failures",
       "description": "This alert fires when there is an increase of Cassandra authentication failures.",
       "type": "MonitorsLibraryMonitorExport",
@@ -277,15 +238,54 @@
       "playbook": ""
     },
     {
-      "name": "Cassandra - High Commitlog Pending Tasks (> 15)",
-      "description": "This alert fires when there are more than 15 commitlog tasks which are pending.",
+      "name": "Cassandra - High Number of Flush Writer Blocked Tasks",
+      "description": "This alert fires when there are high number of flush writer tasks which are blocked.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "evaluationDelay": "0m",
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=cassandra_CommitLogMetrics_PendingTasks_Value db_cluster=* db_system=cassandra | sum by db_cluster, host"
+          "query": "metric=cassandra_ThreadPoolMetrics_* scope=memtableflushwriter name=totalblockedtasks db_cluster=* db_system=cassandra | sum by db_cluster,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 15,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 15,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Cassandra - High Number of Compaction Executor Blocked Tasks",
+      "description": "This alert fires when there are more than 15 compaction executor tasks blocked for more than 5 minutes.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=cassandra_ThreadPoolMetrics_* scope=compactionexecutor name=currentlyblockedtasks db_cluster=* db_system=cassandra | sum by db_cluster, host"
         }
       ],
       "triggers": [
@@ -355,15 +355,15 @@
       "playbook": ""
     },
     {
-      "name": "Cassandra - High Number of Flush Writer Blocked Tasks (>15)",
-      "description": "This alert fires when there are high number of flush writer tasks which are blocked.",
+      "name": "Cassandra - High Commitlog Pending Tasks",
+      "description": "This alert fires when there are more than 15 commitlog tasks which are pending.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Metrics",
       "evaluationDelay": "0m",
       "queries": [
         {
           "rowId": "A",
-          "query": "metric=cassandra_ThreadPoolMetrics_* scope=memtableflushwriter name=totalblockedtasks db_cluster=* db_system=cassandra | sum by db_cluster,host"
+          "query": "metric=cassandra_CommitLogMetrics_PendingTasks_Value db_cluster=* db_system=cassandra | sum by db_cluster, host"
         }
       ],
       "triggers": [

@@ -1,3 +1,38 @@
+module "Cassandra-CompactionTaskPending" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Cassandra - Compaction Task Pending"
+  monitor_description         = "This alert fires when there are more than 15 Commitlog tasks which are pending."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+  queries = {
+    A = "${var.cassandra_data_source} metric=cassandra_TableMetrics_* name=pendingcompactionss db_cluster=* db_system=cassandra | avg by db_cluster, host"
+  }
+  triggers = [
+			  {
+				threshold_type = "GreaterThan",
+				threshold = 100,
+				time_range = "5m",
+				occurrence_type = "Always"
+				trigger_source = "AnyTimeSeries"
+				trigger_type = "Warning",
+				detection_method = "StaticCondition"
+			  },
+			  {
+				threshold_type = "LessThanOrEqual",
+				threshold = 100,
+				time_range = "5m",
+				occurrence_type = "Always"
+				trigger_source = "AnyTimeSeries"
+				trigger_type = "ResolvedWarning",
+				detection_method = "StaticCondition"
+			  }
+			]
+}
 module "Cassandra-NodeDown" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -64,41 +99,6 @@ module "Cassandra-CacheHitRatebelow85Percent" {
 				occurrence_type = "Always"
 				trigger_source = "AnyTimeSeries"
 				trigger_type = "ResolvedCritical",
-				detection_method = "StaticCondition"
-			  }
-			]
-}
-module "Cassandra-HighNumberofCompactionExecutorBlockedTasksGreaterThan15" {
-  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
-  #version                  = "{revision}"
-  monitor_name                = "Cassandra - High Number of Compaction Executor Blocked Tasks (>15)"
-  monitor_description         = "This alert fires when there are more than 15 compaction executor tasks blocked for more than 5 minutes."
-  monitor_monitor_type        = "Metrics"
-  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-  monitor_is_disabled         = var.monitors_disabled
-  group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
-  queries = {
-    A = "${var.cassandra_data_source} metric=cassandra_ThreadPoolMetrics_* scope=compactionexecutor name=currentlyblockedtasks db_cluster=* db_system=cassandra | sum by db_cluster, host"
-  }
-  triggers = [
-			  {
-				threshold_type = "GreaterThan",
-				threshold = 15,
-				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
-				trigger_type = "Warning",
-				detection_method = "StaticCondition"
-			  },
-			  {
-				threshold_type = "LessThanOrEqual",
-				threshold = 15,
-				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
-				trigger_type = "ResolvedWarning",
 				detection_method = "StaticCondition"
 			  }
 			]
@@ -173,41 +173,6 @@ module "Cassandra-HighTombstoneScanning" {
 			  }
 			]
 }
-module "Cassandra-CompactionTaskPendingGreaterThan100" {
-  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
-  #version                  = "{revision}"
-  monitor_name                = "Cassandra - Compaction Task Pending (>100)"
-  monitor_description         = "This alert fires when there are many Cassandra compaction tasks  which are pending. You might need to increase I/O capacity by adding nodes to the cluster."
-  monitor_monitor_type        = "Metrics"
-  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
-  monitor_is_disabled         = var.monitors_disabled
-  group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
-  queries = {
-    A = "${var.cassandra_data_source} metric=cassandra_TableMetrics_* name=pendingcompactionss db_cluster=* db_system=cassandra | avg by db_cluster, host"
-  }
-  triggers = [
-			  {
-				threshold_type = "GreaterThan",
-				threshold = 100,
-				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
-				trigger_type = "Warning",
-				detection_method = "StaticCondition"
-			  },
-			  {
-				threshold_type = "LessThanOrEqual",
-				threshold = 100,
-				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
-				trigger_type = "ResolvedWarning",
-				detection_method = "StaticCondition"
-			  }
-			]
-}
 module "Cassandra-IncreaseinAuthenticationFailures" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -243,11 +208,11 @@ module "Cassandra-IncreaseinAuthenticationFailures" {
 			  }
 			]
 }
-module "Cassandra-HighCommitlogPendingTasksGreaterThan15" {
+module "Cassandra-HighNumberofFlushWriterBlockedTasks" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Cassandra - High Commitlog Pending Tasks (> 15)"
-  monitor_description         = "This alert fires when there are more than 15 commitlog tasks which are pending."
+  monitor_name                = "Cassandra - High Number of Flush Writer Blocked Tasks"
+  monitor_description         = "This alert fires when there are high number of flush writer tasks which are blocked."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -255,7 +220,42 @@ module "Cassandra-HighCommitlogPendingTasksGreaterThan15" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.cassandra_data_source} metric=cassandra_CommitLogMetrics_PendingTasks_Value db_cluster=* db_system=cassandra | sum by db_cluster, host"
+    A = "${var.cassandra_data_source} metric=cassandra_ThreadPoolMetrics_* scope=memtableflushwriter name=totalblockedtasks db_cluster=* db_system=cassandra | sum by db_cluster,host"
+  }
+  triggers = [
+			  {
+				threshold_type = "GreaterThan",
+				threshold = 15,
+				time_range = "5m",
+				occurrence_type = "Always"
+				trigger_source = "AnyTimeSeries"
+				trigger_type = "Warning",
+				detection_method = "StaticCondition"
+			  },
+			  {
+				threshold_type = "LessThanOrEqual",
+				threshold = 15,
+				time_range = "5m",
+				occurrence_type = "Always"
+				trigger_source = "AnyTimeSeries"
+				trigger_type = "ResolvedWarning",
+				detection_method = "StaticCondition"
+			  }
+			]
+}
+module "Cassandra-HighNumberofCompactionExecutorBlockedTasks" {
+  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  #version                  = "{revision}"
+  monitor_name                = "Cassandra - High Number of Compaction Executor Blocked Tasks"
+  monitor_description         = "This alert fires when there are more than 15 compaction executor tasks blocked for more than 5 minutes."
+  monitor_monitor_type        = "Metrics"
+  monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
+  monitor_is_disabled         = var.monitors_disabled
+  group_notifications       = var.group_notifications
+  connection_notifications  = var.connection_notifications
+  email_notifications       = var.email_notifications
+  queries = {
+    A = "${var.cassandra_data_source} metric=cassandra_ThreadPoolMetrics_* scope=compactionexecutor name=currentlyblockedtasks db_cluster=* db_system=cassandra | sum by db_cluster, host"
   }
   triggers = [
 			  {
@@ -313,11 +313,11 @@ module "Cassandra-BlockedRepairTasks" {
 			  }
 			]
 }
-module "Cassandra-HighNumberofFlushWriterBlockedTasksGreaterThan15" {
+module "Cassandra-HighCommitlogPendingTasks" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Cassandra - High Number of Flush Writer Blocked Tasks (>15)"
-  monitor_description         = "This alert fires when there are high number of flush writer tasks which are blocked."
+  monitor_name                = "Cassandra - High Commitlog Pending Tasks"
+  monitor_description         = "This alert fires when there are more than 15 commitlog tasks which are pending."
   monitor_monitor_type        = "Metrics"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
@@ -325,7 +325,7 @@ module "Cassandra-HighNumberofFlushWriterBlockedTasksGreaterThan15" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
   queries = {
-    A = "${var.cassandra_data_source} metric=cassandra_ThreadPoolMetrics_* scope=memtableflushwriter name=totalblockedtasks db_cluster=* db_system=cassandra | sum by db_cluster,host"
+    A = "${var.cassandra_data_source} metric=cassandra_CommitLogMetrics_PendingTasks_Value db_cluster=* db_system=cassandra | sum by db_cluster, host"
   }
   triggers = [
 			  {
