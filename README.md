@@ -22,7 +22,7 @@ This repository also contains predefined alerts for various technologies. Scroll
 
       required_providers {
            sumologic = {
-                version = "~> 2.6.2"
+                version = ">= 2.6.2"
                 source = "SumoLogic/sumologic"
         }
       }
@@ -203,5 +203,9 @@ module "sumologic-metrics-monitor" {
 - [MongoDB](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/MongoDB)
 - [SQL Server](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/SQLServer)
 - [Nginx Plus](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/nginx-plus)
+- [Nginx Plus Ingress](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/nginx-plus-ingress)
 - [RabbitMQ](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/RabbitMQ)
+- [Apache Tomcat](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/ApacheTomcat)
+- [Varnish](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/Varnish)
+- [Cassandra](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/Cassandra)
 - [ActiveMQ](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/ActiveMQ)

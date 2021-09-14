@@ -1,542 +1,601 @@
 {
-    "name": "MongoDB",
-    "description": "Folder for MongoDB Monitors",
-    "type": "MonitorsLibraryFolderExport",
-    "children": [
-      {
-        "name": "MongoDB - Too Many Cursors Timeouts",
-        "description": "This alert fires when we detect that there are too many cursors (100) timing out on a MongoDB server within a 5 minute time interval.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Metrics",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": "metric=mongodb_cursor_timed_out db_system=mongodb db_cluster=* | sum by db_cluster, host | rate increasing"
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Warning",
-            "timeRange": "-5m",
-            "threshold": 100,
-            "thresholdType": "GreaterThanOrEqual",
-            "occurrenceType": "Always",
-            "triggerSource": "AnyTimeSeries"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedWarning",
-            "timeRange": "-5m",
-            "threshold": 100,
-            "thresholdType": "LessThan",
-            "occurrenceType": "Always",
-            "triggerSource": "AnyTimeSeries"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Too Many Cursors Open",
-        "description": "This alert fires when we detect that there are too many cursors (>10K) opened by MongoDB.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Metrics",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": "metric=mongodb_cursor_total_count db_system=mongodb db_cluster=* | sum by host, db_cluster"
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Warning",
-            "timeRange": "-5m",
-            "threshold": 10000,
-            "thresholdType": "GreaterThanOrEqual",
-            "occurrenceType": "Always",
-            "triggerSource": "AnyTimeSeries"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedWarning",
-            "timeRange": "-5m",
-            "threshold": 10000,
-            "thresholdType": "LessThan",
-            "occurrenceType": "Always",
-            "triggerSource": "AnyTimeSeries"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "MissingData",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "MissingData",
-            "triggerSource": "AnyTimeSeries"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedMissingData",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "MissingData",
-            "triggerSource": "AnyTimeSeries"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Missing Primary",
-        "description": "This alert fires when we detect that a MongoDB cluster has no node marked as primary.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Metrics",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": "db_system=mongodb db_cluster=* metric=mongodb_repl_queries node_type=pri | count by db_cluster"
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Critical",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "Always",
-            "triggerSource": "AnyTimeSeries"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedCritical",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "Always",
-            "triggerSource": "AnyTimeSeries"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Instance Down",
-        "description": "This alert fires when we detect that the MongoDB instance is down.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Metrics",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": "db_system=mongodb db_cluster=* metric=mongodb_uptime_ns "
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "MissingData",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "MissingData",
-            "triggerSource": "AnyTimeSeries"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedMissingData",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "MissingData",
-            "triggerSource": "AnyTimeSeries"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Replication Lag",
-        "description": "This alert fires when we detect that the replica lag for a given MongoDB cluster is greater than 60 seconds. Please review the replication configuration.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Metrics",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": " db_system=mongodb db_cluster=* metric=mongodb_repl_lag "
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Warning",
-            "timeRange": "-5m",
-            "threshold": 60,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "Always",
-            "triggerSource": "AnyTimeSeries"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedWarning",
-            "timeRange": "-5m",
-            "threshold": 60,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "Always",
-            "triggerSource": "AnyTimeSeries"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Replication Heartbeat Error",
-        "description": "This alert fires when we detect that the MongoDB Replication Heartbeat request has errors, which indicates replication is not working as expected.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Logs",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": "db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*REPL*\"\n| json field=_raw \"attr.heartbeatMessage\" as heartbeatMessage\n| where heartbeatMessage matches \"Error*\"\n| count"
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Warning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedWarning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Too Many Connections",
-        "description": "This alert fires when we detect a given MongoDB server has too many connections (over 80% of capacity).",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Metrics",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": " metric=mongodb_connections_current db_cluster=* db_system=mongodb | sum by db_cluster, host | avg"
-          },
-          {
-            "rowId": "B",
-            "query": " metric=mongodb_connections_available db_cluster=* db_system=mongodb | sum by db_cluster, host | avg"
-          },
-          {
-            "rowId": "C",
-            "query": "#A*100/#B"
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Warning",
-            "timeRange": "-5m",
-            "threshold": 80,
-            "thresholdType": "GreaterThanOrEqual",
-            "occurrenceType": "Always",
-            "triggerSource": "AnyTimeSeries"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedWarning",
-            "timeRange": "-5m",
-            "threshold": 80,
-            "thresholdType": "LessThan",
-            "occurrenceType": "Always",
-            "triggerSource": "AnyTimeSeries"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "MissingData",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "MissingData",
-            "triggerSource": "AnyTimeSeries"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedMissingData",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "MissingData",
-            "triggerSource": "AnyTimeSeries"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Secondary Node Replication Failure",
-        "description": "This alert fires when we detect that a MongoDB secondary node is out of sync for replication.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Logs",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": "db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*REPL*\" and msg matches \"*too stale*\"\n|count"
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Warning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedWarning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Slow Queries",
-        "description": "This alert fires when we detect that a MongoDB cluster is executing slow queries.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Logs",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": " db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*COMMAND*\"\n| json field=_raw \"attr.type\" as type\n| where type matches \"*command*\"\n| json field=_raw \"attr.command\" as command\n| replace (command,\"{\",\"\") as command\n| replace (command,\"}\",\"\") as command\n| parse regex field=command \"(?<db_cmd>[\\w\\-\\.]+):*\"\n| where db_cmd matches \"*find*\" or db_cmd matches \"*insert*\" or db_cmd matches \"*remove*\" or db_cmd matches \"*delete*\" or db_cmd matches \"*update*\"\n| json field=_raw \"attr.durationMillis\" as dur\n| number(dur)\n| where dur > 100\n| count"
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Warning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedWarning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Sharding Warning",
-        "description": "This alert fires when we detect warnings in MongoDB sharding operations.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Logs",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": "db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*SHARDING*\" and severity = \"W\" \n| count "
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Warning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedWarning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Sharding Chunk Split Failure",
-        "description": "This alert fires when we detect that a MongoDB chunk not been split during sharding.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Logs",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": "db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*SHARDING*\" and severity = \"W\" and msg matches \"*splitChunk failed*\"\n| count"
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Warning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedWarning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Sharding Error",
-        "description": "This alert fires when we detect errors in MongoDB sharding operations.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Logs",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": "db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*SHARDING*\" and severity = \"E\" \n| count "
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Critical",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedCritical",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Replication Error",
-        "description": "This alert fires when we detect errors in MongoDB replication operations.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Logs",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": "db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where severity = \"E\" and  component matches \"*REPL*\"\n| count\n"
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Warning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedWarning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      },
-      {
-        "name": "MongoDB - Sharding Balancer Failure",
-        "description": "This alert fires when we detect that data balancing failed on a MongoDB Cluster with 1 mongos instance and 3 mongod instances.",
-        "type": "MonitorsLibraryMonitorExport",
-        "monitorType": "Logs",
-        "queries": [
-          {
-            "rowId": "A",
-            "query": "db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where severity not in  (\"W\", \"E\") and context matches \"*Balancer*\"\n| count"
-          }
-        ],
-        "triggers": [
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "Warning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "GreaterThan",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          },
-          {
-            "detectionMethod": "StaticCondition",
-            "triggerType": "ResolvedWarning",
-            "timeRange": "-5m",
-            "threshold": 0,
-            "thresholdType": "LessThanOrEqual",
-            "occurrenceType": "ResultCount",
-            "triggerSource": "AllResults"
-          }
-        ],
-        "notifications": [],
-        "isDisabled": true,
-        "groupNotifications": true
-      }
-    ]
-  }
-  
+  "name": "MongoDB",
+  "description": "Folder for MongoDB Monitors",
+  "type": "MonitorsLibraryFolderExport",
+  "children": [
+    {
+      "name": "MongoDB - Sharding Chunk Split Failure",
+      "description": "This alert fires when we detect that a MongoDB chunk not been split during sharding.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$mongodb_data_source db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*SHARDING*\" and severity = \"W\" and msg matches \"*splitChunk failed*\""
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Sharding Warning",
+      "description": "This alert fires when we detect warnings in MongoDB sharding operations.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$mongodb_data_source db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*SHARDING*\" and severity = \"W\" "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Too Many Cursors Timeouts",
+      "description": "This alert fires when we detect that there are too many cursors (100) timing out on a MongoDB server within a 5 minute time interval.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=mongodb_cursor_timed_out db_system=mongodb $$mongodb_data_source db_cluster=* | sum by db_cluster, host | rate increasing"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 100,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 100,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Replication Error",
+      "description": "This alert fires when we detect errors in MongoDB replication operations.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$mongodb_data_source db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where severity = \"E\" and  component matches \"*REPL*\"\n\n"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Replication Lag",
+      "description": "This alert fires when we detect that the replica lag for a given MongoDB cluster is greater than 60 seconds. Please review the replication configuration.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": " db_system=mongodb $$mongodb_data_source db_cluster=* metric=mongodb_repl_lag "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 60,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 60,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Replication Heartbeat Error",
+      "description": "This alert fires when we detect that the MongoDB Replication Heartbeat request has errors, which indicates replication is not working as expected.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$mongodb_data_source db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*REPL*\"\n| json field=_raw \"attr.heartbeatMessage\" as heartbeatMessage\n| where heartbeatMessage matches \"Error*\""
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Missing Primary",
+      "description": "This alert fires when we detect that a MongoDB cluster has no node marked as primary.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mongodb $$mongodb_data_source db_cluster=* metric=mongodb_repl_queries node_type=pri | count by db_cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Slow Queries",
+      "description": "This alert fires when we detect that a MongoDB cluster is executing slow queries.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": " $$mongodb_data_source db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*COMMAND*\"\n| json field=_raw \"attr.type\" as type\n| where type matches \"*command*\"\n| json field=_raw \"attr.command\" as command\n| replace (command,\"{\",\"\") as command\n| replace (command,\"}\",\"\") as command\n| parse regex field=command \"(?<db_cmd>[\\w\\-\\.]+):*\"\n| where db_cmd matches \"*find*\" or db_cmd matches \"*insert*\" or db_cmd matches \"*remove*\" or db_cmd matches \"*delete*\" or db_cmd matches \"*update*\"\n| json field=_raw \"attr.durationMillis\" as dur\n| number(dur)\n| where dur > 100"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Sharding Balancer Failure",
+      "description": "This alert fires when we detect that data balancing failed on a MongoDB Cluster with 1 mongos instance and 3 mongod instances.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$mongodb_data_source db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where severity not in  (\"W\", \"E\") and context matches \"*Balancer*\""
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Secondary Node Replication Failure",
+      "description": "This alert fires when we detect that a MongoDB secondary node is out of sync for replication.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$mongodb_data_source db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*REPL*\" and msg matches \"*too stale*\""
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Too Many Connections",
+      "description": "This alert fires when we detect a given MongoDB server has too many connections (over 80% of capacity).",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": " metric=mongodb_connections_current $$mongodb_data_source db_cluster=* db_system=mongodb | sum by db_cluster, host | avg"
+        },
+        {
+          "rowId": "B",
+          "query": " metric=mongodb_connections_available $$mongodb_data_source db_cluster=* db_system=mongodb | sum by db_cluster, host | avg"
+        },
+        {
+          "rowId": "C",
+          "query": "#A*100/#B"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "MissingData",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedMissingData",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Too Many Cursors Open",
+      "description": "This alert fires when we detect that there are too many cursors (>10K) opened by MongoDB.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=mongodb_cursor_total_count db_system=mongodb $$mongodb_data_source db_cluster=* | sum by host, db_cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 10000,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 10000,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "MissingData",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedMissingData",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Sharding Error",
+      "description": "This alert fires when we detect errors in MongoDB sharding operations.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "$$mongodb_data_source db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw \n| json field=_raw \"t.$date\" as timestamp\n| json field=_raw \"s\" as severity\n| json field=_raw \"c\" as component\n| json field=_raw \"ctx\" as context\n| json field=_raw \"msg\" as msg\n| where component matches \"*SHARDING*\" and severity = \"E\" "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    },
+    {
+      "name": "MongoDB - Instance Down",
+      "description": "This alert fires when we detect that the MongoDB instance is down.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mongodb $$mongodb_data_source db_cluster=* metric=mongodb_uptime_ns "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "MissingData",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedMissingData",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "MissingData",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "notes": ""
+    }
+  ]
+}
