@@ -55,8 +55,8 @@ module "KubeAPIDown" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = concat(var.connection_notifications_critical, var.connection_notifications_missingdata)
+  email_notifications       = concat(var.email_notifications_critical,var.email_notifications_missingdata)
 }
 
 module "KubeControllerManagerDown" {
@@ -115,8 +115,8 @@ module "KubeControllerManagerDown" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = concat(var.connection_notifications_critical, var.connection_notifications_missingdata)
+  email_notifications       = concat(var.email_notifications_critical,var.email_notifications_missingdata)
 }
 
 module "KubeletDown" {
@@ -175,8 +175,8 @@ module "KubeletDown" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = concat(var.connection_notifications_critical, var.connection_notifications_missingdata)
+  email_notifications       = concat(var.email_notifications_critical,var.email_notifications_missingdata)
 }
 
 module "KubeNodeNotReady" {
@@ -235,8 +235,8 @@ module "KubeNodeNotReady" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = concat(var.connection_notifications_critical, var.connection_notifications_missingdata)
+  email_notifications       = concat(var.email_notifications_critical,var.email_notifications_missingdata)
 }
 
 module "KubeSchedulerDown" {
@@ -295,8 +295,8 @@ module "KubeSchedulerDown" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = concat(var.connection_notifications_critical, var.connection_notifications_missingdata)
+  email_notifications       = concat(var.email_notifications_critical,var.email_notifications_missingdata)
 }
 
 
@@ -356,8 +356,8 @@ module "NodeCPUUtilizationHigh" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = concat(var.connection_notifications_critical, var.connection_notifications_warning)
+  email_notifications       = concat(var.email_notifications_critical,var.email_notifications_warning)
 }
 
 module "PrometheusRemoteStorageFailures" {
@@ -400,8 +400,8 @@ module "PrometheusRemoteStorageFailures" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 module "MultipleTerminatedPodsErroredOut" {
@@ -442,8 +442,8 @@ module "MultipleTerminatedPodsErroredOut" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 module "MultipleTerminatedPodsContainerCannotRun" {
@@ -484,8 +484,8 @@ module "MultipleTerminatedPodsContainerCannotRun" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 module "MultipleTerminatedPodsOOMKilled" {
@@ -526,8 +526,8 @@ module "MultipleTerminatedPodsOOMKilled" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 module "MultipleTerminatedPodsDeadlineexceeded" {
@@ -568,8 +568,8 @@ module "MultipleTerminatedPodsDeadlineexceeded" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 module "KubePodCrashLooping" {
@@ -610,8 +610,8 @@ module "KubePodCrashLooping" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
 
 module "KubeContainerWaiting" {
@@ -651,8 +651,8 @@ module "KubeContainerWaiting" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
 
 module "KubeDaemonSetNotScheduled" {
@@ -694,8 +694,8 @@ module "KubeDaemonSetNotScheduled" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
 
 module "KubeDaemonSetMisScheduled" {
@@ -735,8 +735,8 @@ module "KubeDaemonSetMisScheduled" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
 
 module "KubeStatefulSetGenerationMismatch" {
@@ -778,8 +778,8 @@ module "KubeStatefulSetGenerationMismatch" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
 
 module "KubeHpaMaxedOut" {
@@ -821,8 +821,8 @@ module "KubeHpaMaxedOut" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
 
 module "etcdInsufficientMembers" {
@@ -864,8 +864,8 @@ module "etcdInsufficientMembers" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 
@@ -908,6 +908,6 @@ module "MultipleContainersOOMKilled" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
