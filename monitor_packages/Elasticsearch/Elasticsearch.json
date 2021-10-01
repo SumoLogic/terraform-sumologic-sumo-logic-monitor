@@ -1,0 +1,763 @@
+{
+  "name": "Elasticsearch",
+  "description": "Folder for Elasticsearch Monitors",
+  "type": "MonitorsLibraryFolderExport",
+  "children": [
+    {
+      "name": "Elasticsearch - Query Time Too Slow",
+      "description": "Alert Slow Query Too High (10 ms)",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=elasticsearch db_cluster=* took_millis | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw\n| json field=_raw \"timestamp\" as timestamp\n| json field=_raw \"level\" as level\n| json field=_raw \"component\" as component\n| json field=_raw \"message\" as message\n| where level = \"WARN\" and message matches \"*took_millis*\"\n| json field=_raw \"type\" as type\n| parse regex field=message \"took_millis\\[(?<took_millis>[\\d-]+)\\]\"\n| where number(took_millis) > 10\n| fields took_millis"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Query Time Slow",
+      "description": "Slow query time greater than 5 ms",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=elasticsearch db_cluster=* took_millis | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw\n| json field=_raw \"timestamp\" as timestamp\n| json field=_raw \"level\" as level\n| json field=_raw \"component\" as component\n| json field=_raw \"message\" as message\n| where level = \"WARN\" and message matches \"*took_millis*\"\n| json field=_raw \"type\" as type\n| parse regex field=message \"took_millis\\[(?<took_millis>[\\d-]+)\\]\"\n| where number(took_millis) > 5\n| fields took_millis"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Cluster Red",
+      "description": "Elasticsearch Cluster Red status",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_cluster_health_indices_status_code  db_cluster=* | min by db_cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 3,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 3,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Initializing Shards Too Long",
+      "description": "Elasticsearch has been initializing shards for 5 min",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_cluster_health_initializing_shards db_cluster=* host=* | sum by db_cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Cluster Yellow",
+      "description": "Elasticsearch Cluster Yellow status",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_cluster_health_indices_status_code  db_cluster=* host=* | min by db_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 2,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 2,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Relocating Shards Too Long",
+      "description": "Elasticsearch has been relocating shards for 5min",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_cluster_health_relocating_shards db_cluster=* host=* | sum by db_cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Unassigned Shards",
+      "description": "Elasticsearch has unassigned shards",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_cluster_health_unassigned_shards db_cluster=* host=* | sum by db_cluster,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Heap Usage Warning",
+      "description": "The heap usage is over 80%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_clusterstats_nodes_jvm_mem_heap_used_in_bytes db_cluster=* host=* | sum by db_cluster, host"
+        },
+        {
+          "rowId": "B",
+          "query": " metric=elasticsearch_clusterstats_nodes_jvm_mem_heap_used_in_bytes db_cluster=* host=* | sum by db_cluster, host"
+        },
+        {
+          "rowId": "C",
+          "query": "#A*100/#B along db_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Error Log Too Many",
+      "description": "Error Log Too Many",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=elasticsearch db_cluster=* ERROR | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw\n| json field=_raw \"timestamp\" as timestamp\n| json field=_raw \"level\" as level\n| json field=_raw \"component\" as component\n| json field=_raw \"message\" as message\n| where level = \"ERROR\"\n| fields level,message"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Pending Tasks",
+      "description": "Elasticsearch has pending tasks. Cluster works slowly.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_cluster_health_number_of_pending_tasks db_cluster=* | sum by db_cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Heap Usage Too High",
+      "description": "The heap usage is over 90%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_clusterstats_nodes_jvm_mem_heap_used_in_bytes db_cluster=* host=* | sum by db_cluster, host"
+        },
+        {
+          "rowId": "B",
+          "query": " metric=elasticsearch_clusterstats_nodes_jvm_mem_heap_used_in_bytes db_cluster=* host=* | sum by db_cluster, host"
+        },
+        {
+          "rowId": "C",
+          "query": "#A*100/#B along db_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Too Many Slow Query",
+      "description": "Alert Too Many Slow Query in 5 minutes",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=elasticsearch db_cluster=* took_millis | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw\n| json field=_raw \"timestamp\" as timestamp\n| json field=_raw \"level\" as level\n| json field=_raw \"component\" as component\n| json field=_raw \"message\" as message\n| where level = \"WARN\" and message matches \"*took_millis*\"\n| fields level,message"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 100,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 100,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Healthy Data Nodes",
+      "description": "Missing data node in Elasticsearch cluster",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_cluster_health_number_of_data_nodes db_cluster=* host=*| min by db_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 3,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 3,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Healthy Nodes",
+      "description": "Missing node in Elasticsearch cluster",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_cluster_health_number_of_nodes db_cluster=* host=* | min by db_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 3,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 3,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Disk Space Low",
+      "description": "The disk usage is over 80%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_fs_total_free_in_bytes db_cluster=* host=* | sum by db_cluster, host"
+        },
+        {
+          "rowId": "B",
+          "query": "metric=elasticsearch_fs_total_total_in_bytes db_cluster=* host=* | sum by db_cluster, host"
+        },
+        {
+          "rowId": "C",
+          "query": "(1-(#A/#B))*100 along db_cluster,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Elasticsearch - Disk Out of Space",
+      "description": "The disk usage is over 90%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=elasticsearch_fs_total_free_in_bytes db_cluster=* host=* | sum by db_cluster, host"
+        },
+        {
+          "rowId": "B",
+          "query": "metric=elasticsearch_fs_total_total_in_bytes db_cluster=* host=* | sum by db_cluster, host"
+        },
+        {
+          "rowId": "C",
+          "query": "(1-(#A/#B))*100 along db_cluster,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    }
+  ]
+}

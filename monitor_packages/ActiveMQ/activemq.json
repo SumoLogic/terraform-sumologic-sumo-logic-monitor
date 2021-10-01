@@ -1,0 +1,569 @@
+{
+  "name": "ActiveMQ",
+  "description": "Folder for ActiveMQ Monitors",
+  "type": "MonitorsLibraryFolderExport",
+  "children": [
+    {
+      "name": "ActiveMQ - High Storage  Used",
+      "description": "This alert fires when there is high store usage on a node in a ActiveMQ cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=\"activemq_broker_StorePercentUsage\" | avg by messaging_cluster,host | eval _value*100"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - Too Many Connections",
+      "description": "This alert fires when there are too many connections to a node in a ActiveMQ cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=\"activemq_broker_CurrentConnectionsCount\"  | avg by host,messaging_cluster "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - Too Many Unacknowledged Messages",
+      "description": "This alert fires when there are too many unacknowledged messages on a node in a ActiveMQ cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=activemq_*_QueueSize|avg by messaging_cluster,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - Too Many Expired Messages on Topics",
+      "description": "This alert fires when there are too many expired messages on a topic in a ActiveMQ cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* destinationName=* metric=\"activemq_topic_ExpiredCount\"| parse  field=destinationName * as topic | avg by topic,messaging_cluster"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - No Consumers on Queues",
+      "description": "This alert fires when a ActiveMQ queue has no consumers.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* destinationName=* metric=\"activemq_queue_ConsumerCount\" | parse  field=destinationName * as queue |avg by messaging_cluster,queue"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - Maximum Connection",
+      "description": "This alert fires when one node in ActiveMQ cluster exceeds the maximum allowed client connection limit.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=\"activemq\" messaging_cluster=* \"Exceeded the maximum number of allowed client connections\" \n| json \"log\" as _rawlog nodrop\n| if(isEmpty(_rawlog),_raw,_rawlog) as _raw\n|if(isEmpty(pod),_sourcehost,pod) as host \n| fields messaging_cluster,host,_raw"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - High CPU Usage",
+      "description": "This alert fires when CPU usage on a node in a ActiveMQ cluster is high.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=\"activemq_OperatingSystem_SystemCpuLoad\" | avg by host,messaging_cluster | eval _value*100"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - High Host Disk Usage",
+      "description": "This alert fires when there is high disk usage on a node in a ActiveMQ cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=\"activemq\" messaging_cluster=* host=* metric=\"disk_used_percent\" | avg by messaging_cluster,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - No Consumers on Topics",
+      "description": "This alert fires when a ActiveMQ topic has no consumers.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* destinationName=* metric=\"activemq_topic_ConsumerCount\" | parse  field=destinationName * as topic |avg by messaging_cluster,topic"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - Node Down",
+      "description": "This alert fires when a node in the ActiveMQ cluster is down.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_system=\"activemq\" messaging_cluster=* \"shutdown\" \"Apache ActiveMQ\"\n| json \"log\" as _rawlog nodrop\n| if(isEmpty(_rawlog),_raw,_rawlog) as _raw\n| fields messaging_cluster,_raw"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - High Number of File Descriptors in use",
+      "description": "This alert fires when the percentage of file descriptors used by a node in a ActiveMQ cluster is high.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=\"activemq_OperatingSystem_OpenFileDescriptorCount\" "
+        },
+        {
+          "rowId": "B",
+          "query": "messaging_cluster=* host=* metric=\"activemq_OperatingSystem_MaxFileDescriptorCount\" "
+        },
+        {
+          "rowId": "C",
+          "query": "(#A/#B)*100 along host,messaging_cluster | avg by messaging_cluster,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - High Memory Usage",
+      "description": "This alert fires when memory usage on a node in a ActiveMQ cluster is high.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=\"activemq_OperatingSystem_FreePhysicalMemorySize\"  | avg by messaging_cluster,host"
+        },
+        {
+          "rowId": "B",
+          "query": "messaging_cluster=* host=* metric=\"activemq_OperatingSystem_TotalPhysicalMemorySize\"  | avg by messaging_cluster,host"
+        },
+        {
+          "rowId": "C",
+          "query": "100-(#A/#B)*100 along host,messaging_cluster "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - High Temp  Usage",
+      "description": "This alert fires when there is high temp usage on a node in a ActiveMQ cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* host=* metric=\"activemq_broker_TempPercentUsage\" | eval _value*100 | avg by messaging_cluster,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "ActiveMQ - Too Many Expired Messages on Queues",
+      "description": "This alert fires when there are too many expired messages on a queue in a ActiveMQ cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "messaging_cluster=* destinationName=* metric=\"activemq_queue_ExpiredCount\"| parse  field=destinationName * as queue | avg by messaging_cluster,queue"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    }
+  ]
+}
