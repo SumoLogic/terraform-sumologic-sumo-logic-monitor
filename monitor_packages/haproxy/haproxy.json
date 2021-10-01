@@ -1,0 +1,530 @@
+{
+  "name": "HAProxy",
+  "description": "Folder for HAProxy Monitors",
+  "type": "MonitorsLibraryFolderExport",
+  "children": [
+    {
+      "name": "HAProxy - High Server Connection Errors",
+      "description": "There are too many connection errors to backend servers.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=haproxy_econ type=server proxy_cluster=* proxy_system=haproxy | sum by proxy_cluster, host, proxy"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 100,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 100,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - Frontend Security Blocked Requests",
+      "description": "HAProxy is blocking requests for security reasons",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=haproxy_dcon type=frontend proxy_system=haproxy proxy_cluster=* host=* | sum by proxy_cluster, host, proxy|  rate"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 10,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 10,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - Retry High",
+      "description": "There is a high retry rate",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=haproxy_wretr type=backend proxy_cluster=* host=* proxy_system=haproxy | sum by proxy_cluster,host,proxy "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - Access from Highly Malicious Sources",
+      "description": "This alert fires when an HAProxy is accessed from highly malicious IP addresses.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "proxy_cluster = * proxy_system=haproxy\n| json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as haproxy_log_message\n| parse regex field=haproxy_log_message \"(?<syslog_host>.*)\\]:\\s+\" nodrop\n| parse regex field=haproxy_log_message \":\\s+(?<c_ip>[\\w\\.]+):(?<c_port>\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\[(?<accept_date>.+)\\]\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\[(?<accept_date>.+)\\]\\s+(?<frontend_name>\\S+)\\s+(?<backend_name>\\S+)/(?<server_name>\\S+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<tq>-?\\d+)/(?<tw>-?\\d+)/(?<tc>-?\\d+)/(?<tr>-?\\d+)/(?<tt>\\+?\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<status_code>\\d+)\\s+(?<bytes_read>[\\d-]+)\\s+(?<tsc>.*)\\s+(?<act>\\d+)/(?<fe>\\d+)/(?<be>\\d+)/(?<srv>\\d+)/(?<retries>\\+?\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<queue_server>\\d+)/(?<queue_backend>\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\{(?<request_headers>.*)\\}\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\\"(?<http_request>.*)\\\"\" nodrop\n| parse regex field=request_headers \"(?<referer>\\S+)\\|(?<user_agent>[^\\\"]*)\"\n| parse regex field=http_request \"(?<method>\\w+)\\s+(?<request>[^\\\"]*)\\s+(?<http_version>\\w+)\"\n| lookup type, actor, raw, threatlevel as Malicious_Confidence from sumo://threat/cs on threat=c_ip \n| where  type=\"ip_address\" and !isNull(Malicious_Confidence)\n| json field=raw \"labels[*].name\" as label_name \n| replace(label_name, \"\\\\/\",\"->\") as label_name\n| replace(label_name, \"\\\"\",\" \") as label_name\n| if (isEmpty(actor), \"Unassigned\", actor) as Actor\n| where Malicious_Confidence matches \"high\"\n| fields raw,Malicious_Confidence,c_ip, actor, haproxy_log_message"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - High Active Backend Server Sessions",
+      "description": "When the percent of backend server connections are high.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "B",
+          "query": "metric=haproxy_slim type=server proxy_cluster=* proxy_system=haproxy | sum by proxy_cluster, host"
+        },
+        {
+          "rowId": "C",
+          "query": "metric=haproxy_smax type=server proxy_cluster=* proxy_system=haproxy | sum by proxy_cluster, host"
+        },
+        {
+          "rowId": "D",
+          "query": "100*#C/#B"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - High Client (HTTP 4xx) Error Rate",
+      "description": "This alert fires when there are too many HTTP requests (>5%) with a response status of 4xx.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "proxy_cluster = * proxy_system=haproxy\n| json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as haproxy_log_message\n| if (isEmpty(pod),_sourceHost,pod) as Server\n| parse regex field=haproxy_log_message \"(?<syslog_host>.*)\\]:\\s+\" nodrop\n| parse regex field=haproxy_log_message \":\\s+(?<c_ip>[\\w\\.]+):(?<c_port>\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\[(?<accept_date>.+)\\]\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\[(?<accept_date>.+)\\]\\s+(?<frontend_name>\\S+)\\s+(?<backend_name>\\S+)/(?<server_name>\\S+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<tq>-?\\d+)/(?<tw>-?\\d+)/(?<tc>-?\\d+)/(?<tr>-?\\d+)/(?<tt>\\+?\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<status_code>\\d+)\\s+(?<bytes_read>[\\d-]+)\\s+(?<tsc>.*)\\s+(?<act>\\d+)/(?<fe>\\d+)/(?<be>\\d+)/(?<srv>\\d+)/(?<retries>\\+?\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<queue_server>\\d+)/(?<queue_backend>\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\{(?<request_headers>.*)\\}\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\\"(?<http_request>.*)\\\"\" nodrop\n| parse regex field=request_headers \"(?<referer>\\S+)\\|(?<user_agent>[^\\\"]*)\"\n| parse regex field=http_request \"(?<method>\\w+)\\s+(?<request>[^\\\"]*)\\s+(?<http_version>\\w+)\"\n| where status_code matches \"5*\" or status_code matches \"4*\" or status_code matches \"3*\" or status_code matches \"2*\" or status_code matches \"1*\"\n| if (status_code matches \"4*\", 1, 0) as client_error\n| sum(client_error) as client_error, count as TotalRequests by Server\n| (client_error/TotalRequests) * 100 as ErrorPercentage\n| where ErrorPercentage > 5\n| fields Server, ErrorPercentage, client_error, TotalRequests"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - Slow Response Time",
+      "description": "The HAProxy response times are greater than one second.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=haproxy_ctime_max type=server proxy_cluster=* | avg by proxy_cluster,host,proxy"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - High Server (HTTP 5xx) Error Rate",
+      "description": "This alert fires when there are too many HTTP requests (>5%) with a response status of 5xx.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "proxy_cluster = * proxy_system=haproxy\n| json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as haproxy_log_message\n| if (isEmpty(pod),_sourceHost,pod) as Server\n| parse regex field=haproxy_log_message \"(?<syslog_host>.*)\\]:\\s+\" nodrop\n| parse regex field=haproxy_log_message \":\\s+(?<c_ip>[\\w\\.]+):(?<c_port>\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\[(?<accept_date>.+)\\]\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\[(?<accept_date>.+)\\]\\s+(?<frontend_name>\\S+)\\s+(?<backend_name>\\S+)/(?<server_name>\\S+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<tq>-?\\d+)/(?<tw>-?\\d+)/(?<tc>-?\\d+)/(?<tr>-?\\d+)/(?<tt>\\+?\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<status_code>\\d+)\\s+(?<bytes_read>[\\d-]+)\\s+(?<tsc>.*)\\s+(?<act>\\d+)/(?<fe>\\d+)/(?<be>\\d+)/(?<srv>\\d+)/(?<retries>\\+?\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<queue_server>\\d+)/(?<queue_backend>\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\{(?<request_headers>.*)\\}\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\\"(?<http_request>.*)\\\"\" nodrop\n| parse regex field=request_headers \"(?<referer>\\S+)\\|(?<user_agent>[^\\\"]*)\"\n| parse regex field=http_request \"(?<method>\\w+)\\s+(?<request>[^\\\"]*)\\s+(?<http_version>\\w+)\"\n| where status_code matches \"5*\" or status_code matches \"4*\" or status_code matches \"3*\" or status_code matches \"2*\" or status_code matches \"1*\"\n| if (status_code matches \"5*\", 1, 0) as server_error\n| sum(server_error) as ServerErrors, count as TotalRequests by Server\n| (ServerErrors / TotalRequests) * 100 as ErrorPercentage\n| where ErrorPercentage > 5\n| fields Server, ErrorPercentage, ServerErrors, TotalRequests"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - Server Healthcheck Failure",
+      "description": "Server healthchecks are failing.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=haproxy_chkfail type=server proxy_cluster=* proxy_system=haproxy "
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - Backend Error",
+      "description": "This alert fires when we detect backend server errors.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "proxy_cluster=* proxy_system=haproxy backend\n| json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as haproxy_log_message\n| parse regex field=haproxy_log_message \"(?<syslog_host>.*)\\]:\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+backend\\s+(?<frontend_name>\\S+)\\s+(?<msg>.*)\" nodrop\n| where length(frontend_name) > 0\n| fields  proxy_cluster, frontend_name, msg"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - Pending Requests",
+      "description": "HAProxy requests are pending",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=haproxy_qcur type=backend proxy_cluster=* proxy_system=haproxy | rate"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - Has No Alive Backends",
+      "description": "HAProxy has no alive active or backup backend servers",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=haproxy_active_servers type=backend proxy_cluster=* host=* | sum by proxy_cluster, host, proxy"
+        },
+        {
+          "rowId": "B",
+          "query": "metric=haproxy_backup_servers  type=backend proxy_cluster=* host=* | sum by proxy_cluster, host, proxy"
+        },
+        {
+          "rowId": "C",
+          "query": "#A+#B along proxy_cluster, host, proxy"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "HAProxy - Backend Server Down",
+      "description": "This alert fires when we detect a backend server for a given HAProxy server is down.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "proxy_cluster=* proxy_system=haproxy Server\n| json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as haproxy_log_message\n| parse regex field=haproxy_log_message \"(?<syslog_host>.*)\\]:\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+Server\\s+(?<frontend_name>\\S+)/(?<backend_name>\\S+)\\s+is\\s+DOWN,\\s+reason:\\s+(?<reason>.*),\\s+info:\\s+\\\"(?<info>.*)\\\",\\s+check\\s+duration:\\s+(?<check_duration>\\d+)ms.\\s+(?<active>\\d+)\\s+active\\s+and\\s+(?<backup>\\d+)\\s+backup\\s+servers\\s+left.\\s+(?<sessions>\\d+) sessions\\s+active,\\s+(?<requeued>\\d+)\\s+requeued,\\s+(?<remaining>\\d+)\\s+remaining\\s+in\\s+queue.\" nodrop\n| where length(frontend_name) > 0 and length(backend_name) > 0\n| fields proxy_cluster, frontend_name, backend_name, reason, info"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    }
+  ]
+}
