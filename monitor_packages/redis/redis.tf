@@ -39,8 +39,8 @@ module "Redis-HighCPUUsage" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 module "Redis-OutOfMemory" {
@@ -83,8 +83,8 @@ module "Redis-OutOfMemory" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 module "Redis-Instancedown" {
@@ -125,8 +125,8 @@ module "Redis-Instancedown" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_missingdata
+  email_notifications       = var.email_notifications_missingdata
 }
 
 module "Redis-Master-SlaveIO" {
@@ -167,8 +167,8 @@ module "Redis-Master-SlaveIO" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
 
 module "Redis-MemFragmentationRatioHigherthan" {
@@ -209,8 +209,8 @@ module "Redis-MemFragmentationRatioHigherthan" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
 
 
@@ -252,8 +252,8 @@ module "Redis-MissingMaster" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 module "Redis-RejectedConnections" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
@@ -293,8 +293,8 @@ module "Redis-RejectedConnections" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 module "Redis-ReplicaLag" {
@@ -335,8 +335,8 @@ module "Redis-ReplicaLag" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
 
 module "Redis-ReplicationBroken" {
@@ -377,8 +377,8 @@ module "Redis-ReplicationBroken" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 module "Redis-ReplicationOffset" {
@@ -419,8 +419,8 @@ module "Redis-ReplicationOffset" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
 
 module "Redis-TooManyConnections" {
@@ -461,6 +461,6 @@ module "Redis-TooManyConnections" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
 }
