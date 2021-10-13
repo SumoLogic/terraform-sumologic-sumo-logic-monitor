@@ -7,8 +7,8 @@ module "MongoDB-TooManyCursorsTimeouts" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.mongodb_data_source} metric=mongodb_cursor_timed_out db_system=mongodb db_cluster=* | sum by db_cluster, host | rate increasing"
   }
@@ -42,8 +42,8 @@ module "MongoDB-TooManyCursorsOpen" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = concat(var.connection_notifications_warning, var.connection_notifications_missingdata)
+  email_notifications       = concat(var.email_notifications_warning, var.email_notifications_missingdata)
   queries = {
     A = "${var.mongodb_data_source} metric=mongodb_cursor_total_count db_system=mongodb db_cluster=* | sum by host, db_cluster"
   }
@@ -95,8 +95,8 @@ module "MongoDB-MissingPrimary" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
   queries = {
     A = "${var.mongodb_data_source} db_system=mongodb db_cluster=* metric=mongodb_repl_queries node_type=pri | count by db_cluster"
   }
@@ -130,8 +130,8 @@ module "MongoDB-InstanceDown" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_missingdata
+  email_notifications       = var.email_notifications_missingdata
   queries = {
     A = "${var.mongodb_data_source} db_system=mongodb db_cluster=* metric=mongodb_uptime_ns "
   }
@@ -165,8 +165,8 @@ module "MongoDB-ReplicationLag" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.mongodb_data_source}  db_system=mongodb db_cluster=* metric=mongodb_repl_lag "
   }
@@ -200,8 +200,8 @@ module "MongoDB-ReplicationHeartbeatError" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*REPL*\" | json field=_raw \"attr.heartbeatMessage\" as heartbeatMessage | where heartbeatMessage matches \"Error*\""
   }
@@ -235,8 +235,8 @@ module "MongoDB-TooManyConnections" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = concat(var.connection_notifications_warning, var.connection_notifications_missingdata)
+  email_notifications       = concat(var.email_notifications_warning, var.email_notifications_missingdata)
   queries = {
     A = "${var.mongodb_data_source}  metric=mongodb_connections_current db_cluster=* db_system=mongodb | sum by db_cluster, host | avg"
     B = "${var.mongodb_data_source}  metric=mongodb_connections_available db_cluster=* db_system=mongodb | sum by db_cluster, host | avg"
@@ -290,8 +290,8 @@ module "MongoDB-SecondaryNodeReplicationFailure" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*REPL*\" and msg matches \"*too stale*\""
   }
@@ -325,8 +325,8 @@ module "MongoDB-SlowQueries" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.mongodb_data_source}  db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*COMMAND*\" | json field=_raw \"attr.type\" as type | where type matches \"*command*\" | json field=_raw \"attr.command\" as command | replace (command,\"{\",\"\") as command | replace (command,\"}\",\"\") as command | parse regex field=command \"(?<db_cmd>[\\w\\-\\.]+):*\" | where db_cmd matches \"*find*\" or db_cmd matches \"*insert*\" or db_cmd matches \"*remove*\" or db_cmd matches \"*delete*\" or db_cmd matches \"*update*\" | json field=_raw \"attr.durationMillis\" as dur | number(dur) | where dur > 100"
   }
@@ -360,8 +360,8 @@ module "MongoDB-ShardingWarning" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*SHARDING*\" and severity = \"W\" "
   }
@@ -395,8 +395,8 @@ module "MongoDB-ShardingChunkSplitFailure" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*SHARDING*\" and severity = \"W\" and msg matches \"*splitChunk failed*\""
   }
@@ -430,8 +430,8 @@ module "MongoDB-ShardingError" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
   queries = {
     A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where component matches \"*SHARDING*\" and severity = \"E\" "
   }
@@ -465,8 +465,8 @@ module "MongoDB-ReplicationError" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where severity = \"E\" and  component matches \"*REPL*\" "
   }
@@ -500,8 +500,8 @@ module "MongoDB-ShardingBalancerFailure" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.mongodb_data_source} db_cluster=* db_system=mongodb | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw  | json field=_raw \"t.$date\" as timestamp | json field=_raw \"s\" as severity | json field=_raw \"c\" as component | json field=_raw \"ctx\" as context | json field=_raw \"msg\" as msg | where severity not in  (\"W\", \"E\") and context matches \"*Balancer*\""
   }
