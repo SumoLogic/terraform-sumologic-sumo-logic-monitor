@@ -7,8 +7,8 @@ module "Varnish-High4XXErrorRate" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
   queries = {
     A = "${var.varnish_data_source} cache_system=varnish cache_cluster=* | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | if (isEmpty(pod),_sourceHost,pod) as Server | parse regex \"(?<client_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<logname>\\S+)\\s+(?<user>[\\S]+)\\s+\\[\" nodrop | parse regex \"(?<client_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<logname>\\S+)\\s+(?<user>[\\S]+)\\s+\\[\" nodrop | parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop | parse regex \"\\\"(?<referrer>http[s]{0,1}:[^\\\"]+)\\\"\\s+\\\"(?<agent>[^\\\"]+?)\\\"\" | if (status_code matches \"4*\", 1, 0) as ServerError | sum(ServerError) as ServerErrors, count as TotalRequests by Server | (ServerErrors/TotalRequests) * 100 as ErrorPercentage | where ErrorPercentage > 5 | fields Server, ErrorPercentage, ServerErrors, TotalRequests"
   }
@@ -42,8 +42,8 @@ module "Varnish-AccessfromHighlyMaliciousSources" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
   queries = {
     A = "${var.varnish_data_source} cache_system=varnish cache_cluster=* | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<logname>\\S+)\\s+(?<user>[\\S]+)\\s+\\[\" nodrop | parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<logname>\\S+)\\s+(?<user>[\\S]+)\\s+\\[\" nodrop | parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop | parse regex \"\\\"(?<referrer>http[s]{0,1}:[^\\\"]+)\\\"\\s+\\\"(?<agent>[^\\\"]+?)\\\"\" | lookup type, actor, raw, threatlevel as Malicious_Confidence from sumo://threat/cs on threat=remote_ip  | where  type=\"ip_address\" and !isNull(Malicious_Confidence) | json field=raw \"labels[*].name\" as label_name  | replace(label_name, \"\\\\/\",\"->\") as label_name | replace(label_name, \"\\\"\",\" \") as label_name | if (isEmpty(actor), \"Unassigned\", actor) as Actor | where Malicious_Confidence matches \"high\" | fields raw,Malicious_Confidence,remote_ip, actor, _raw"
   }
@@ -77,8 +77,8 @@ module "Varnish-BackendBusy" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.varnish_data_source} metric=varnish_backend_unhealthy cache_system=varnish cache_cluster=* host=* | sum by cache_cluster,host"
   }
@@ -112,8 +112,8 @@ module "Varnish-High5XXErrorRate" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
   queries = {
     A = "${var.varnish_data_source} cache_system=varnish cache_cluster=* | json \"log\" as _rawlog nodrop  | if (isEmpty(_rawlog), _raw, _rawlog) as _raw | if (isEmpty(pod),_sourceHost,pod) as Server | parse regex \"(?<client_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<logname>\\S+)\\s+(?<user>[\\S]+)\\s+\\[\" nodrop | parse regex \"(?<client_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<logname>\\S+)\\s+(?<user>[\\S]+)\\s+\\[\" nodrop | parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop | parse regex \"\\\"(?<referrer>http[s]{0,1}:[^\\\"]+)\\\"\\s+\\\"(?<agent>[^\\\"]+?)\\\"\" | if (status_code matches \"5*\", 1, 0) as ServerError | sum(ServerError) as ServerErrors, count as TotalRequests by Server | (ServerErrors/TotalRequests) * 100 as ErrorPercentage | where ErrorPercentage > 5 | fields Server, ErrorPercentage, ServerErrors, TotalRequests"
   }
@@ -147,8 +147,8 @@ module "Varnish-UnhealthyBackend" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
   queries = {
     A = "${var.varnish_data_source} metric=varnish_backend_unhealthy cache_system=varnish cache_cluster=* host=* | sum by cache_cluster,host "
   }
@@ -182,8 +182,8 @@ module "Varnish-BackendFailedConnections" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.varnish_data_source} metric=varnish_backend_fail cache_system=varnish cache_cluster=* host=* | sum by cache_cluster,host "
   }
@@ -217,8 +217,8 @@ module "Varnish-BackendConnectionRetries" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.varnish_data_source} metric=varnish_backend_retry cache_system=varnish cache_cluster=* host=* | sum by cache_cluster,host"
   }
@@ -252,8 +252,8 @@ module "Varnish-ThreadCreationFailed" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.varnish_data_source} metric=varnish_threads_failed cache_system=varnish cache_cluster=* host=* | sum by cache_cluster,host"
   }
