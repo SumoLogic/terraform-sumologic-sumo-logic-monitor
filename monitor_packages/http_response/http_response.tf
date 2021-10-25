@@ -43,8 +43,8 @@ module "http_response-failed_check" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 
@@ -91,8 +91,8 @@ module "http_response-4XX" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 # 5xx response code
@@ -138,8 +138,8 @@ module "http_response-5XX" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
 
 
@@ -186,6 +186,6 @@ module "http_response-high_response_time" {
 
   # Notifications
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
 }
