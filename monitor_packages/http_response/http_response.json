@@ -1,0 +1,167 @@
+{
+    "name": "http_response",
+    "description": "Folder for http_response Monitors",
+    "type": "MonitorsLibraryFolderExport",
+    "children": [
+      {
+        "name": "http_response - Failed HTTP 5XX Code",
+        "description": "This alert is fired if an HTTP synthetic check reports an HTTP 5XX code.",
+        "type": "MonitorsLibraryMonitorExport",
+        "monitorType": "Metrics",
+        "evaluationDelay": "0m",
+        "notificationGroupFields": [],
+        "queries": [
+          {
+            "rowId": "A",
+            "query": "     \n    component=http_response metric=http_response_result_code status_code=4*\n    | count by server \n"
+          }
+        ],
+        "triggers": [
+          {
+            "detectionMethod": "StaticCondition",
+            "triggerType": "Critical",
+            "timeRange": "-5m",
+            "threshold": 0,
+            "thresholdType": "GreaterThan",
+            "field": null,
+            "occurrenceType": "Always",
+            "triggerSource": "AnyTimeSeries"
+          },
+          {
+            "detectionMethod": "StaticCondition",
+            "triggerType": "ResolvedCritical",
+            "timeRange": "-5m",
+            "threshold": 0,
+            "thresholdType": "LessThanOrEqual",
+            "field": null,
+            "occurrenceType": "Always",
+            "triggerSource": "AnyTimeSeries"
+          }
+        ],
+        "notifications": [],
+        "isDisabled": true,
+        "groupNotifications": true,
+        "playbook": ""
+      },
+      {
+        "name": "http_response - Failed HTTP 4XX Code",
+        "description": "This alert is fired if an HTTP synthetic check reports an HTTP 4XX code.",
+        "type": "MonitorsLibraryMonitorExport",
+        "monitorType": "Metrics",
+        "evaluationDelay": "0m",
+        "notificationGroupFields": [],
+        "queries": [
+          {
+            "rowId": "A",
+            "query": "     \n    component=http_response metric=http_response_result_code status_code=4*\n    | count by server \n"
+          }
+        ],
+        "triggers": [
+          {
+            "detectionMethod": "StaticCondition",
+            "triggerType": "Critical",
+            "timeRange": "-5m",
+            "threshold": 0,
+            "thresholdType": "GreaterThan",
+            "field": null,
+            "occurrenceType": "Always",
+            "triggerSource": "AnyTimeSeries"
+          },
+          {
+            "detectionMethod": "StaticCondition",
+            "triggerType": "ResolvedCritical",
+            "timeRange": "-5m",
+            "threshold": 0,
+            "thresholdType": "LessThanOrEqual",
+            "field": null,
+            "occurrenceType": "Always",
+            "triggerSource": "AnyTimeSeries"
+          }
+        ],
+        "notifications": [],
+        "isDisabled": true,
+        "groupNotifications": true,
+        "playbook": ""
+      },
+      {
+        "name": "http_response - High Page Response Time",
+        "description": "This alert is fired if an HTTP synthetic check reports high response time.",
+        "type": "MonitorsLibraryMonitorExport",
+        "monitorType": "Metrics",
+        "evaluationDelay": "0m",
+        "notificationGroupFields": [],
+        "queries": [
+          {
+            "rowId": "A",
+            "query": "     \n    component=http_response metric=http_response_response_time  \n    | avg  by server\n"
+          }
+        ],
+        "triggers": [
+          {
+            "detectionMethod": "StaticCondition",
+            "triggerType": "Critical",
+            "timeRange": "-5m",
+            "threshold": 10,
+            "thresholdType": "GreaterThan",
+            "field": null,
+            "occurrenceType": "Always",
+            "triggerSource": "AnyTimeSeries"
+          },
+          {
+            "detectionMethod": "StaticCondition",
+            "triggerType": "ResolvedCritical",
+            "timeRange": "-5m",
+            "threshold": 10,
+            "thresholdType": "LessThanOrEqual",
+            "field": null,
+            "occurrenceType": "Always",
+            "triggerSource": "AnyTimeSeries"
+          }
+        ],
+        "notifications": [],
+        "isDisabled": true,
+        "groupNotifications": true,
+        "playbook": ""
+      },
+      {
+        "name": "http_response - Failed HTTP Check",
+        "description": "This alert is fired if an HTTP synthetic check reports status other than success.",
+        "type": "MonitorsLibraryMonitorExport",
+        "monitorType": "Metrics",
+        "evaluationDelay": "0m",
+        "notificationGroupFields": [],
+        "queries": [
+          {
+            "rowId": "A",
+            "query": "     \n    component=http_response metric=http_response_result_code not result=success \n    | count by server \n"
+          }
+        ],
+        "triggers": [
+          {
+            "detectionMethod": "StaticCondition",
+            "triggerType": "Critical",
+            "timeRange": "-5m",
+            "threshold": 0,
+            "thresholdType": "GreaterThan",
+            "field": null,
+            "occurrenceType": "Always",
+            "triggerSource": "AnyTimeSeries"
+          },
+          {
+            "detectionMethod": "StaticCondition",
+            "triggerType": "ResolvedCritical",
+            "timeRange": "-5m",
+            "threshold": 0,
+            "thresholdType": "LessThanOrEqual",
+            "field": null,
+            "occurrenceType": "Always",
+            "triggerSource": "AnyTimeSeries"
+          }
+        ],
+        "notifications": [],
+        "isDisabled": true,
+        "groupNotifications": true,
+        "playbook": ""
+      }
+    ]
+  }
