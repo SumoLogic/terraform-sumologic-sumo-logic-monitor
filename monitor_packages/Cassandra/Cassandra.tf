@@ -7,8 +7,8 @@ module "Cassandra-CompactionTaskPending" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.cassandra_data_source} metric=cassandra_TableMetrics_* name=pendingcompactionss db_cluster=* db_system=cassandra | avg by db_cluster, host"
   }
@@ -42,8 +42,8 @@ module "Cassandra-NodeDown" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
   queries = {
     A = "${var.cassandra_data_source} metric=cassandra_Net_FailureDetector_DownEndpointCount db_cluster=* db_system=cassandra | sum by db_cluster, host"
   }
@@ -77,8 +77,8 @@ module "Cassandra-CacheHitRatebelow85Percent" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
   queries = {
     A = "${var.cassandra_data_source} metric=cassandra_TableMetrics_KeyCacheHitRate_Value name=keycachehitrate db_cluster=* db_system=cassandra | sum by db_cluster,host,keyspace,scope | eval _value*100"
   }
@@ -112,8 +112,8 @@ module "Cassandra-RepairTasksPending" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.cassandra_data_source} metric=cassandra_ThreadPoolMetrics_internal_Value name=pendingtasks scope=antientropystage db_cluster=* db_system=cassandra | sum by db_cluster, host"
   }
@@ -147,8 +147,8 @@ module "Cassandra-HighTombstoneScanning" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_critical
+  email_notifications       = var.email_notifications_critical
   queries = {
     A = "${var.cassandra_data_source} metric=cassandra_TableMetrics_TombstoneScannedHistogram_99thPercentile name=tombstonescannedhistogram db_cluster=* db_system=cassandra | sum by db_cluster, hosst"
   }
@@ -182,8 +182,8 @@ module "Cassandra-IncreaseinAuthenticationFailures" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.cassandra_data_source} metric=cassandra_ClientMetrics_AuthFailure_Count db_cluster=* db_system=cassandra | sum by db_cluster, host"
   }
@@ -217,8 +217,8 @@ module "Cassandra-HighNumberofFlushWriterBlockedTasks" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.cassandra_data_source} metric=cassandra_ThreadPoolMetrics_* scope=memtableflushwriter name=totalblockedtasks db_cluster=* db_system=cassandra | sum by db_cluster,host"
   }
@@ -252,8 +252,8 @@ module "Cassandra-HighNumberofCompactionExecutorBlockedTasks" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.cassandra_data_source} metric=cassandra_ThreadPoolMetrics_* scope=compactionexecutor name=currentlyblockedtasks db_cluster=* db_system=cassandra | sum by db_cluster, host"
   }
@@ -287,8 +287,8 @@ module "Cassandra-BlockedRepairTasks" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.cassandra_data_source} metric=cassandra_ThreadPoolMetrics_internal_Value name=pendingtasks scope=currentlyblockedtasks db_cluster=* db_system=cassandra | sum by db_cluster,host"
   }
@@ -322,8 +322,8 @@ module "Cassandra-HighCommitlogPendingTasks" {
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id
   monitor_is_disabled         = var.monitors_disabled
   group_notifications       = var.group_notifications
-  connection_notifications  = var.connection_notifications
-  email_notifications       = var.email_notifications
+  connection_notifications  = var.connection_notifications_warning
+  email_notifications       = var.email_notifications_warning
   queries = {
     A = "${var.cassandra_data_source} metric=cassandra_CommitLogMetrics_PendingTasks_Value db_cluster=* db_system=cassandra | sum by db_cluster, host"
   }
