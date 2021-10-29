@@ -1,7 +1,7 @@
 # sumologic-host-process-metrics-monitors
 
 This script configures Sumo Logic Monitors for Host and Process Metrics using Terraform modules.
-For installation and configuration, please look at Sumo Logic Host and Process Metrics [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/12Databases/PostgreSQL/Install_the_PostgreSQL_app_and_view_the_dashboards).
+For installation and configuration, please look at Sumo Logic Host and Process Metrics [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/14Hosts_and_Operating_Systems/Host_and_Process_Metrics).
 ## License
 
 The Host and Process Metrics Terraform script is licensed under the apache v2.0 license.
