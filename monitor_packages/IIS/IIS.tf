@@ -17,8 +17,8 @@ module "IIS-SlowResponseTime" {
 				threshold_type = "GreaterThan",
 				threshold = 0,
 				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
 				trigger_type = "Warning",
 				detection_method = "LogsStaticCondition"
 			  },
@@ -26,8 +26,8 @@ module "IIS-SlowResponseTime" {
 				threshold_type = "LessThanOrEqual",
 				threshold = 0,
 				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
 				trigger_type = "ResolvedWarning",
 				detection_method = "LogsStaticCondition"
 			  }
@@ -52,8 +52,8 @@ module "IIS-ErrorEvents" {
 				threshold_type = "GreaterThan",
 				threshold = 0,
 				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
 				trigger_type = "Critical",
 				detection_method = "LogsStaticCondition"
 			  },
@@ -61,8 +61,8 @@ module "IIS-ErrorEvents" {
 				threshold_type = "LessThanOrEqual",
 				threshold = 0,
 				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
 				trigger_type = "ResolvedCritical",
 				detection_method = "LogsStaticCondition"
 			  }
@@ -122,8 +122,8 @@ module "IIS-HighServerHTTP5xxErrorRate" {
 				threshold_type = "GreaterThan",
 				threshold = 0,
 				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
 				trigger_type = "Critical",
 				detection_method = "LogsStaticCondition"
 			  },
@@ -131,8 +131,8 @@ module "IIS-HighServerHTTP5xxErrorRate" {
 				threshold_type = "LessThanOrEqual",
 				threshold = 0,
 				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
 				trigger_type = "ResolvedCritical",
 				detection_method = "LogsStaticCondition"
 			  }
@@ -157,8 +157,8 @@ module "IIS-AccessfromHighlyMaliciousSources" {
 				threshold_type = "GreaterThan",
 				threshold = 0,
 				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
 				trigger_type = "Critical",
 				detection_method = "LogsStaticCondition"
 			  },
@@ -166,8 +166,8 @@ module "IIS-AccessfromHighlyMaliciousSources" {
 				threshold_type = "LessThanOrEqual",
 				threshold = 0,
 				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
 				trigger_type = "ResolvedCritical",
 				detection_method = "LogsStaticCondition"
 			  }
@@ -227,8 +227,8 @@ module "IIS-HighClientHTTP4xxErrorRate" {
 				threshold_type = "GreaterThan",
 				threshold = 0,
 				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
 				trigger_type = "Critical",
 				detection_method = "LogsStaticCondition"
 			  },
@@ -236,8 +236,8 @@ module "IIS-HighClientHTTP4xxErrorRate" {
 				threshold_type = "LessThanOrEqual",
 				threshold = 0,
 				time_range = "5m",
-				occurrence_type = "Always"
-				trigger_source = "AnyTimeSeries"
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
 				trigger_type = "ResolvedCritical",
 				detection_method = "LogsStaticCondition"
 			  }
