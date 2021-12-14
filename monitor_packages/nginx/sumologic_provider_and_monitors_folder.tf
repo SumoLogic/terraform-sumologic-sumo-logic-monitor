@@ -6,7 +6,7 @@ provider "sumologic" {
 }
 
 #Sumo Logic Monitor Folder
-resource "sumologic_monitor_folder" "tf_monitor_folder" {
+resource "sumologic_monitor_folder" "tf_monitor_folder_1" {
   name = var.folder
   description = "Folder for Nginx Monitors"
 }
