@@ -1,0 +1,556 @@
+{
+  "name": "MariaDB",
+  "description": "Folder for MySQL Monitors",
+  "type": "MonitorsLibraryFolderExport",
+  "children": [
+    {
+      "name": "MariaDB - Excessive Slow Query Detected",
+      "description": "This alert fires when we detect the average time to execute a query is more than 15 seconds over a 24 hour time-period",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb db_cluster=* \"User@Host\" \"Query_time\"\n| json auto maxdepth 1 nodrop\n| if (isEmpty(log), _raw, log) as mariadb_log_message\n| parse regex field=mariadb_log_message \"(?<query_block># User@Host:[\\S\\s]+?SET timestamp=\\d+;[\\S\\s]+?;)\" multi\n| parse regex field=query_block \"Schema: (?<schema>(?:\\S*|\\s)?)\\s*Last_errno[\\s\\S]+?Query_time:\\s+(?<query_time>[\\d.]*)\\s+Lock_time:\\s+(?<lock_time>[\\d.]*)\\s+Rows_sent:\\s+(?<rows_sent>[\\d.]*)\\s+Rows_examined:\\s+(?<rows_examined>[\\d.]*)\\s+Rows_affected:\\s+(?<rows_affected>[\\d.]*)\\s+Rows_read:\\s+(?<rows_read>[\\d.]*)\\n\" nodrop // Pttrn2-vrtn1\n| parse regex field=query_block \"Schema: (?<schema>(?:\\S*|\\s)?)\\s*Last_errno[\\s\\S]+?\\s+Killed:\\s+\\d+\\n\" nodrop // Pttrn2-vrtn2\n| parse regex field=query_block \"Query_time:\\s+(?<query_time>[\\d.]*)\\s+Lock_time:\\s+(?<lock_time>[\\d.]*)\\s+Rows_sent:\\s+(?<rows_sent>[\\d]*)\\s+Rows_examined:\\s+(?<rows_examined>[\\d]*)\\s+Rows_affected:\\s+(?<rows_affected>[\\d]*)\\s+\" nodrop // Pttrn2-vrtn3\n| parse regex field=query_block \"Query_time:\\s+(?<query_time>[\\d.]*)\\s+Lock_time:\\s+(?<lock_time>[\\d.]*)\\s+Rows_sent:\\s+(?<rows_sent>[\\d]*)\\s+Rows_examined:\\s+(?<rows_examined>[\\d]*)\" // Pttrn2-vrtn4\n| fields -query_block\n| num (query_time)\n| count as frequency, sum(query_time) as total_time, min(query_time) as min_time, max(query_time) as max_time, avg(query_time) as avg_time, avg(rows_examined) as avg_rows_examined, avg(rows_sent) as avg_rows_sent, avg(Lock_Time) as avg_lock_time group by sql_cmd, db_cluster, schema\n| 15 as threshold // customize if need different value. As an example, query taking more than 15 Seconds is considered as Excessive Slow.\n| where avg_time > threshold\n| sort by avg_time, frequency asc"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-1d",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-1d",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - High Innodb buffer pool utilization",
+      "description": "This alert fires when we detect that the InnoDB buffer pool utilization is high (>=90%) within a 5 minute time interval.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb metric=mysql_Innodb_buffer_pool_pages_total db_cluster=* server=* | sum by db_cluster, host, server"
+        },
+        {
+          "rowId": "B",
+          "query": "db_system=mariadb metric=mysql_Innodb_buffer_pool_pages_free db_cluster=* server=* | sum by db_cluster, host, server"
+        },
+        {
+          "rowId": "C",
+          "query": "((#A - #B) / #A) * 100 along db_cluster, host, server"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - Instance down",
+      "description": "This alert fires when we detect that a MariaDB instance is down within last 5 minutes interval",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb db_cluster=*  (\"Shutdown complete\" or \"Terminated.\")\n| json \"log\" nodrop | if (_raw matches \"{*\", log, _raw) as mesg\n| parse regex field=mesg \"\\[(?<ErrorLogtype>[^\\]]*)][\\:]*\\s(?<ErrorMsg>.*)\" nodrop\n| \"Unknown\" as server_status\n| if (ErrorMsg matches \"*Terminated.*\", \"Down\", server_status) as server_status\n| if (ErrorMsg matches \"*Shutdown complete*\", \"Down\", server_status) as server_status\n| where server_status = \"Down\"\n| if (isEmpty(pod),_sourceHost,pod) as host\n| timeslice 1s\n| count by _timeslice, db_cluster,host,server_status,ErrorMsg"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "field": "",
+          "occurrenceType": "ResultCount",
+          "triggerSource": "AllResults"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - Large number of aborted connections",
+      "description": "This alert fires when we detect that there are 5 or more aborted connections identified within a time interval of 5 minutes.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb metric=mysql_aborted_connects db_cluster=* server=* | sum by db_cluster,host, server"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - Large number of internal connection errors",
+      "description": "This alert fires when we detect that there are 5 or more internal connection errors within a time interval of 5 minutes.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb metric=mysql_connection_errors_internal db_cluster=* server=* | sum by db_cluster, host, server"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - Slave Server Error",
+      "description": "This alert fires when slave server error within 5 minute time interval.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "C",
+          "query": "db_system=mariadb (metric=mysql_slave_last_io_errno or metric=mysql_slave_last_sql_errno) db_cluster=* | filter latest > 0 | sum by db_cluster,host,server"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - Connection refused",
+      "description": "This alert fires when connections are refused when the limit of maximum connections is reached within 5 minute time interval.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb metric=mysql_connection_errors_max_connections db_cluster=* host=* server=* | sum by db_cluster, host, server"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - Large number of statement warnings",
+      "description": "This alert fires when we detect that there are 20 or more statement warnings within a 5 minute time interval.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb metric=mysql_perf_schema_events_statements_warnings_total db_cluster=* server=* schema=* | sum by db_cluster, host, server, schema"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 20,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 20,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - Large number of slow queries",
+      "description": "This alert fires when we detect that there are 5 or more slow queries within a 5 minute time interval.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb metric=mysql_slow_queries db_cluster=* server=* | sum by db_cluster, host, server"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - Follower replication lag detected",
+      "description": "This alert fires when we detect that the average replication lag is greater than or equal to 900 seconds within a 5 minute time interval.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb metric=mysql_slave_Seconds_Behind_Master db_cluster=* server=* host=* | avg by db_cluster, server, host"
+        },
+        {
+          "rowId": "B",
+          "query": "db_system=mariadb metric=mysql_slave_SQL_delay db_cluster=* server=* host=*  | avg by db_cluster, server, host"
+        },
+        {
+          "rowId": "C",
+          "query": "(#A - #B) along db_cluster, server, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 900,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 900,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - Large number of statement errors",
+      "description": "This alert fires when we detect that there are 5 or more statement errors within a 5 minute time interval.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb metric=mysql_perf_schema_events_statements_errors_total db_cluster=* server=* schema=* | sum by db_cluster, host, server, schema"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - No index used in the SQL statements",
+      "description": "This alert fires when we detect that there are 5 or more statements not using an index in the sql query within a 5 minute time interval.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb metric=mysql_perf_schema_events_statements_no_index_used_total db_cluster=* server=* schema=* | sum by db_cluster, host, server, schema"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "MariaDB - High average query run time",
+      "description": "This alert fires when the average run time of SQL queries for a given schema is greater than or equal to one second within a time interval of 5 minutes.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=mariadb metric=mysql_perf_schema_events_statements_seconds_total db_cluster=* server=* schema=* | avg by db_cluster, host, server, schema"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        },
+        {
+          "detectionMethod": "StaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "field": null,
+          "occurrenceType": "Always",
+          "triggerSource": "AnyTimeSeries"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    }
+  ]
+}
