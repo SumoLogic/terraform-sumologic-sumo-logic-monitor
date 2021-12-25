@@ -1,10 +1,10 @@
 # Sumo Logic
 # Please replace <YOUR SUMO ACCESS ID> (including brackets) with your Sumo Access ID. https://help.sumologic.com/Manage/Security/Access-Keys
-access_id           = "su3UJ7JUUcRAWz"
+access_id           = "<YOUR SUMO ACCESS ID>"
 # Please replace <YOUR SUMO ACCESS KEY> (including brackets) with your Sumo Access KEY.
-access_key          = "25TAM0tmLbkmlI9EPn8KurKtXNHlj2m5d0Xaq4sCRr4YBc2tYawgllt1ojUBKFOA"
+access_key          = "<YOUR SUMO ACCESS KEY>"
 # Please update with your deployment, refer: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
-environment         = "us2"
+environment         = "<DEPLOYMENT>"
 # This flag determines whether to enable all monitors or not.
 monitors_disabled   = true
 # The Sumo Logic monitors will be installed in a folder specified by this value.
