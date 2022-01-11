@@ -213,5 +213,6 @@ module "sumologic-metrics-monitor" {
 - [ActiveMQ](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/ActiveMQ)
 - [Memcached](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/Memcached)
 - [http_response](./monitor_packages/http_response)
+- [IIS](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/IIS)
 - [MariaDB](./monitor_packages/MariaDB)
 - [Oracle](./monitor_packages/Oracle)
