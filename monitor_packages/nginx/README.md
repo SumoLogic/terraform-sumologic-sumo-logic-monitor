@@ -1,11 +1,12 @@
 # sumologic-nginx-monitors
 
-This Terraform script configures pre-packaged Sumo Logic Monitors for Nginx using Terraform modules.
-For installation and configuration, please look at Sumo Logic Nginx [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/24Web_Servers/Nginx_ULM/Install_the_Nginx_ULM_App_and_View_the_Dashboards).
+This script configures Sumo Logic Monitors for nginx using Terraform modules.
 
+This Terraform script configures pre-packaged Sumo Logic Monitors for nginx using Terraform modules.
+For installation and configuration, please look at Sumo Logic nginx [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/24Web_Servers/Nginx_ULM).
 ## License
 
-The Nginx Terraform script is licensed under the apache v2.0 license.
+The nginx Terraform script is licensed under the apache v2.0 license.
 
 ## Issues
 
