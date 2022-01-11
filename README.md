@@ -214,3 +214,4 @@ module "sumologic-metrics-monitor" {
 - [Memcached](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/Memcached)
 - [http_response](./monitor_packages/http_response)
 - [MariaDB](./monitor_packages/MariaDB)
+- [Oracle](./monitor_packages/Oracle)

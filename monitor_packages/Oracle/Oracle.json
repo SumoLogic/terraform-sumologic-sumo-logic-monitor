@@ -1,0 +1,843 @@
+{
+  "name": "Oracle",
+  "description": "Folder for Oracle Monitors",
+  "type": "MonitorsLibraryFolderExport",
+  "children": [
+    {
+      "name": "Oracle - High CPU Usage",
+      "description": "This alert fires when CPU usage on a node in a Oracle cluster is high.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=oracle metric_name=\"host_cpu_utilization_(%)\" db_cluster=* host=* | sum by db_cluster,host,instance"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Database Crash",
+      "description": "This alert fires when the database crashes.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle (\"ORA-00603\" or \"ORA-00449\" or \"ORA-00471\" or \"ORA-01092\") | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex field=oracle_log_message \"(?<oraerr>ORA-\\d{5}): (?<oramsg>.*)\" multi\n| where oraerr in (\"ORA-00603\", \"ORA-00449\", \"ORA-00471\", \"ORA-01092\")\n| if (isEmpty(pod),_sourceHost,pod) as host\n| fields db_cluster,host,oraerr,oramsg"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThan",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Deadlock",
+      "description": "This alert fires when deadlocks are detected.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle \"ORA-00060\" | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex field=oracle_log_message \"(?<oraerr>ORA-\\d{5}): (?<oramsg>.*)\" multi\n| where oraerr = \"ORA-00060\"\n| if (isEmpty(pod),_sourceHost,pod) as host\n| fields db_cluster,host,oraerr,oramsg"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 5,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Tablespaces Space Low",
+      "description": "This alert fires when tablespace disk usage is over 80%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=oracle metric=oracle_tablespaces_percent_used db_cluster=* host=* | sum by db_cluster,host,instance,tbs_name"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Process Limit Critical",
+      "description": "This alert fires when process CPU utilization is over 90%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=oracle metric_name=process_limit_% metric=oracle_sysmetric_metric_value db_cluster=* host=* | sum by db_cluster,host,instance"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Session Critical",
+      "description": "This alert fires when session usage is over 97%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=oracle metric_name=session_limit_% metric=oracle_sysmetric_metric_value db_cluster=* host=* | sum by db_cluster,host,instance"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 97,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 97,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Internal Errors",
+      "description": "This alert fires when internal errors are detected.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle (\"ORA-00600\" or \"ORA-07445\") | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex field=oracle_log_message \"(?<oraerr>ORA-\\d{5}): (?<oramsg>.*)\" multi\n| where oraerr in (\"ORA-00600\", \"ORA-07445\")\n| if (isEmpty(pod),_sourceHost,pod) as host\n| fields db_cluster,host,oraerr,oramsg"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - TNS Error",
+      "description": "This alert fires when we detect TNS operations errors.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle TNS-* | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex field=oracle_log_message \"(?<TNSerr>TNS-\\d{5}): (?<tnsmsg>.*)\" multi\n| if (isEmpty(pod),_sourceHost,pod) as host\n| fields db_cluster,host,TNSerr,tnsmsg"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Session Warning",
+      "description": "This alert fires when session usage is over 90%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=oracle metric_name=session_limit_% metric=oracle_sysmetric_metric_value db_cluster=* host=* | sum by db_cluster,host,instance"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "GreaterThan",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "LessThanOrEqual",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Unauthorized Command Execution",
+      "description": "This alert fires when we detect that a user is not authorized to execute a requested listener command in a Oracle instance.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle \"TNS-01190\" or \"The user is not authorized to execute the requested listener command\" | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex field=oracle_log_message \"(?<TNSerr>TNS-\\d{5}): (?<tnsmsg>.*)\" nodrop\n| if (isEmpty(pod),_sourceHost,pod) as host\n| fields db_cluster,host,TNSerr, tnsmsg\n"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Possible Inappropriate Activity",
+      "description": "This alert fires when we detect possible inappropriate activity.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle (\"TNS-01169\" or \"TNS-01189\" or \"TNS-01190\" or \"TNS-12508\") or (\"ORA-12525\" or \"ORA-28040\" or \"ORA-12170\") | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex field=oracle_log_message \"(?<TNSerr>TNS-\\d{5}): (?<tnsmsg>.*)\" nodrop\n| parse regex field=oracle_log_message \"(?<oraerr>ORA-\\d{5}): (?<oramsg>.*)\" multi nodrop\n| where (TNSerr in (\"TNS-01169\", \"TNS-01189\", \"TNS-01190\", \"TNS-12508\")) or (oraerr in (\"ORA-12525\", \"ORA-28040\", \"ORA-12170\"))\n| if (isEmpty(pod),_sourceHost,pod) as host\n| count as eventCount by db_cluster,host\n"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": "eventCount"
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": "eventCount"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Tablespaces Out of Space",
+      "description": "This alert fires when tablespace disk usage is over 90%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=oracle metric=oracle_tablespaces_percent_used db_cluster=* host=* | sum by db_cluster,host,instance,tbs_name"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Block Corruption",
+      "description": "This alert fires when we detect corrupted data blocks.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle \"ORA-01578\" | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex field=oracle_log_message \"(?<oraerr>ORA-\\d{5}): (?<oramsg>.*)\" multi\n| where oraerr = \"ORA-01578\"\n| if (isEmpty(pod),_sourceHost,pod) as host\n| fields db_cluster,host,oraerr,oramsg"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Unable To Extend Tablespace",
+      "description": "This alert fires when we detect that we are unable to extend tablespaces.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle unable to extend by tablespace\n| json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex field=oracle_log_message \"(?<oraerr>ORA-\\d{4,5}): (?<oramsg>.*)\" multi\n| parse regex field=oramsg \"unable to extend (?<object>[\\S\\s]+?)\\s+by \\d+ in tablespace\\s+(?<tablespace>\\S+)\"\n| if (isEmpty(pod),_sourceHost,pod) as host\n| fields db_cluster,host,oraerr, oramsg, object, tablespace\n"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Process Limit Warning",
+      "description": "This alert fires when processes CPU utilization is over 80%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=oracle metric_name=process_limit_% metric=oracle_sysmetric_metric_value db_cluster=* host=* | sum by db_cluster,host,instance"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Database Down",
+      "description": "This alert fires when we detect that the Oracle database is down.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=oracle metric=oracle_status_metric_value metric_name=database_status db_cluster=* | sum by db_cluster,host,instance"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Admin Restricted Command Execution",
+      "description": "This alert fires when the Listener could not resolve a command.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle (\"TNS:listener could not resolve the COMMAND given\" or \"TNS-12508\") | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex field=oracle_log_message \"(?<TNSerr>TNS-\\d{5}): (?<tnsmsg>.*)\" nodrop\n| if (isEmpty(pod),_sourceHost,pod) as host\n| fields db_cluster,host,TNSerr, tnsmsg\n"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Archival Log Creation",
+      "description": "This alert fires when there is an archive log creation error.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle Thread cannot allocate new log sequence Checkpoint \"not\" complete | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex field=oracle_log_message \"(?<oraerr>ORA-\\d{5}): (?<oramsg>.*)\" multi\n| where oraerr = \"ORA-00270\"\n| if (isEmpty(pod),_sourceHost,pod) as host\n| fields db_cluster,host,oraerr,oramsg"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - User Limit Critical",
+      "description": "This alert fires when concurrent user sessions usage is over 90%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=oracle metric_name=user_limit_% metric=oracle_sysmetric_metric_value db_cluster=* host=* | sum by db_cluster,host,instance"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 90,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Login Fail",
+      "description": "This alert fires when we detect that a user cannot login.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle establish \"PROGRAM=\" (\"SID=\" or \"SERVICE_NAME=\") | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex  field=oracle_log_message \"\\* \\(CONNECT_DATA[\\s\\S]+?\\* establish \\* \\S+ \\* (?<status>\\d+)\" nodrop\n| parse regex  field=oracle_log_message \"CONNECT_DATA[\\s\\S]+?SERVICE_NAME=(?<serviceName>[^)]*)\\)[\\s\\S]+establish\" nodrop\n| parse regex  field=oracle_log_message \"CONNECT_DATA[\\s\\S]+?service_name=(?<serviceName>[^)]*)\\)[\\s\\S]+establish\" nodrop\n| parse regex  field=oracle_log_message \"CONNECT_DATA[\\s\\S]+?SID=(?<SID>[^)]*)\\)[\\s\\S]+establish\" nodrop\n| parse regex  field=oracle_log_message \"CONNECT_DATA[\\s\\S]+?sid=(?<SID>[^)]*)\\)[\\s\\S]+establish\" nodrop\n| parse regex  field=oracle_log_message \"CONNECT_DATA[\\s\\S]+?PROGRAM=(?<userProgramName>[^)]*)\\)[\\s\\S]+?HOST=(?<userHost>[^)]*)\\)[\\s\\S]+?USER=(?<databaseUser>[^)]*)\\)\" nodrop\n| parse  field=oracle_log_message \"(ADDRESS=(PROTOCOL=*)(HOST=*)(PORT=*))\" as clientProtocol, clientHost, clientPort nodrop\n| parse regex  field=oracle_log_message \"(?<TNSerr>TNS-\\d{5}): (?<tnsmsg>.*)\" nodrop\n| where status != \"0\"\n| if (isEmpty(pod),_sourceHost,pod) as host\n| fields db_cluster,host,clientHost"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - Fatal NI Connect Error",
+      "description": "This alert fires when we detect a \"Fatal NI connect error\".",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=oracle \"Fatal NI connect error\" | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as oracle_log_message\n| parse regex field=oracle_log_message \"Fatal NI connect error (?<oraerr>\\d+?)(?:,|\\.)\"\n| if (isEmpty(pod),_sourceHost,pod) as host\n| count as eventCount by db_cluster, host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Oracle - User Limit Warning",
+      "description": "This alert fires when concurrent user sessions usage is over 80%",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_system=oracle metric_name=user_limit_% metric=oracle_sysmetric_metric_value db_cluster=* host=* | sum by db_cluster,host,instance"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Warning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedWarning",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    }
+  ]
+}
