@@ -1,11 +1,12 @@
 # sumologic-nginx-ingress-monitors
 
-This Terraform script configures pre-packaged Sumo Logic Monitors for Nginx-Ingress using Terraform modules.
-For installation and configuration, please look at Sumo Logic Nginx-Ingress [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/24Web_Servers/Nginx_Ingress_ULM/Install_the_Nginx_Ingress_App_and_View_the_Dashboards).
+This script configures Sumo Logic Monitors for Nginx Ingress using Terraform modules.
 
+This Terraform script configures pre-packaged Sumo Logic Monitors for Nginx Ingress using Terraform modules.
+For installation and configuration, please look at Sumo Logic Nginx Ingress [Help Document](https://help.sumologic.com/07Sumo-Logic-Apps/24Web_Servers/Nginx_Ingress_ULM).
 ## License
 
-The Nginx-Ingress Terraform script is licensed under the apache v2.0 license.
+The Nginx Ingress Terraform script is licensed under the apache v2.0 license.
 
 ## Issues
 

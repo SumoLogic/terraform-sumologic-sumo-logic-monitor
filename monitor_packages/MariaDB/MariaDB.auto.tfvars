@@ -8,6 +8,6 @@ environment         = "<DEPLOYMENT>"
 # This flag determines whether to enable all monitors or not.
 monitors_disabled   = true
 # The Sumo Logic monitors will be installed in a folder specified by this value.
-folder              = "Nginx"
-# Sumo Logic nginx Farm Filter. For eg: webserver_farm=nginx.prod.01
-nginx_data_source = ""
+folder              = "MariaDB"
+# Sumo Logic MariaDB. For eg: dbsystem=MariaDB.prod.01
+mariadb_data_source = ""

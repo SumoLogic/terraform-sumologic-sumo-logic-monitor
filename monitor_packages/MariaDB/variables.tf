@@ -27,7 +27,7 @@ variable "environment" {
 variable "folder" {
   type = string
   description = "Folder where monitors will be created."
-  default = "Nginx Ingress"
+  default = "MariaDB"
 }
 
 variable "monitors_disabled" {
@@ -67,7 +67,7 @@ variable "group_notifications" {
   description = "Whether or not to group notifications for individual items that meet the trigger condition. Defaults to true."
   default     = true
 }
-variable "nginxingress_data_source" {
+variable "mariadb_data_source" {
   type = string
-  description = "Sumo Logic Nginx Ingress Farm Filter. For eg: webserver_farm=nginxingress.prod.01"
+  description = "Sumo Logic MariaDB. For eg: dbsystem=MariaDB.prod.01"
 }
