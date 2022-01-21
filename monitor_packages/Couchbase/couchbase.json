@@ -1,0 +1,281 @@
+{
+  "name": "Couchbase",
+  "description": "Folder for Couchbase Monitors",
+  "type": "MonitorsLibraryFolderExport",
+  "children": [
+    {
+      "name": "Couchbase - High Memory Usage",
+      "description": "This alert fires when memory usage on a node in a Couchbase cluster is high.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=couchbase_node_memory_free db_cluster=* host=* | avg by db_cluster,host"
+        },
+        {
+          "rowId": "B",
+          "query": "metric=couchbase_node_memory_total db_cluster=* host=* | avg by db_cluster,host"
+        },
+        {
+          "rowId": "C",
+          "query": "(1-#A/#B)*100 along db_cluster,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Couchbase - Too Many Login Failure",
+      "description": "This alert fires when there are too many login failures to a node in a Couchbase cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=\"couchbase\"  \"login failure\"\n| json \"log\" as _rawlog nodrop\n| if(isEmpty(_rawlog),_raw,_rawlog) as _raw\n| json \"name\" as event_name\n| where event_name=\"login failure\"\n| json \"remote.ip\" as client_ip \n| json \"local.ip\" as couchbase_server\n| count as count by db_cluster, couchbase_server"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": "count"
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "LessThan",
+          "field": "count"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Couchbase - High CPU Usage",
+      "description": "This alert fires when CPU usage on a node in a Couchbase cluster is high.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Metrics",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "metric=couchbase_bucket_cpu_utilization_rate db_cluster=* host=* | avg by db_cluster,host"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "GreaterThanOrEqual",
+          "occurrenceType": "Always"
+        },
+        {
+          "detectionMethod": "MetricsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 80,
+          "thresholdType": "LessThan",
+          "occurrenceType": "Always"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Couchbase - Node Down",
+      "description": "This alert fires when a node in the Couchbase cluster is down.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=\"couchbase\" \"error\" \"nodedown\"\n| json \"log\" as _rawlog nodrop\n| if(isEmpty(_rawlog),_raw,_rawlog) as _raw\n| if (isEmpty(pod),_sourceHost,pod) as host\n|replace (_raw,/\\s+/,\" \") as _raw\n|parse regex \"nodedown,\\s'\\S+@(?<node>\\S+)\\'\"\n| parse regex \"ns_server:error,(?<time>\\S+),\"\n|_raw as msg \n| fields db_cluster,node"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Couchbase - Node Not Respond",
+      "description": "This alert fires when a node in the Couchbase cluster does not respond too many times.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=\"couchbase\" \"error\" \"Some nodes didn't respond\" \n| json \"log\" as _rawlog nodrop\n| if(isEmpty(_rawlog),_raw,_rawlog) as _raw\n|replace (_raw,/\\s+/,\" \") as _raw\n| parse regex \"stats:error,(?<time>\\S+),\"\n| parse regex \"Some nodes didn't respond: \\[(?<temp_nodes>.+)\\]\" | parse regex field=temp_nodes \"\\'(?<node_temp>[^,]+)\\'\" multi | parse regex field=node_temp \"@(?<node>.+)\"| _raw as msg \n| count as count by db_cluster,node"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 10,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": "count"
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 10,
+          "thresholdType": "LessThan",
+          "field": "count"
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Couchbase - Bucket Not Ready",
+      "description": "This alert fires when a bucket in the Couchbase cluster is not ready.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=\"couchbase\" \"buckets became not ready on node\" \"error\"\n| json \"log\" as _rawlog nodrop\n| if(isEmpty(_rawlog),_raw,_rawlog) as _raw\n| if (isEmpty(pod),_sourceHost,pod) as host\n|replace (_raw,/\\s+/,\" \") as _raw\n| parse regex \"\\'\\S+@(?<node>\\S+)\\'\\:\\s+\\[(?<buckets>.+)\\],\" | parse regex field=buckets \"\\\"(?<bucket>[^,]+)\\\"\" multi\n| parse regex \"ns_server:error,(?<time>\\S+),\" | _raw as msg\n| fields db_cluster,bucket,node"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "GreaterThan",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 0,
+          "thresholdType": "LessThanOrEqual",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    },
+    {
+      "name": "Couchbase - Too Many Error Queries on Buckets",
+      "description": "This alert fires when there are too many error queries on a bucket in a Couchbase cluster.",
+      "type": "MonitorsLibraryMonitorExport",
+      "monitorType": "Logs",
+      "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
+      "queries": [
+        {
+          "rowId": "A",
+          "query": "db_cluster=* db_system=\"couchbase\" (\"ERROR\" or \"Error\")\n| json \"log\" as _rawlog nodrop\n| if(isEmpty(_rawlog),_raw,_rawlog) as _raw\n| if (isEmpty(pod),_sourceHost,pod) as host\n| parse regex \"_time=(?<time>\\S+)\"\n| parse regex \"_msg=(?<msg>.+)\"\n| parse regex field=msg \"Keyspace\\s\\w+:(?<bucket>.+)\\.\"\n| parse regex field=msg \"Failed to perform (?<method>\\w+)\"\n|count by db_cluster,host,bucket\n| fields db_cluster,host,bucket\n"
+        }
+      ],
+      "triggers": [
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "Critical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "GreaterThanOrEqual",
+          "field": ""
+        },
+        {
+          "detectionMethod": "LogsStaticCondition",
+          "triggerType": "ResolvedCritical",
+          "timeRange": "-5m",
+          "threshold": 1000,
+          "thresholdType": "LessThan",
+          "field": ""
+        }
+      ],
+      "notifications": [],
+      "isDisabled": true,
+      "groupNotifications": true,
+      "playbook": ""
+    }
+  ]
+}
