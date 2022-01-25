@@ -35,10 +35,10 @@ module "Couchbase-HighMemoryUsage" {
 			  }
 			]
 }
-module "Couchbase-TooManyLoginFailure" {
+module "Couchbase-TooManyLoginFailures" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
-  monitor_name                = "Couchbase - Too Many Login Failure"
+  monitor_name                = "Couchbase - Too Many Login Failures"
   monitor_description         = "This alert fires when there are too many login failures to a node in a Couchbase cluster."
   monitor_monitor_type        = "Logs"
   monitor_parent_id           = sumologic_monitor_folder.tf_monitor_folder_1.id

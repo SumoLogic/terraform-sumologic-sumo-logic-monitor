@@ -50,7 +50,7 @@
       "playbook": ""
     },
     {
-      "name": "Couchbase - Too Many Login Failure",
+      "name": "Couchbase - Too Many Login Failures",
       "description": "This alert fires when there are too many login failures to a node in a Couchbase cluster.",
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Logs",
