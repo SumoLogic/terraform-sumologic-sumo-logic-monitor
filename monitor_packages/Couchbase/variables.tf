@@ -36,7 +36,7 @@ variable "monitors_disabled" {
   default = true
 }
 
-variable "connection_notifications" {
+variable "connection_notifications_critical" {
   type        = list(object(
                 {
                   connection_type = string,
@@ -45,10 +45,34 @@ variable "connection_notifications" {
                   run_for_trigger_types = list(string)
                 }
     ))
-  description = "Connection Notifications to be sent by the alert."
+  description = "Connection Notifications to be sent by the critical alert."
 }
 
-variable "email_notifications" {
+variable "connection_notifications_warning" {
+  type        = list(object(
+                {
+                  connection_type = string,
+                  connection_id = string,
+                  payload_override = string,
+                  run_for_trigger_types = list(string)
+                }
+    ))
+  description = "Connection Notifications to be sent by the warning alert."
+}
+
+variable "connection_notifications_missingdata" {
+  type        = list(object(
+                {
+                  connection_type = string,
+                  connection_id = string,
+                  payload_override = string,
+                  run_for_trigger_types = list(string)
+                }
+    ))
+  description = "Connection Notifications to be sent by the missingdata alert."
+}
+
+variable "email_notifications_critical" {
   type        = list(object(
                 {
                   connection_type = string,
@@ -59,7 +83,49 @@ variable "email_notifications" {
                   run_for_trigger_types = list(string)
                 }
     ))
-  description = "Email Notifications to be sent by the alert."
+  description = "Email Notifications to be sent by the critical alert."
+}
+
+variable "email_notifications_critical" {
+  type        = list(object(
+                {
+                  connection_type = string,
+                  recipients = list(string),
+                  subject = string,
+                  time_zone = string,
+                  message_body = string,
+                  run_for_trigger_types = list(string)
+                }
+    ))
+  description = "Email Notifications to be sent by the critical alert."
+}
+
+variable "email_notifications_warning" {
+  type        = list(object(
+                {
+                  connection_type = string,
+                  recipients = list(string),
+                  subject = string,
+                  time_zone = string,
+                  message_body = string,
+                  run_for_trigger_types = list(string)
+                }
+    ))
+  description = "Email Notifications to be sent by the warning alert."
+}
+
+variable "email_notifications_missingdata" {
+  type        = list(object(
+                {
+                  connection_type = string,
+                  recipients = list(string),
+                  subject = string,
+                  time_zone = string,
+                  message_body = string,
+                  run_for_trigger_types = list(string)
+                }
+    ))
+  description = "Email Notifications to be sent by the missingdata alert."
 }
 
 variable "group_notifications" {
