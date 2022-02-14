@@ -217,3 +217,4 @@ module "sumologic-metrics-monitor" {
 - [MariaDB](./monitor_packages/MariaDB)
 - [Oracle](./monitor_packages/Oracle)
 - [Squid Proxy](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/SquidProxy)
+- [Couchbase](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/Couchbase)
