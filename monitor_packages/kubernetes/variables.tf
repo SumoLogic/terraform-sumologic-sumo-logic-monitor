@@ -29,6 +29,11 @@ variable "folder" {
   description = "Folder where monitors will be created."
   default = "Kubernetes"
 }
+variable "folder_parent_id" {
+  type = string
+  description = "Parent if of the folder where monitors will be created. By default it's the root monitors folder."
+  default = null
+}
 
 variable "monitors_disabled" {
   type = bool
