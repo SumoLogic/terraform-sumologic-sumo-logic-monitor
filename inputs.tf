@@ -18,6 +18,21 @@ variable "monitor_monitor_type" {
   description = "The type of monitor, Logs or Metrics. Default Logs"
   default     = "Logs"
 }
+variable "monitor_slo_type" {
+  type        = string
+  description = "The type of Slo, Sli or BurnRate. Required if Monitor Type is Slo."
+  default     = null
+}
+variable "monitor_slo_id" {
+  type        = string
+  description = "Slo Id. Required if Monitor Type is Slo."
+  default     = null
+}
+#variable "monitor_evaluation_delay" { . #TODO
+#   type        = string
+#   description = "Evaluation Delay."
+#   default     = ""
+# }
 variable "monitor_is_disabled" {
   type        = bool
   description = "Whether or not the monitor is disabled. Default false."
@@ -30,8 +45,9 @@ variable "group_notifications" {
 }
 
 variable "queries" {
-  type      = map
+  type        = map
   description     = "All queries for the monitor."
+  default     = null
 }
 
 variable "triggers" {
@@ -47,8 +63,31 @@ variable "triggers" {
                 }
     ))
   description = "Triggers for alerting."
+  default = null
 }
 
+variable "slo_burnrate_triggers" {
+  type        = list(object(
+                {
+                  threshold = number,
+                  time_range = string,
+                  trigger_type = string,
+                }
+    ))
+  description = "Triggers for SLO Burn Rate alerting."
+  default = null
+}
+
+variable "slo_sli_triggers" {
+  type        = list(object(
+                {
+                  threshold = number,
+                  trigger_type = string,
+                }
+    ))
+  description = "Triggers for SLO Sli alerting."
+  default = null
+}
 
 variable "connection_notifications" {
   type        = list(object(
