@@ -101,7 +101,7 @@ resource "sumologic_monitor" "tf_monitor" {
                 for_each = local.hasMetricsWarningAlert ? ["1"] : []
                 content {
                   time_range = local.MetricsWarningAlert[0].time_range
-                  occurrence_type = local.MetricsCriticalAlert[0].occurrence_type
+                  occurrence_type = local.MetricsWarningAlert[0].occurrence_type
                   alert {
                     threshold      = local.MetricsWarningAlert[0].threshold
                     threshold_type = local.MetricsWarningAlert[0].threshold_type
