@@ -122,7 +122,7 @@ module "MongoDB-MissingPrimary" {
 			]
 }
 module "MongoDB-InstanceDown" {
-  source                    = "SumoLogic/sumo-logic-monitor/sumologic"
+  source                    = "../../"
   #version                  = "{revision}"
   monitor_name                = "MongoDB - Instance Down"
   monitor_description         = "This alert fires when we detect that the MongoDB instance is down."

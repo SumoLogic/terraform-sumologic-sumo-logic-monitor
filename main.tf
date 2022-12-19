@@ -55,7 +55,7 @@ resource "sumologic_monitor" "tf_monitor" {
 
  trigger_conditions {
     dynamic "logs_static_condition" {
-            for_each = toset(var.monitor_monitor_type == "Logs" ? ["1"] : [])
+            for_each = toset(var.monitor_monitor_type == "Logs" && (local.hasLogsCriticalAlert||local.hasLogsWarningAlert) ? ["1"] : [])
             content {
               dynamic "critical" {
                 for_each = local.hasLogsCriticalAlert ? ["1"] : []
@@ -94,7 +94,7 @@ resource "sumologic_monitor" "tf_monitor" {
       }
     }
     dynamic "metrics_static_condition" {
-            for_each = toset(var.monitor_monitor_type == "Metrics" ? ["1"] : [])
+            for_each = toset(var.monitor_monitor_type == "Metrics"&&(local.hasMetricsCriticalAlert||local.hasMetricsWarningAlert) ? ["1"] : [])
             content {
               dynamic "critical" {
                 for_each = local.hasMetricsCriticalAlert ? ["1"] : []

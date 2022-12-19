@@ -3,7 +3,7 @@ terraform {
 
   required_providers {
     sumologic = {
-      version = "~> 2.6.2"
+      version = "~> 2.18.0"
       source = "SumoLogic/sumologic"
     }
   }
