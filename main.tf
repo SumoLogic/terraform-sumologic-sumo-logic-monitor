@@ -43,6 +43,7 @@ resource "sumologic_monitor" "tf_monitor" {
   monitor_type = var.monitor_monitor_type
   group_notifications = var.group_notifications
   slo_id = var.monitor_slo_id
+  evaluation_delay = var.monitor_evaluation_delay
   
 
   dynamic "queries" {
@@ -171,6 +172,15 @@ resource "sumologic_monitor" "tf_monitor" {
               }
             }
     }
+  }
+
+ dynamic "obj_permission" {
+    for_each = var.monitor_permission
+      content {
+            subject_type = obj_permission.value.subject_type
+            subject_id = obj_permission.value.subject_id
+            permissions = obj_permission.value.permissions
+          }
   }
 
   dynamic "notifications" {
