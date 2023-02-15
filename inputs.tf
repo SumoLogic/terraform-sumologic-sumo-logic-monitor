@@ -28,11 +28,11 @@ variable "monitor_slo_id" {
   description = "Slo Id. Required if Monitor Type is Slo."
   default     = null
 }
-#variable "monitor_evaluation_delay" { . #TODO
-#   type        = string
-#   description = "Evaluation Delay."
-#   default     = ""
-# }
+variable "monitor_evaluation_delay" {
+  type        = string
+  description = "Evaluation Delay."
+  default     = "0m"
+}
 variable "monitor_is_disabled" {
   type        = bool
   description = "Whether or not the monitor is disabled. Default false."
@@ -113,4 +113,16 @@ variable "email_notifications" {
                 }
     ))
   description = "Email Notifications to be sent by the alert."
+}
+
+variable "monitor_permission" {
+  type        = list(object(
+                {
+                  subject_type = string,
+                  subject_id = string,
+                  permissions = list(string)
+                }
+    ))
+  description = "An monitor_permission is used to control permissions Explicitly associated with a Monitor"
+  default = []
 }
