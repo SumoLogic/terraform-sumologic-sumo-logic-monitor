@@ -1,13 +1,12 @@
 # Sumo Logic
 # Please replace <YOUR SUMO ACCESS ID> (including brackets) with your Sumo Access ID. https://help.sumologic.com/Manage/Security/Access-Keys
-# access_id           = "<YOUR SUMO ACCESS ID>"
-access_id = ""
-access_key = ""
+access_id           = "<YOUR SUMO ACCESS ID>"
 # Please replace <YOUR SUMO ACCESS KEY> (including brackets) with your Sumo Access KEY.
-# access_key          = "<YOUR SUMO ACCESS KEY>"
+access_key          = "<YOUR SUMO ACCESS KEY>"
 # Please update with your deployment, refer: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
-# environment         = "<DEPLOYMENT>"
-environment         = "us1"
+environment         = "<DEPLOYMENT>"
+# Please replace <YOUR SUMO ORGANIZATION ID> (including brackets) with your Sumo Organization ID.
+sumologic_organization_id ="<YOUR SUMO ORGANIZATION ID>"
 # The Sumo Logic monitors will be installed in a folder specified by this value.
 folder              = "Host And Process Metrics"
 # This flag determines whether to enable all monitors or not.
