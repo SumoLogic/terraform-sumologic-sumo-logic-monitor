@@ -9,4 +9,9 @@ provider "sumologic" {
 resource "sumologic_monitor_folder" "tf_monitor_folder_1" {
   name = var.folder
   description = "Folder for squidproxy Monitors"
+  obj_permission {
+    subject_type = "org"
+    subject_id = var.sumologic_organization_id
+    permissions = ["Create", "Read", "Update", "Delete", "Manage"]
+  }
 }
