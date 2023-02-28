@@ -125,7 +125,6 @@ module "HighLeaderElectionRate" {
   email_notifications       = var.email_notifications
 }
 
-
 module "GarbageCollection" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -167,7 +166,6 @@ module "GarbageCollection" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
 }
-
 
 module "OfflinePartitions" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
@@ -211,7 +209,6 @@ module "OfflinePartitions" {
   email_notifications       = var.email_notifications
 }
 
-
 module "FatalEventonBroker" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -233,7 +230,7 @@ module "FatalEventonBroker" {
                   time_range = "5m",
                   trigger_type = "Critical",
                   threshold = 0,
-                  threshold_type = "GreaterThanOrEqual",
+                  threshold_type = "GreaterThan",
                   occurrence_type = "ResultCount",
                   trigger_source = "AllResults" 
           
@@ -243,7 +240,7 @@ module "FatalEventonBroker" {
                   time_range = "5m",
                   trigger_type = "ResolvedCritical",
                   threshold = 0,
-                  threshold_type = "LessThan",
+                  threshold_type = "LessThanOrEqual",
                   occurrence_type = "ResultCount"
                   trigger_source = "AllResults" 
                   
@@ -392,7 +389,6 @@ module "HighCPUBrokerNode" {
   email_notifications       = var.email_notifications
 }
 
-
 module "OutOfSyncFollowers" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -437,7 +433,6 @@ module "OutOfSyncFollowers" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
 }
-
 
 module "HighBrokerMemUtilization" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"

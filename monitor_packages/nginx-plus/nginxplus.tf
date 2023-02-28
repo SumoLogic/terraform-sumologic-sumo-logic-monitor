@@ -40,7 +40,6 @@ module "DroppedConnections" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
 }
-
 # Sumo Logic Nginx Plus Logs Monitor
 module "AccessFromHighlyMaliciousSource" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
@@ -82,7 +81,6 @@ module "AccessFromHighlyMaliciousSource" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
 }
-
 module "CriticalErrorMessage" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -123,7 +121,6 @@ module "CriticalErrorMessage" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
 }
-
 module "HighClientError" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -164,7 +161,6 @@ module "HighClientError" {
   connection_notifications  = var.connection_notifications
   email_notifications       = var.email_notifications
 }
-
 module "HighServerError" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"

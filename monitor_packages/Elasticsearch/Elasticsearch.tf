@@ -476,7 +476,7 @@ module "Elasticsearch-TooManySlowQuery" {
 			  },
 			  {
 				threshold_type = "GreaterThanOrEqual",
-				threshold = 0,
+				threshold = 200,
 				time_range = "5m",
 				occurrence_type = "ResultCount"
 				trigger_source = "AllResults"
@@ -485,7 +485,7 @@ module "Elasticsearch-TooManySlowQuery" {
 			  },
 			  {
 				threshold_type = "LessThan",
-				threshold = 0,
+				threshold = 200,
 				time_range = "5m",
 				occurrence_type = "ResultCount"
 				trigger_source = "AllResults"
