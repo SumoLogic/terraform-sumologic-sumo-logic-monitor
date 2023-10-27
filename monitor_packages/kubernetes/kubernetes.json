@@ -396,7 +396,7 @@
       "queries": [
         {
           "rowId": "A",
-          "query": "$$kubernetes_data_source metric=node:node_cpu_utilisation:avg1m | sum by cluster,node"
+          "query": "$$kubernetes_data_source metric=node_cpu_seconds_total mode=idle | rate | avg by cluster,node | eval 1 - _value"
         }
       ],
       "triggers": [

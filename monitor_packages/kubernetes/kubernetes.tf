@@ -311,7 +311,7 @@ module "NodeCPUUtilizationHigh" {
 
   # Queries - Multiple queries allowed for Metrics monitor
   queries = {
-    A = "${var.kubernetes_data_source} metric=node:node_cpu_utilisation:avg1m | sum by cluster,node"
+    A = "${var.kubernetes_data_source} metric=node_cpu_seconds_total mode=idle | rate | avg by cluster, node | eval 1 - _value"
   }
 
   # Triggers
