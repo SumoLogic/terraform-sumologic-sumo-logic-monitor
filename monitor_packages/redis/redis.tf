@@ -42,7 +42,6 @@ module "Redis-HighCPUUsage" {
   connection_notifications  = var.connection_notifications_critical
   email_notifications       = var.email_notifications_critical
 }
-
 module "Redis-OutOfMemory" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -86,7 +85,6 @@ module "Redis-OutOfMemory" {
   connection_notifications  = var.connection_notifications_critical
   email_notifications       = var.email_notifications_critical
 }
-
 module "Redis-Instancedown" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -128,7 +126,6 @@ module "Redis-Instancedown" {
   connection_notifications  = var.connection_notifications_missingdata
   email_notifications       = var.email_notifications_missingdata
 }
-
 module "Redis-Master-SlaveIO" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -170,7 +167,6 @@ module "Redis-Master-SlaveIO" {
   connection_notifications  = var.connection_notifications_warning
   email_notifications       = var.email_notifications_warning
 }
-
 module "Redis-MemFragmentationRatioHigherthan" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -212,8 +208,6 @@ module "Redis-MemFragmentationRatioHigherthan" {
   connection_notifications  = var.connection_notifications_warning
   email_notifications       = var.email_notifications_warning
 }
-
-
 module "Redis-MissingMaster" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -296,7 +290,6 @@ module "Redis-RejectedConnections" {
   connection_notifications  = var.connection_notifications_critical
   email_notifications       = var.email_notifications_critical
 }
-
 module "Redis-ReplicaLag" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -338,7 +331,6 @@ module "Redis-ReplicaLag" {
   connection_notifications  = var.connection_notifications_warning
   email_notifications       = var.email_notifications_warning
 }
-
 module "Redis-ReplicationBroken" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -380,7 +372,6 @@ module "Redis-ReplicationBroken" {
   connection_notifications  = var.connection_notifications_critical
   email_notifications       = var.email_notifications_critical
 }
-
 module "Redis-ReplicationOffset" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"
@@ -422,7 +413,6 @@ module "Redis-ReplicationOffset" {
   connection_notifications  = var.connection_notifications_warning
   email_notifications       = var.email_notifications_warning
 }
-
 module "Redis-TooManyConnections" {
   source                    = "SumoLogic/sumo-logic-monitor/sumologic"
   #version                  = "{revision}"

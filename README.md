@@ -38,7 +38,18 @@ provider "sumologic" {
   environment = "<SUMOLOGIC DEPLOYMENT>"
 }
 ```
+
+#### Required Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_access_id"></a> [access\_id](#input\_access\_id) | Sumo Logic Access ID. Visit https://help.sumologic.com/Manage/Security/Access-Keys#Create_an_access_key | `string` | n/a | yes |
+| <a name="input_access_key"></a> [access\_key](#input\_access\_key) | Sumo Logic Access Key. | `string` | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | Please update with your deployment, refer: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security | `string` | n/a | yes |
+| <a name="input_sumologic_organization_id"></a> [sumologic\_organization\_id](#input\_sumologic\_organization\_id) | You can find your org on the Preferences page in the Sumo Logic UI.<br>            For more details, visit https://help.sumologic.com/01Start-Here/05Customize-Your-Sumo-Logic-Experience/Preferences-Page | `string` | n/a | yes |
+
 You can also define these values in `terraform.tfvars`.
+
 #### Optional Prerequisites
 
 Sumo Logic monitors can be configured in a folder.
@@ -76,7 +87,7 @@ module "sumologic-logs-monitor" {
   triggers = [
               {
                   threshold_type        = "GreaterThanOrEqual",
-                  threshold             = 0,
+                  threshold             = 5,
                   time_range            = "5m",
                   occurrence_type       = "ResultCount", # Options: ResultCount and MissingData for logs
                   trigger_source        = "AllResults", # Options: AllResults for logs.
@@ -85,7 +96,7 @@ module "sumologic-logs-monitor" {
                 },
                 {
                   threshold_type        = "LessThan",
-                  threshold             = 0,
+                  threshold             = 5,
                   time_range            = "5m",
                   occurrence_type       = "ResultCount", # Options: ResultCount and MissingData for logs
                   trigger_source        = "AllResults", # Options: AllResults for logs.
@@ -218,3 +229,36 @@ module "sumologic-metrics-monitor" {
 - [Oracle](./monitor_packages/Oracle)
 - [Squid Proxy](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/SquidProxy)
 - [Couchbase](https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/Couchbase)
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [sumologic_monitor.tf_monitor](https://registry.terraform.io/providers/SumoLogic/sumologic/latest/docs/resources/monitor) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_connection_notifications"></a> [connection\_notifications](#input\_connection\_notifications) | Connection Notifications to be sent by the alert. | <pre>list(object(<br>                {<br>                  connection_type = string,<br>                  connection_id = string,<br>                  payload_override = string,<br>                  run_for_trigger_types = list(string)<br>                }<br>    ))</pre> | n/a | yes |
+| <a name="input_email_notifications"></a> [email\_notifications](#input\_email\_notifications) | Email Notifications to be sent by the alert. | <pre>list(object(<br>                {<br>                  connection_type = string,<br>                  recipients = list(string),<br>                  subject = string,<br>                  time_zone = string,<br>                  message_body = string,<br>                  run_for_trigger_types = list(string)<br>                }<br>    ))</pre> | n/a | yes |
+| <a name="input_group_notifications"></a> [group\_notifications](#input\_group\_notifications) | Whether or not to group notifications for individual items that meet the trigger condition. Defaults to true. | `bool` | `true` | no |
+| <a name="input_monitor_description"></a> [monitor\_description](#input\_monitor\_description) | The description of the monitor. | `string` | `""` | no |
+| <a name="input_monitor_evaluation_delay"></a> [monitor\_evaluation\_delay](#input\_monitor\_evaluation\_delay) | Evaluation Delay. | `string` | `"0m"` | no |
+| <a name="input_monitor_is_disabled"></a> [monitor\_is\_disabled](#input\_monitor\_is\_disabled) | Whether or not the monitor is disabled. Default false. | `bool` | `false` | no |
+| <a name="input_monitor_monitor_type"></a> [monitor\_monitor\_type](#input\_monitor\_monitor\_type) | The type of monitor, Logs or Metrics. Default Logs | `string` | `"Logs"` | no |
+| <a name="input_monitor_name"></a> [monitor\_name](#input\_monitor\_name) | Monitor Name | `string` | n/a | yes |
+| <a name="input_monitor_parent_id"></a> [monitor\_parent\_id](#input\_monitor\_parent\_id) | The ID of the Monitor Folder that contains this monitor. | `string` | `null` | no |
+| <a name="input_monitor_permission"></a> [monitor\_permission](#input\_monitor\_permission) | An monitor\_permission is used to control permissions Explicitly associated with a Monitor | <pre>list(object(<br>                {<br>                  subject_type = string,<br>                  subject_id = string,<br>                  permissions = list(string)<br>                }<br>    ))</pre> | `[]` | no |
+| <a name="input_monitor_slo_id"></a> [monitor\_slo\_id](#input\_monitor\_slo\_id) | Slo Id. Required if Monitor Type is Slo. | `string` | `null` | no |
+| <a name="input_monitor_slo_type"></a> [monitor\_slo\_type](#input\_monitor\_slo\_type) | The type of Slo, Sli or BurnRate. Required if Monitor Type is Slo. | `string` | `null` | no |
+| <a name="input_queries"></a> [queries](#input\_queries) | All queries for the monitor. | `map` | `null` | no |
+| <a name="input_slo_burnrate_triggers"></a> [slo\_burnrate\_triggers](#input\_slo\_burnrate\_triggers) | Triggers for SLO Burn Rate alerting. | <pre>list(object(<br>                {<br>                  threshold = number,<br>                  time_range = string,<br>                  trigger_type = string,<br>                }<br>    ))</pre> | `null` | no |
+| <a name="input_slo_sli_triggers"></a> [slo\_sli\_triggers](#input\_slo\_sli\_triggers) | Triggers for SLO Sli alerting. | <pre>list(object(<br>                {<br>                  threshold = number,<br>                  trigger_type = string,<br>                }<br>    ))</pre> | `null` | no |
+| <a name="input_triggers"></a> [triggers](#input\_triggers) | Triggers for alerting. | <pre>list(object(<br>                {<br>                  threshold_type = string,<br>                  threshold = number,<br>                  time_range = string,<br>                  occurrence_type = string,<br>                  trigger_source = string,<br>                  trigger_type = string,<br>                  detection_method = string<br>                }<br>    ))</pre> | `null` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_sumologic_monitor"></a> [sumologic\_monitor](#output\_sumologic\_monitor) | This output contains details of the Sumo Logic monitor. |
