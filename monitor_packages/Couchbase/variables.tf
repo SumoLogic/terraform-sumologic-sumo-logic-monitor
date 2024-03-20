@@ -86,20 +86,6 @@ variable "email_notifications_critical" {
   description = "Email Notifications to be sent by the critical alert."
 }
 
-variable "email_notifications_critical" {
-  type        = list(object(
-                {
-                  connection_type = string,
-                  recipients = list(string),
-                  subject = string,
-                  time_zone = string,
-                  message_body = string,
-                  run_for_trigger_types = list(string)
-                }
-    ))
-  description = "Email Notifications to be sent by the critical alert."
-}
-
 variable "email_notifications_warning" {
   type        = list(object(
                 {

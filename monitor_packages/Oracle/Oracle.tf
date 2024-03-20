@@ -49,7 +49,7 @@ module "Oracle-DatabaseCrash" {
   }
   triggers = [
 			  {
-				threshold_type = "GreaterThanOrEqual",
+				threshold_type = "GreaterThan",
 				threshold = 0,
 				time_range = "5m",
 				occurrence_type = "ResultCount"
@@ -58,7 +58,7 @@ module "Oracle-DatabaseCrash" {
 				detection_method = "LogsStaticCondition"
 			  },
 			  {
-				threshold_type = "LessThan",
+				threshold_type = "LessThanOrEqual",
 				threshold = 0,
 				time_range = "5m",
 				occurrence_type = "ResultCount"

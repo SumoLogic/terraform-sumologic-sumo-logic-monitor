@@ -51,7 +51,7 @@ module "SquidProxy-HighClientHTTP4xxErrorRate" {
   }
   triggers = [
 			  {
-				threshold_type = "GreaterThanOrEqual",
+				threshold_type = "GreaterThan",
 				threshold = 0,
 				time_range = "5m",
 				occurrence_type = "ResultCount"
@@ -60,7 +60,7 @@ module "SquidProxy-HighClientHTTP4xxErrorRate" {
 				detection_method = "LogsStaticCondition"
 			  },
 			  {
-				threshold_type = "LessThan",
+				threshold_type = "LessThanOrEqual",
 				threshold = 0,
 				time_range = "5m",
 				occurrence_type = "ResultCount"
@@ -86,7 +86,7 @@ module "SquidProxy-HighServerHTTP5xxErrorRate" {
   }
   triggers = [
 			  {
-				threshold_type = "GreaterThanOrEqual",
+				threshold_type = "GreaterThan",
 				threshold = 0,
 				time_range = "5m",
 				occurrence_type = "ResultCount"
@@ -95,7 +95,7 @@ module "SquidProxy-HighServerHTTP5xxErrorRate" {
 				detection_method = "LogsStaticCondition"
 			  },
 			  {
-				threshold_type = "LessThan",
+				threshold_type = "LessThanOrEqual",
 				threshold = 0,
 				time_range = "5m",
 				occurrence_type = "ResultCount"
@@ -121,7 +121,7 @@ module "SquidProxy-HighDeniedRequest" {
   }
   triggers = [
 			  {
-				threshold_type = "GreaterThanOrEqual",
+				threshold_type = "GreaterThan",
 				threshold = 0,
 				time_range = "5m",
 				occurrence_type = "ResultCount"
@@ -130,7 +130,7 @@ module "SquidProxy-HighDeniedRequest" {
 				detection_method = "LogsStaticCondition"
 			  },
 			  {
-				threshold_type = "LessThan",
+				threshold_type = "LessThanOrEqual",
 				threshold = 0,
 				time_range = "5m",
 				occurrence_type = "ResultCount"
