@@ -462,7 +462,7 @@ module "Elasticsearch-TooManySlowQuery" {
 				time_range = "5m",
 				occurrence_type = "ResultCount"
 				trigger_source = "AllResults"
-				trigger_type = "Warning",
+				trigger_type = "Critical",
 				detection_method = "StaticCondition"
 			  },
 			  {
@@ -471,25 +471,25 @@ module "Elasticsearch-TooManySlowQuery" {
 				time_range = "5m",
 				occurrence_type = "ResultCount"
 				trigger_source = "AllResults"
-				trigger_type = "ResolvedWarning",
-				detection_method = "StaticCondition"
-			  },
-			  {
-				threshold_type = "GreaterThanOrEqual",
-				threshold = 0,
-				time_range = "5m",
-				occurrence_type = "ResultCount"
-				trigger_source = "AllResults"
-				trigger_type = "Critical",
-				detection_method = "StaticCondition"
-			  },
-			  {
-				threshold_type = "LessThan",
-				threshold = 0,
-				time_range = "5m",
-				occurrence_type = "ResultCount"
-				trigger_source = "AllResults"
 				trigger_type = "ResolvedCritical",
+				detection_method = "StaticCondition"
+			  },
+			  {
+				threshold_type = "GreaterThan",
+				threshold = 0,
+				time_range = "5m",
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
+				trigger_type = "Warning",
+				detection_method = "StaticCondition"
+			  },
+			  {
+				threshold_type = "LessThanOrEqual",
+				threshold = 0,
+				time_range = "5m",
+				occurrence_type = "ResultCount"
+				trigger_source = "AllResults"
+				trigger_type = "ResolvedWarning",
 				detection_method = "StaticCondition"
 			  }
 			]
