@@ -233,7 +233,7 @@ module "FatalEventonBroker" {
                   time_range = "5m",
                   trigger_type = "Critical",
                   threshold = 0,
-                  threshold_type = "GreaterThanOrEqual",
+                  threshold_type = "GreaterThan",
                   occurrence_type = "ResultCount",
                   trigger_source = "AllResults" 
           
@@ -243,7 +243,7 @@ module "FatalEventonBroker" {
                   time_range = "5m",
                   trigger_type = "ResolvedCritical",
                   threshold = 0,
-                  threshold_type = "LessThan",
+                  threshold_type = "LessThanOrEqual",
                   occurrence_type = "ResultCount"
                   trigger_source = "AllResults" 
                   
