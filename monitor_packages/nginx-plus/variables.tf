@@ -21,25 +21,18 @@ variable "environment" {
   description = "Please update with your deployment, refer: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security"
   validation {
     condition = contains([
-      "US1",
-      "us1",
-      "US2",
-      "us2",
-      "AU",
       "au",
-      "CA",
       "ca",
-      "DE",
       "de",
-      "EU",
       "eu",
-      "FED",
       "fed",
-      "JP",
+      "in",
       "jp",
-      "IN",
-      "in"], var.environment)
-    error_message = "Argument \"environment\" must be one of \"us1\",\"us2\",\"au\",\"ca\",\"de\",\"eu\",\"fed\",\"jp\",\"in\"."
+      "kr",
+      "us1",
+      "us2"
+    ], var.environment)
+    error_message = "The value must be one of au, ca, de, eu, fed, in, jp, kr, us1 or us2."
   }
 }
 
