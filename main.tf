@@ -44,6 +44,7 @@ resource "sumologic_monitor" "tf_monitor" {
   group_notifications = var.group_notifications
   slo_id = var.monitor_slo_id
   evaluation_delay = var.monitor_evaluation_delay
+  tags = var.tags
   
 
   dynamic "queries" {
