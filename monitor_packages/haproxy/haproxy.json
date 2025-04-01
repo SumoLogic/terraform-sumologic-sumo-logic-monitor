@@ -126,38 +126,50 @@
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Logs",
       "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
       "queries": [
         {
           "rowId": "A",
-          "query": "proxy_cluster = * proxy_system=haproxy\n| json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as haproxy_log_message\n| parse regex field=haproxy_log_message \"(?<syslog_host>.*)\\]:\\s+\" nodrop\n| parse regex field=haproxy_log_message \":\\s+(?<c_ip>[\\w\\.]+):(?<c_port>\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\[(?<accept_date>.+)\\]\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\[(?<accept_date>.+)\\]\\s+(?<frontend_name>\\S+)\\s+(?<backend_name>\\S+)/(?<server_name>\\S+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<tq>-?\\d+)/(?<tw>-?\\d+)/(?<tc>-?\\d+)/(?<tr>-?\\d+)/(?<tt>\\+?\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<status_code>\\d+)\\s+(?<bytes_read>[\\d-]+)\\s+(?<tsc>.*)\\s+(?<act>\\d+)/(?<fe>\\d+)/(?<be>\\d+)/(?<srv>\\d+)/(?<retries>\\+?\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<queue_server>\\d+)/(?<queue_backend>\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\{(?<request_headers>.*)\\}\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\\"(?<http_request>.*)\\\"\" nodrop\n| parse regex field=request_headers \"(?<referer>\\S+)\\|(?<user_agent>[^\\\"]*)\"\n| parse regex field=http_request \"(?<method>\\w+)\\s+(?<request>[^\\\"]*)\\s+(?<http_version>\\w+)\"\n| lookup type, actor, raw, threatlevel as Malicious_Confidence from sumo://threat/cs on threat=c_ip \n| where  type=\"ip_address\" and !isNull(Malicious_Confidence)\n| json field=raw \"labels[*].name\" as label_name \n| replace(label_name, \"\\\\/\",\"->\") as label_name\n| replace(label_name, \"\\\"\",\" \") as label_name\n| if (isEmpty(actor), \"Unassigned\", actor) as Actor\n| where Malicious_Confidence matches \"high\"\n| fields raw,Malicious_Confidence,c_ip, actor, haproxy_log_message"
+          "query": "proxy_cluster = * proxy_system=haproxy\n| json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as haproxy_log_message\n| parse regex field=haproxy_log_message \"(?<syslog_host>.*)\\]:\\s+\" nodrop\n| parse regex field=haproxy_log_message \":\\s+(?<c_ip>[\\w\\.]+):(?<c_port>\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\[(?<accept_date>.+)\\]\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\[(?<accept_date>.+)\\]\\s+(?<frontend_name>\\S+)\\s+(?<backend_name>\\S+)/(?<server_name>\\S+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<tq>-?\\d+)/(?<tw>-?\\d+)/(?<tc>-?\\d+)/(?<tr>-?\\d+)/(?<tt>\\+?\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<status_code>\\d+)\\s+(?<bytes_read>[\\d-]+)\\s+(?<tsc>.*)\\s+(?<act>\\d+)/(?<fe>\\d+)/(?<be>\\d+)/(?<srv>\\d+)/(?<retries>\\+?\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+(?<queue_server>\\d+)/(?<queue_backend>\\d+)\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\{(?<request_headers>.*)\\}\\s+\" nodrop\n| parse regex field=haproxy_log_message \"\\s+\\\"(?<http_request>.*)\\\"\" nodrop\n| parse regex field=request_headers \"(?<referer>\\S+)\\|(?<user_agent>[^\\\"]*)\"\n| parse regex field=http_request \"(?<method>\\w+)\\s+(?<request>[^\\\"]*)\\s+(?<http_version>\\w+)\"\n| threatlookup singleIndicator c_ip\n| where (_threatlookup.type=\"ipv4-addr:value\" or _threatlookup.type=\"ipv6-addr:value\") and !isNull(_threatlookup.confidence)\n| if (_threatlookup.confidence >= 85, \"high\", if (_threatlookup.confidence >= 50, \"medium\", if (_threatlookup.confidence >= 15, \"low\", if (_threatlookup.confidence >= 0, \"unverified\", \"Unknown\")))) as malicious_confidence\n| if (isEmpty(_threatlookup.actors), \"Unassigned\", _threatlookup.actors) as Actor\n| where malicious_confidence matches \"high\"\n| fields _threatlookup.fields,malicious_confidence,c_ip, Actor, haproxy_log_message"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
           "triggerType": "Critical",
+          "resolutionWindow": null,
           "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
-          "field": "",
+          "field": null,
           "occurrenceType": "ResultCount",
-          "triggerSource": "AllResults"
+          "triggerSource": "AllResults",
+          "minDataPoints": null
         },
         {
           "detectionMethod": "StaticCondition",
           "triggerType": "ResolvedCritical",
+          "resolutionWindow": null,
           "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
-          "field": "",
+          "field": null,
           "occurrenceType": "ResultCount",
-          "triggerSource": "AllResults"
+          "triggerSource": "AllResults",
+          "minDataPoints": null
         }
       ],
+      "timeZone": null,
       "notifications": [],
       "isDisabled": true,
       "groupNotifications": true,
-      "playbook": ""
+      "playbook": "",
+      "sloId": null,
+      "monitorTemplateId": null,
+      "tags": null,
+      "automatedPlaybookIds": []
     },
     {
       "name": "HAProxy - High Active Backend Server Sessions",

@@ -282,38 +282,50 @@
       "type": "MonitorsLibraryMonitorExport",
       "monitorType": "Logs",
       "evaluationDelay": "0m",
+      "alertName": null,
+      "runAs": null,
+      "notificationGroupFields": [],
       "queries": [
         {
           "rowId": "A",
-          "query": "cache_system=varnish cache_cluster=* | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw\n| parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<logname>\\S+)\\s+(?<user>[\\S]+)\\s+\\[\" nodrop\n| parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<logname>\\S+)\\s+(?<user>[\\S]+)\\s+\\[\" nodrop\n| parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop\n| parse regex \"\\\"(?<referrer>http[s]{0,1}:[^\\\"]+)\\\"\\s+\\\"(?<agent>[^\\\"]+?)\\\"\"\n| lookup type, actor, raw, threatlevel as Malicious_Confidence from sumo://threat/cs on threat=remote_ip \n| where  type=\"ip_address\" and !isNull(Malicious_Confidence)\n| json field=raw \"labels[*].name\" as label_name \n| replace(label_name, \"\\\\/\",\"->\") as label_name\n| replace(label_name, \"\\\"\",\" \") as label_name\n| if (isEmpty(actor), \"Unassigned\", actor) as Actor\n| where Malicious_Confidence matches \"high\"\n| fields raw,Malicious_Confidence,remote_ip, actor, _raw"
+          "query": "cache_system=varnish cache_cluster=* | json \"log\" as _rawlog nodrop \n| if (isEmpty(_rawlog), _raw, _rawlog) as _raw\n| parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<logname>\\S+)\\s+(?<user>[\\S]+)\\s+\\[\" nodrop\n| parse regex \"(?<remote_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<local_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(?<logname>\\S+)\\s+(?<user>[\\S]+)\\s+\\[\" nodrop\n| parse regex \"\\s+\\[(?<date>[^\\]]+)\\]\\s+\\\"(?<method>\\w+)\\s+(?<uri>\\S+)\\s+(?<protocol>\\S+)\\\"\\s+(?<status_code>\\d+)\\s+(?<size>[\\d-]+)\" nodrop\n| parse regex \"\\\"(?<referrer>http[s]{0,1}:[^\\\"]+)\\\"\\s+\\\"(?<agent>[^\\\"]+?)\\\"\"\n| threatlookup singleIndicator remote_ip\n| where (_threatlookup.type=\"ipv4-addr:value\" or _threatlookup.type=\"ipv6-addr:value\") and !isNull(_threatlookup.confidence)\n| if (_threatlookup.confidence >= 85, \"high\", if (_threatlookup.confidence >= 50, \"medium\", if (_threatlookup.confidence >= 15, \"low\", if (_threatlookup.confidence >= 0, \"unverified\", \"Unknown\")))) as malicious_confidence\n| if (isEmpty(_threatlookup.actors), \"Unassigned\", _threatlookup.actors) as Actor\n| where malicious_confidence matches \"high\"\n| fields _threatlookup.fields,malicious_confidence,remote_ip, Actor"
         }
       ],
       "triggers": [
         {
           "detectionMethod": "StaticCondition",
           "triggerType": "Critical",
+          "resolutionWindow": null,
           "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "GreaterThan",
           "field": null,
           "occurrenceType": "ResultCount",
-          "triggerSource": "AllResults"
+          "triggerSource": "AllResults",
+          "minDataPoints": null
         },
         {
           "detectionMethod": "StaticCondition",
           "triggerType": "ResolvedCritical",
+          "resolutionWindow": null,
           "timeRange": "-5m",
           "threshold": 0,
           "thresholdType": "LessThanOrEqual",
           "field": null,
           "occurrenceType": "ResultCount",
-          "triggerSource": "AllResults"
+          "triggerSource": "AllResults",
+          "minDataPoints": null
         }
       ],
+      "timeZone": null,
       "notifications": [],
       "isDisabled": true,
       "groupNotifications": true,
-      "playbook": ""
+      "playbook": "",
+      "sloId": null,
+      "monitorTemplateId": null,
+      "tags": null,
+      "automatedPlaybookIds": []
     }
   ]
 }
