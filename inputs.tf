@@ -50,6 +50,12 @@ variable "queries" {
   default     = null
 }
 
+variable "tags" {
+  type        = map(string)
+  default     = {}
+  description = "A map defining tag keys and tag values for the Monitor."
+}
+
 variable "triggers" {
   type        = list(object(
                 {

@@ -22,7 +22,7 @@ This repository also contains predefined alerts for various technologies. Scroll
 
       required_providers {
            sumologic = {
-                version = ">= 2.31.3, < 3.0.0"
+                version = ">= 2.31.3, < 4.0.0"
                 source = "SumoLogic/sumologic"
         }
       }
