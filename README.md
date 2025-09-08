@@ -10,7 +10,7 @@ This repository also contains predefined alerts for various technologies. Scroll
 
 #### Requirements
 
-* [Terraform 0.13+](https://www.terraform.io/downloads.html)
+* [Terraform 1.5.7+](https://www.terraform.io/downloads.html)
 * [Sumo Logic Provider](https://registry.terraform.io/providers/SumoLogic/sumologic/latest/docs)
 
 
@@ -18,7 +18,7 @@ This repository also contains predefined alerts for various technologies. Scroll
 
     ```shell
     terraform {
-      required_version = ">= 0.13"
+      required_version = ">= 1.5.7"
 
       required_providers {
            sumologic = {
