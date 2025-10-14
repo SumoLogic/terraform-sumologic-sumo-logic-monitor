@@ -31,7 +31,7 @@ variable "environment" {
       "us1",
       "us2"
     ], var.environment)
-    error_message = "The value must be one of au, ca, ch, de, eu, fed, in, jp, kr, us1 or us2."
+    error_message = "The value must be one of au, ca, ch, de, eu, fed, jp, kr, us1 or us2."
   }
 }
 variable "folder" {
