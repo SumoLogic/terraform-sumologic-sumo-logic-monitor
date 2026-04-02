@@ -26,6 +26,7 @@ variable "environment" {
       "ch",
       "de",
       "eu",
+      "esc",
       "fed",
       "in",
       "jp",
@@ -33,7 +34,7 @@ variable "environment" {
       "us1",
       "us2"
     ], var.environment)
-    error_message = "The value must be one of au, ca, ch, de, eu, fed, jp, kr, us1 or us2."
+    error_message = "The value must be one of au, ca, ch, de, eu, esc, fed, jp, kr, us1 or us2."
   }
 }
 
