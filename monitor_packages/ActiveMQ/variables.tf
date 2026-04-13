@@ -25,7 +25,6 @@ variable "environment" {
       "de",
       "eu",
       "fed",
-      "in",
       "jp",
       "kr",
       "us1",
